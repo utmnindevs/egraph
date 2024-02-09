@@ -41,7 +41,7 @@ class Graph {
       if (flow) {
         const population_comp = comp.GetPopulation();
         const data_population = population_comp * flow.GetFromComps().get(comp) - flow.GetCoef() * population_comp;
-        comp.SetPopulation(data_population);
+        comp.SetPopulation(data_population); // SetIterationPopulation
         console.log(comp.GetName().substr(0, 2) + " from " + comp.GetPopulation());
         for (const [ptr, coef] of flow.GetToComps()) {
           ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);
@@ -50,6 +50,7 @@ class Graph {
         }
       }
     }
+    // ApplyIterationPopulation
     GetFlows() {
       return this.id_to_flow_;
     }

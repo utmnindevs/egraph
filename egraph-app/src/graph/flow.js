@@ -5,7 +5,7 @@ class Flow  {
     constructor(id, coef, x, y) {
         this.x_ = x;
         this.y_ = y;
-      this.from_coefs_ = new Map();
+      this.from_coefs_ = new Map(); // -> const Compartment*
       this.to_coefs_ = new Map();
       this.coef_ = coef;
       this.id_ = id;
@@ -18,7 +18,7 @@ class Flow  {
       this.to_coefs_.set(from, coef);
     }
     SetInerpolar(from, coef = 1) {
-      this.interpolar_ = { interpolar_by: from, interpolar_coef_: coef };
+      this.interpolar_ = { interpolar_by: from, interpolar_coef_: coef }; // induction
     }
     DeleteInterpolar() {
       if (this.interpolar_) {

@@ -25,6 +25,9 @@ class Compartment extends Coordinates {
       this.name_ = name === "" ? name : this.name_;
       this.id_ = id === "" ? id : this.id_;
     }
+
+    // iteration population - +/-
+    // method: ApplyIterationPopulation
   }
 
   export {Compartment};
