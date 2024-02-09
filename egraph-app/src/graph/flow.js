@@ -5,14 +5,15 @@ class Flow  {
     constructor(id, coef, x, y) {
         this.x_ = x;
         this.y_ = y;
-      this.from_coefs_ = new Map(); // -> const Compartment*
+      this.from_ = null; // -> const Compartment*
       this.to_coefs_ = new Map();
       this.coef_ = coef;
       this.id_ = id;
       this.interpolar_ = null;
+      this.it_population_ = 0;
     }
-    SetFromCompartment(from, coef = 1) {
-      this.from_coefs_.set(from, coef);
+    SetFromCompartment(from) {
+      this.from_ = from;
     }
     SetToCompartment(from, coef = 1) {
       this.to_coefs_.set(from, coef);
@@ -30,20 +31,13 @@ class Flow  {
         this.to_coefs_.set(to, coef);
       }
     }
-    UpdateFromComaprtmentCoef(from, coef) {
-      if (this.from_coefs_.has(from)) {
-        this.from_coefs_.set(from, coef);
-      }
-    }
     DeleteToCompartment(to) {
       if (this.to_coefs_.has(to)) {
         this.to_coefs_.delete(to);
       }
     }
     DeleteFromCompartment(from) {
-      if (this.from_coefs_.has(from)) {
-        this.from_coefs_.delete(from);
-      }
+      delete this.from_;
     }
     GetId() {
       return this.id_;
@@ -51,11 +45,17 @@ class Flow  {
     GetCoef() {
       return this.coef_;
     }
-    GetFromComps() {
-      return this.from_coefs_;
+    GetFromComp() {
+      return this.from_;
     }
     GetToComps() {
       return this.to_coefs_;
+    }
+    SetItPopulation(dif_population){
+      this.it_population_ = dif_population;
+    }
+    GetItPopulation(){
+      return this.it_population_;
     }
   }
 

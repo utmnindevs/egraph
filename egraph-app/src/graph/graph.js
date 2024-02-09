@@ -1,11 +1,15 @@
 
+import { Flow } from "./flow";
 
+const compute_event = new Event("compute");
 
 class Graph {
     constructor(start) {
       this.id_to_flow_ = new Map();
       this.start_compartment_ = start;
     }
+
+
     AddFlow(flow) {
       const id_flow = flow.GetId();
       if (!this.id_to_flow_.has(id_flow)) {
@@ -20,8 +24,8 @@ class Graph {
     }
     FindFlowByFromComp(comp) {
       for (const [name, ptr] of this.id_to_flow_) {
-        const comps_by_flow = ptr.GetFromComps();
-        if (comps_by_flow.has(comp)) {
+        var comps_by_flow = ptr.GetFromComp();
+        if(comps_by_flow == comp){
           return ptr;
         }
       }
@@ -36,19 +40,34 @@ class Graph {
       }
       return null;
     }
-    Compute(comp) {
+    ComputePopulation(comp) {
       const flow = this.FindFlowByFromComp(comp);
       if (flow) {
         const population_comp = comp.GetPopulation();
-        const data_population = population_comp * flow.GetFromComps().get(comp) - flow.GetCoef() * population_comp;
-        comp.SetPopulation(data_population); // SetIterationPopulation
-        console.log(comp.GetName().substr(0, 2) + " from " + comp.GetPopulation());
+        const data_population = flow.GetCoef() * population_comp;
+        flow.SetItPopulation(data_population);
         for (const [ptr, coef] of flow.GetToComps()) {
-          ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);
-          console.log(ptr.GetName().substr(0, 2) + " to " + ptr.GetPopulation());
-          this.Compute(ptr);
+          // ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);
+          this.ComputePopulation(ptr);
         }
       }
+    }
+    ApplyIterationPopulation(comp){
+      const flow = this.FindFlowByFromComp(comp);
+      if(flow){
+        const it_population = flow.GetItPopulation();
+        flow.GetFromComp().SetPopulationFromDiff(-1*it_population);
+        for(const [comp, coef] of flow.GetToComps()){
+          comp.SetPopulationFromDiff(it_population*coef);
+          this.ApplyIterationPopulation(comp);
+        }
+      }
+    }
+    onCompute(comp){
+      this.ComputePopulation(comp);
+      this.ApplyIterationPopulation(comp);
+      console.log(this);
+
     }
     // ApplyIterationPopulation
     GetFlows() {

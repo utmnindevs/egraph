@@ -14,6 +14,9 @@ class Compartment extends Coordinates {
     SetPopulation(new_population) {
       this.population_ = new_population;
     }
+    SetPopulationFromDiff(diff_population){
+      this.population_ += diff_population;
+    }
     GetName() {
       return this.name_;
     }
