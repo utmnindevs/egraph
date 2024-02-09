@@ -6,15 +6,23 @@ const compute_event = new Event("compute");
 class Graph {
     constructor(start) {
       this.id_to_flow_ = new Map();
+      this.id_to_compartment_ = new Map();
       this.start_compartment_ = start;
     }
-
+    AddCompartment(comp){
+      const id_comp = comp.GetId();
+      if(!this.id_to_compartment_.has(id_comp)){
+        this.id_to_compartment_.set(id_comp, comp);
+      }
+      return this;
+    }
 
     AddFlow(flow) {
       const id_flow = flow.GetId();
       if (!this.id_to_flow_.has(id_flow)) {
         this.id_to_flow_.set(id_flow, flow);
       }
+      return this;
     }
     DeleteFlow(flow) {
       const id_flow = flow.GetId();
@@ -67,11 +75,13 @@ class Graph {
       this.ComputePopulation(comp);
       this.ApplyIterationPopulation(comp);
       console.log(this);
-
     }
     // ApplyIterationPopulation
     GetFlows() {
       return this.id_to_flow_;
+    }
+    GetCompartments(){
+      return this.id_to_compartment_;
     }
     GetStarted() {
       return this.start_compartment_;

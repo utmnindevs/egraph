@@ -13,10 +13,9 @@ function CompartmentNode({ data }) {
       <Handle type="target" position={Position.Top} />
       <div>
         <label htmlFor="text">Name: {data.name} </label>
-        <label htmlFor="text">Pop: {data.population} </label>
+        <label htmlFor="text">Pop: {data.population.toFixed(2)} </label>
       </div>
       <Handle type="source" position={Position.Bottom} id="a" />
-
     </>
   );
 }
