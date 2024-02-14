@@ -9,7 +9,13 @@ class Graph {
       this.id_to_comp_ = new Map();
       this.start_compartment_ = start;
     }
-
+    AddCompartment(comp){
+      const id_comp = comp.GetId();
+      if(!this.id_to_compartment_.has(id_comp)){
+        this.id_to_compartment_.set(id_comp, comp);
+      }
+      return this;
+    }
 
     AddFlow(flow) {
       const id_flow = flow.GetId();
@@ -82,7 +88,6 @@ class Graph {
       this.ComputePopulation(comp);
       this.ApplyIterationPopulation(comp);
       console.log(this);
-
     }
     // ApplyIterationPopulation
     GetFlows() {
