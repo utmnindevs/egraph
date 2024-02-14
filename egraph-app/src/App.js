@@ -22,7 +22,10 @@ const i1 = new Compartment("I1nfected2", generate_uuid_v4(), 1);
 const i2 = new Compartment("I2nfected1", generate_uuid_v4(), 1);
 const r = new Compartment("Rejected", generate_uuid_v4(), 0);
 
-const comps = [s, i1, i2, r];
+var g = new Graph(s);
+g.AddComp(s).AddComp(i1).AddComp(i2).AddComp(r);
+
+const comps = g.GetComps();
 const si_flow = new Flow(generate_uuid_v4(), 0.6, 3, 4);
 const ir_flow = new Flow(generate_uuid_v4(), 0.3, 4, 4);
 const ir2_flow = new Flow(generate_uuid_v4(), 0.5, 4, 4);
@@ -33,10 +36,7 @@ ir_flow.SetFromCompartment(i1);
 ir2_flow.SetFromCompartment(i2);
 ir_flow.SetToCompartment(r, 1);
 ir2_flow.SetToCompartment(r, 1);
-var g = new Graph(s);
-g.AddFlow(si_flow);
-g.AddFlow(ir_flow);
-g.AddFlow(ir2_flow);
+g.AddFlow(si_flow).AddFlow(ir_flow).AddFlow(ir2_flow);
 console.log(g.GetFlows().has(si_flow.GetId()));
 console.log(g.GetFlows().has(ir_flow.GetId()));
 

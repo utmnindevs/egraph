@@ -57,6 +57,20 @@ class Flow  {
     GetItPopulation(){
       return this.it_population_;
     }
+
+    toJson(){
+
+      const to_comps = {};
+      this.to_coefs_.forEach((comp, coef) => {
+        to_comps[comp.GetName()] = coef;
+      })
+      return JSON.stringify({
+        id: this.id_,
+        from: this.from_,
+        to: to_comps,
+        coef: this.coef_,
+      });
+    }
   }
 
   export {Flow};

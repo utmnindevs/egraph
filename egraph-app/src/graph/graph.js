@@ -6,6 +6,7 @@ const compute_event = new Event("compute");
 class Graph {
     constructor(start) {
       this.id_to_flow_ = new Map();
+      this.id_to_comp_ = new Map();
       this.start_compartment_ = start;
     }
 
@@ -15,11 +16,25 @@ class Graph {
       if (!this.id_to_flow_.has(id_flow)) {
         this.id_to_flow_.set(id_flow, flow);
       }
+      return this;
+    }
+    AddComp(comp){
+      const id_comp = comp.GetId();
+      if(!this.id_to_comp_.has(id_comp)){
+        this.id_to_comp_.set(id_comp, comp);
+      }
+      return this;
     }
     DeleteFlow(flow) {
       const id_flow = flow.GetId();
       if (this.id_to_flow_.has(id_flow)) {
         this.id_to_flow_.delete(id_flow);
+      }
+    }
+    DeleteComp(comp) {
+      const id_comp = comp.GetId();
+      if (this.id_to_comp_.has(id_comp)) {
+        this.id_to_comp_.delete(id_comp);
       }
     }
     FindFlowByFromComp(comp) {
@@ -72,6 +87,9 @@ class Graph {
     // ApplyIterationPopulation
     GetFlows() {
       return this.id_to_flow_;
+    }
+    GetComps(){
+      return this.id_to_comp_;
     }
     GetStarted() {
       return this.start_compartment_;
