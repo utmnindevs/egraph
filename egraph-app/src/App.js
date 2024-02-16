@@ -23,8 +23,6 @@ const i1 = new Compartment("I1nfected2", generate_uuid_v4(), 1);
 const i2 = new Compartment("I2nfected1", generate_uuid_v4(), 1);
 const r = new Compartment("Rejected", generate_uuid_v4(), 0);
 
-g.AddCompartment(s).AddCompartment(i1).AddCompartment(i2).AddCompartment(r);
-g.start_compartment_ = s;
 
 var g = new Graph(s);
 g.AddComp(s).AddComp(i1).AddComp(i2).AddComp(r);
@@ -137,13 +135,14 @@ function App() {
         <Controls />
       </ReactFlow>
       <button style={{ height: '40px', width: '50px' }} onClick={async () => {
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 1; i++) {
           await delay(500);
           g.onCompute(g.GetStarted());
-          updateNodesByObjects(g.GetCompartments());
+          updateNodesByObjects(g.GetComps());
+          console.log(g.toJson());
         }
+        console.log(JSON.parse(g.toJson()));
         console.log('Done');
-
       }} />
     </div>
   );

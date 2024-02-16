@@ -11,8 +11,8 @@ class Graph {
     }
     AddCompartment(comp){
       const id_comp = comp.GetId();
-      if(!this.id_to_compartment_.has(id_comp)){
-        this.id_to_compartment_.set(id_comp, comp);
+      if(!this.id_to_comp_.has(id_comp)){
+        this.id_to_comp_.set(id_comp, comp);
       }
       return this;
     }
@@ -102,6 +102,14 @@ class Graph {
     UpdateStartedCompartment(new_start) {
       this.start_compartment_ = new_start;
     }
+
+    toJson(){
+      return JSON.stringify({
+        compartments: this.id_to_comp_,
+        flows:  this.id_to_flow_
+      });
+    }
+
   }
 
   export {Graph};

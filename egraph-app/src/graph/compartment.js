@@ -32,9 +32,8 @@ class Compartment extends Coordinates {
     // iteration population - +/-
     // method: ApplyIterationPopulation
 
-    toJson(){
+    toJSON(){
       return JSON.stringify({
-        id: this.id_,
         name: this.name_,
         attr: this.name_.slice(0,1),
         population: this.population_,

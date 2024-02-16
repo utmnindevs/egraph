@@ -1,5 +1,6 @@
 
 import { Coordinates } from "./helpers"
+import { Compartment } from "./compartment";
 
 class Flow  {
     constructor(id, coef, x, y) {
@@ -61,12 +62,11 @@ class Flow  {
     toJson(){
 
       const to_comps = {};
-      this.to_coefs_.forEach((comp, coef) => {
-        to_comps[comp.GetName()] = coef;
+      this.to_coefs_.forEach((coef, comp) => {
+        to_comps[comp.name_] = coef;
       })
       return JSON.stringify({
-        id: this.id_,
-        from: this.from_,
+        from: this.from_.name_,
         to: to_comps,
         coef: this.coef_,
       });
