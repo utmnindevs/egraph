@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Modal.css'; // Импортируем файл со стилями
+import './Modal.css'; 
 
 function Modal({ isOpen, onClose }) {
   const [fileName, setFileName] = useState('');
@@ -25,9 +25,30 @@ function Modal({ isOpen, onClose }) {
   };
 
   const handleOpenExisting = () => {
-    // Здесь вы можете добавить логику открытия существующего файла
-    onClose();
+    
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.xml'; 
+  
+    
+    input.addEventListener('change', event => {
+      const file = event.target.files[0]; 
+  
+      
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith('.json') || fileName.endsWith('.xml')) {
+        
+        console.log('Выбранный файл:', file);
+      } else {
+        alert('Пожалуйста, выберите файл с расширением .json или .xml');
+      }
+  
+      onClose(); 
+    });
+  
+    input.click();
   };
+  
 
   return (
     <div className={`modal ${isOpen ? 'open' : ''}`}>
