@@ -15,6 +15,7 @@ import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
 
 import './App.css';
+import Modal from './Modal'; // Импортируем компонент Modal
 
 var g = new Graph();
 
@@ -84,6 +85,12 @@ const initialNodes = [
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(true); // Состояние для открытия/закрытия модального окна
+
+   // Функция для закрытия модального окна
+   const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const delay = ms => new Promise(
     resolve => setTimeout(resolve, ms)
@@ -123,6 +130,10 @@ function App() {
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: '500px', width: '1000px' }}>
+      
+      {/* Показываем модальное окно, если isModalOpen равен true */}
+      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} />}
+
       <ReactFlow
         nodeTypes={nodeTypes}
 
