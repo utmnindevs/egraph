@@ -20,9 +20,9 @@ function Modal({ isOpen, onClose }) {
   }, []);
 
   const handleCreateNew = () => {
-    // Здесь вы можете добавить логику создания нового файла
-    onClose();
+  
   };
+  
 
   const handleOpenExisting = () => {
     
@@ -39,11 +39,12 @@ function Modal({ isOpen, onClose }) {
       if (fileName.endsWith('.json') || fileName.endsWith('.xml')) {
         
         console.log('Выбранный файл:', file);
+        onClose(); 
       } else {
         alert('Пожалуйста, выберите файл с расширением .json или .xml');
       }
   
-      onClose(); 
+      
     });
   
     input.click();
@@ -53,9 +54,8 @@ function Modal({ isOpen, onClose }) {
   return (
     <div className={`modal ${isOpen ? 'open' : ''}`}>
       <div className="modal-content">
-        <span className="close" onClick={onClose}>&times;</span>
         <p>Хотите создать новый файл проекта или открыть существующий?</p>
-        <button onClick={handleCreateNew}>Создать новый файл</button>
+        <button onClick={onClose}>Создать новый файл</button>
         <button onClick={handleOpenExisting}>Открыть существующий файл</button>
       </div>
     </div>
