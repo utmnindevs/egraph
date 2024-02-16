@@ -59,17 +59,18 @@ class Flow  {
       return this.it_population_;
     }
 
-    toJson(){
+    toString(){
 
       const to_comps = {};
       this.to_coefs_.forEach((coef, comp) => {
         to_comps[comp.name_] = coef;
       })
-      return JSON.stringify({
+      return {
+        id: this.id_,
         from: this.from_.name_,
         to: to_comps,
         coef: this.coef_,
-      });
+      };
     }
   }
 

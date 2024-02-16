@@ -121,6 +121,26 @@ function App() {
     });
   };
 
+  const downloadFile = () => {
+  
+    // create file in browser
+    const fileName = "my-file";
+    const json = g.toJson();
+    const blob = new Blob([json], { type: "application/json" });
+    const href = URL.createObjectURL(blob);
+  
+    // create "a" HTLM element with href to file
+    const link = document.createElement("a");
+    link.href = href;
+    link.download = fileName + ".json";
+    document.body.appendChild(link);
+    link.click();
+  
+    // clean up "a" element & remove ObjectURL
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+  }
+
   useEffect(() => {
     console.log(compartmentsUpdate);
     compartmentsUpdate.forEach(obj => {
@@ -155,6 +175,7 @@ function App() {
         console.log(JSON.parse(g.toJson()));
         console.log('Done');
       }} />
+      <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/>
     </div>
   );
 }

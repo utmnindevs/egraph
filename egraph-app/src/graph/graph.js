@@ -104,9 +104,17 @@ class Graph {
     }
 
     toJson(){
+      var compartments = [];
+      this.id_to_comp_.forEach((id, comp) => {
+        compartments.push(id.toString());
+      });
+      var flows = [];
+      this.id_to_flow_.forEach((id, flow) => {
+        flows.push(id.toString());
+      });
       return JSON.stringify({
-        compartments: this.id_to_comp_,
-        flows:  this.id_to_flow_
+        compartments,
+        flows,
       });
     }
 

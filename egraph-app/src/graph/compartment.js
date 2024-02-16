@@ -32,12 +32,13 @@ class Compartment extends Coordinates {
     // iteration population - +/-
     // method: ApplyIterationPopulation
 
-    toJSON(){
-      return JSON.stringify({
+    toString(){
+      return {
+        id: this.id_,
         name: this.name_,
         attr: this.name_.slice(0,1),
         population: this.population_,
-      });
+      };
     }
   }
 
