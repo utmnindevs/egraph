@@ -103,6 +103,8 @@ class Graph {
       this.start_compartment_ = new_start;
     }
 
+
+    // serialization to json format
     toJson(){
       var compartments = [];
       this.id_to_comp_.forEach((id, comp) => {
@@ -117,6 +119,31 @@ class Graph {
         flows,
       });
     }
+
+
+    // get all flows and comps to graph for layer-drawing
+    toNodeEdgeGraph(){
+      var compartments = [];
+      this.id_to_comp_.forEach((comp, id) => {
+        compartments.push({id: comp.GetName().slice(0,2)});
+      });
+
+      var flows_sources = [];
+      this.id_to_flow_.forEach((flow, id) => {
+        flow.to_coefs_.forEach((id_comp, comp) => {
+          flows_sources.push({
+            source: flow.from_.GetName().slice(0,2), target: comp.GetName().slice(0,2)
+          })
+        })
+      });
+
+      const graph = {
+        nodes: compartments,
+        edges: flows_sources
+      }
+      return graph;
+    }
+
 
   }
 

@@ -13,6 +13,7 @@ import { Coordinates } from './graph/helpers';
 import { Flow } from './graph/flow';
 import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
+import { SugiyamaLayering } from './graph/drawing/sugiyama';
 
 import './App.css';
 import Modal from './Modal'; 
@@ -42,6 +43,12 @@ ir2_flow.SetToCompartment(r, 1);
 g.AddFlow(si_flow).AddFlow(ir_flow).AddFlow(ir2_flow);
 console.log(g.GetFlows().has(si_flow.GetId()));
 console.log(g.GetFlows().has(ir_flow.GetId()));
+
+var graphic = g.toNodeEdgeGraph()
+console.log(graphic)
+var points = SugiyamaLayering(graphic);
+console.log({points})
+
 
 const initialNodes = [
   {
@@ -107,7 +114,8 @@ function App() {
     setGraphCompartments(graphObjects => {
       return graphObjects.map(obj => {
         if (obj.id === objectId) {
-          obj.data = { ...obj.data, population: newValues }
+          obj.data = { ...obj.data, population: newValues };
+          obj.position = points[obj.data.obj.GetAttr()];
         }
         return obj;
       });
@@ -175,7 +183,7 @@ function App() {
         console.log(JSON.parse(g.toJson()));
         console.log('Done');
       }} />
-      <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/>
+      {/* <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/> */}
     </div>
   );
 }

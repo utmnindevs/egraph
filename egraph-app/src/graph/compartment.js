@@ -23,6 +23,9 @@ class Compartment extends Coordinates {
     GetId() {
       return this.id_;
     }
+    GetAttr(){
+      return this.name_.slice(0,2);
+    }
     UpdateCompartment(name = "", id = "", population = null) {
       this.population_ = population ? population : this.population_;
       this.name_ = name === "" ? name : this.name_;
