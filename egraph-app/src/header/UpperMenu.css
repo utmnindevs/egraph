@@ -1,0 +1,45 @@
+
+.upper-menu {
+    display: flex;
+    flex-direction: column; /* Размещаем элементы вертикально */
+    align-items: flex-start; /* Выравниваем элементы к правому краю */
+    background-color: #fefefe;
+    color: hsl(0, 0%, 0%);
+    padding: 5px;
+    border-bottom: px solid #ddd;
+   
+  }
+  
+  .logo-and-file {
+    display: flex;
+    align-items: center;
+    font-size:small;
+  }
+  
+  .logo-and-file img {
+    margin-right: 10px;
+    margin-left: 25px;
+  }
+
+  .header-buttons {
+    margin-left: 60px;
+    transition-duration: 0.4s;
+    display: flex;
+
+  }
+
+  .header-buttons button {
+    background-color:white;
+    border:white;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border-radius: 12px;
+  }
+  .header-buttons button:hover {
+    background-color:#87CEEB;
+    
+  }
+  
+
+ 

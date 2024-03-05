@@ -1,6 +1,6 @@
-import logo from './logo.svg';
+import logo from './logo.png';
 
-
+import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 
@@ -150,7 +150,7 @@ function App() {
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: '500px', width: '1000px' }}>
-      
+    <Header  />
       
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} />}
 
