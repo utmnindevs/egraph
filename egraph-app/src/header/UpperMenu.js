@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useCallback } from 'react';
 import './UpperMenu.css';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -112,7 +113,7 @@ const UpperMenu = ({ rfInstance }) => {
   return (
     <div className="upper-menu">
       <div className="logo-and-file">
-        <img src="logo.png" alt="Logo" />
+        <img src="logo.svg" alt="Logo" />
         <h1 id='title_filename'
           contentEditable
           onBlur={handleFileNameChange}
