@@ -1,8 +1,8 @@
 
 .upper-menu {
     display: flex;
-    flex-direction: column; /* Размещаем элементы вертикально */
-    align-items: flex-start; /* Выравниваем элементы к правому краю */
+    flex-direction: column; 
+    align-items: flex-start; 
     background-color: #fefefe;
     color: hsl(0, 0%, 0%);
     padding: 5px;
@@ -41,5 +41,34 @@
     
   }
   
+
+.dark-mode-button {
+  position: fixed;
+  top: 35px;
+  right: 25px;
+  background-color: #333;
+  color: #000000;
+  border: #000000;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 0; 
+}
+
+
+
+.dark-mode  {
+  background-color: #121212;
+  color: #fff; 
+  border-bottom-color: #ddd; 
+}
+
+
+.dark-mode .upper-menu {
+  background-color: #121212; 
+  color: #fff;
+  border-bottom-color: #ddd;
+}
+
 
  

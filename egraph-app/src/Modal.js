@@ -55,8 +55,8 @@ function Modal({ isOpen, onClose }) {
     <div className={`modal ${isOpen ? 'open' : ''}`}>
       <div className="modal-content">
         <p>Хотите создать новый файл проекта или открыть существующий?</p>
-        <button onClick={onClose}>Создать новый файл</button>
-        <button onClick={handleOpenExisting}>Открыть существующий файл</button>
+        <button class="modal-button" onClick={onClose}>Создать новый файл</button>
+        <button class="modal-button" onClick={handleOpenExisting}>Открыть существующий файл</button>
       </div>
     </div>
   );

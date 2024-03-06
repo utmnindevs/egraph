@@ -158,12 +158,13 @@ function App() {
   }, [compartmentsUpdate]);
 
   return (
-    <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: '500px', width: '1000px' }}>
+    <div className="reactflow-wrapper" ref={reactFlowWrapper} >
     <Header onDownloadFile={downloadFile} onRunModel={runModel} />
       
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} />}
 
       <ReactFlow
+      
         nodeTypes={nodeTypes}
 
         nodes={compartmentsObjects}

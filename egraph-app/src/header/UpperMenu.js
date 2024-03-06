@@ -109,7 +109,11 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
     </Dropdown>
     );
   }
-
+  
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+  }
+  
   return (
     <div className="upper-menu">
       <div className="logo-and-file">
@@ -123,7 +127,7 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
         </h1>
       </div>
       <div className="header-buttons" >
-
+        <button className="dark-mode-button" onClick={toggleDarkMode}>Dark Theme</button>
         <FileMenuDropDown className="hdr-button" name={'Файл'}/>
         <EditMenuDropDown className="hdr-button" name={'Правка'}/>
         <AboutMenuDropDown className="hdr-button" name={'Справка'}/>
