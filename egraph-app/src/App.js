@@ -122,8 +122,8 @@ function App() {
   };
 
   const downloadFile = () => {
-  
-    // create file in browser
+    //console.log("downloaded");
+    //create file in browser
     const fileName = "my-file";
     const json = g.toJson();
     const blob = new Blob([json], { type: "application/json" });
@@ -141,6 +141,15 @@ function App() {
     URL.revokeObjectURL(href);
   }
 
+  const runModel = async () => {
+    for (let i = 0; i < 1; i++) {
+      await delay(500);
+      g.onCompute(g.GetStarted());
+      updateNodesByObjects(g.GetComps());
+      console.log(g.toJson());
+    }
+  }
+
   useEffect(() => {
     console.log(compartmentsUpdate);
     compartmentsUpdate.forEach(obj => {
@@ -150,7 +159,7 @@ function App() {
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} style={{ height: '500px', width: '1000px' }}>
-    <Header  />
+    <Header onDownloadFile={downloadFile} onRunModel={runModel} />
       
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} />}
 
@@ -165,17 +174,6 @@ function App() {
         <Background color="#aaa" gap={16} />
         <Controls />
       </ReactFlow>
-      <button style={{ height: '40px', width: '50px' }} onClick={async () => {
-        for (let i = 0; i < 1; i++) {
-          await delay(500);
-          g.onCompute(g.GetStarted());
-          updateNodesByObjects(g.GetComps());
-          console.log(g.toJson());
-        }
-        console.log(JSON.parse(g.toJson()));
-        console.log('Done');
-      }} />
-      <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/>
     </div>
   );
 }
