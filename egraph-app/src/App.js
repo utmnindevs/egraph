@@ -15,7 +15,7 @@ import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
 
 import './App.css';
-import Modal from './Modal'; 
+import Modal from './Modal';
 
 var g = new Graph();
 
@@ -85,10 +85,10 @@ const initialNodes = [
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState(true); 
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  
 
-   
-   const handleCloseModal = () => {
+  const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
@@ -128,14 +128,14 @@ function App() {
     const json = g.toJson();
     const blob = new Blob([json], { type: "application/json" });
     const href = URL.createObjectURL(blob);
-  
+
     // create "a" HTLM element with href to file
     const link = document.createElement("a");
     link.href = href;
     link.download = fileName + ".json";
     document.body.appendChild(link);
     link.click();
-  
+
     // clean up "a" element & remove ObjectURL
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
@@ -159,26 +159,43 @@ function App() {
 
 
   const handleOpenExisting = () => {
-    
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = '.json,.xml'; 
+    input.accept = '.json';
   
-    
-    input.addEventListener('change', event => {
-      const file = event.target.files[0]; 
+    input.addEventListener('change', async event => {
+      const file = event.target.files[0];
   
-      
       const fileName = file.name.toLowerCase();
-      if (fileName.endsWith('.json') || fileName.endsWith('.xml')) {
-        
-        console.log('Выбранный файл:', file);
-        handleCloseModal(); 
-      } else {
-        alert('Пожалуйста, выберите файл с расширением .json или .xml');
-      }
+      if (fileName.endsWith('.json')) {
+        try {
+          const fileContent = await file.text();
+          const jsonData = JSON.parse(fileContent);
   
-      
+          // Обновляем состояние компонентов на основе данных из файла
+          setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
+            id: compartment.id,
+            type: 'compartmentNode',
+            position: { x: 100 + index * 100, y: 100 + index * 100 }, // Устанавливаем разные координаты для каждой ноды
+            data: {
+              population: compartment.population,
+              name: compartment.name,
+              obj: compartment // Здесь вы можете сохранить полный объект от файла, если нужно
+            }
+          })));
+  
+          // Обновляем состояние потоков на основе данных из файла (если нужно)
+          // setGraphFlows(jsonData.flows);
+  
+          // Закрываем модальное окно
+          handleCloseModal();
+        } catch (error) {
+          console.error('Ошибка при чтении файла JSON:', error);
+          alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
+        }
+      } else {
+        alert('Пожалуйста, выберите файл с расширением .json');
+      }
     });
   
     input.click();
@@ -186,12 +203,12 @@ function App() {
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} >
-    <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting = {handleOpenExisting} />
-      
-      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting = {handleOpenExisting} />}
+      <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
+
+      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <ReactFlow
-      
+
         nodeTypes={nodeTypes}
 
         nodes={compartmentsObjects}

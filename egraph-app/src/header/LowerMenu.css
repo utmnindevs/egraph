@@ -1,14 +1,12 @@
-
 .lower-menu {
-    display: flex;
-    justify-content: space-around;
-    background-color: #87CEEB; /* Синий цвет */
-    padding: 15px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    margin-left: 25px;
-    margin-right: 25px;
-  }
-  
+  display: flex;
+  justify-content: space-around;
+  background-color: #87CEEB;
+  padding: 15px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  margin-left: 25px;
+  margin-right: 25px;
+}

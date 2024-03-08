@@ -1,55 +1,58 @@
-
 .upper-menu {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
-    background-color: #fefefe;
-    color: hsl(0, 0%, 0%);
-    
-    border-bottom: px solid #ddd;
-    justify-content: space-between
-    
-  }
-  .logo-and-content {
-    display: flex;
-    margin-top: 10px;
-    margin-left: 25px;
-  }
-  .logo {
-    margin-right: 5px;
-    margin-left: 10px;
-    
-  }
-  .logo img {
-    width: 55px;
-  }
-  .header-buttons {
-    transition-duration: 0.4s;
-    display: flex;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background-color: #fefefe;
+  color: hsl(0, 0%, 0%);
 
-  }
+  border-bottom: px solid #ddd;
+  justify-content: space-between
+}
 
-  #title_filename {
-    font-size: 20px; 
-    white-space: nowrap; 
-    margin: 3px;
-    margin-left: 4px;
-    
-  }
+.logo-and-content {
+  display: flex;
+  margin-top: 10px;
+  margin-left: 25px;
+}
 
-  .header-buttons button {
-    background-color:white;
-    border:white;
-    margin-left: 0px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    border-radius: 12px;
-  }
-  .header-buttons button:hover {
-    background-color:#87CEEB;
-    
-  }
-  
+.logo {
+  margin-right: 5px;
+  margin-left: 10px;
+
+}
+
+.logo img {
+  width: 55px;
+}
+
+.header-buttons {
+  transition-duration: 0.4s;
+  display: flex;
+
+}
+
+#title_filename {
+  font-size: 20px;
+  white-space: nowrap;
+  margin: 3px;
+  margin-left: 4px;
+
+}
+
+.header-buttons button {
+  background-color: white;
+  border: white;
+  margin-left: 0px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.header-buttons button:hover {
+  background-color: #87CEEB;
+
+}
+
 
 .dark-mode-button {
   position: fixed;
@@ -61,22 +64,20 @@
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
-  z-index: 0; 
+  z-index: 0;
 }
 
 
 
-.dark-mode  {
+.dark-mode {
   background-color: #121212;
-  color: #fff; 
-  border-bottom-color: #ddd; 
-}
-
-
-.dark-mode .upper-menu {
-  background-color: #121212; 
   color: #fff;
   border-bottom-color: #ddd;
 }
 
 
+.dark-mode .upper-menu {
+  background-color: #121212;
+  color: #fff;
+  border-bottom-color: #ddd;
+}

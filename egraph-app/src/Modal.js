@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Modal.css'; 
+import './Modal.css';
 
 function Modal({ isOpen, onClose, handleOpenExisting }) {
   const [fileName, setFileName] = useState('');
@@ -20,12 +20,12 @@ function Modal({ isOpen, onClose, handleOpenExisting }) {
   }, []);
 
   const handleCreateNew = () => {
-  
-  };
-  
 
-  
-  
+  };
+
+
+
+
 
   return (
     <div className={`modal ${isOpen ? 'open' : ''}`}>
