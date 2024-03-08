@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Modal.css'; 
 
-function Modal({ isOpen, onClose }) {
+function Modal({ isOpen, onClose, handleOpenExisting }) {
   const [fileName, setFileName] = useState('');
   const [autoSave, setAutoSave] = useState(false);
   const [filePath, setFilePath] = useState('');
@@ -24,31 +24,7 @@ function Modal({ isOpen, onClose }) {
   };
   
 
-  const handleOpenExisting = () => {
-    
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json,.xml'; 
   
-    
-    input.addEventListener('change', event => {
-      const file = event.target.files[0]; 
-  
-      
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith('.json') || fileName.endsWith('.xml')) {
-        
-        console.log('Выбранный файл:', file);
-        onClose(); 
-      } else {
-        alert('Пожалуйста, выберите файл с расширением .json или .xml');
-      }
-  
-      
-    });
-  
-    input.click();
-  };
   
 
   return (

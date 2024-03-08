@@ -157,11 +157,38 @@ function App() {
     });
   }, [compartmentsUpdate]);
 
+
+  const handleOpenExisting = () => {
+    
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,.xml'; 
+  
+    
+    input.addEventListener('change', event => {
+      const file = event.target.files[0]; 
+  
+      
+      const fileName = file.name.toLowerCase();
+      if (fileName.endsWith('.json') || fileName.endsWith('.xml')) {
+        
+        console.log('Выбранный файл:', file);
+        handleCloseModal(); 
+      } else {
+        alert('Пожалуйста, выберите файл с расширением .json или .xml');
+      }
+  
+      
+    });
+  
+    input.click();
+  };
+
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} >
-    <Header onDownloadFile={downloadFile} onRunModel={runModel} />
+    <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting = {handleOpenExisting} />
       
-      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} />}
+      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting = {handleOpenExisting} />}
 
       <ReactFlow
       

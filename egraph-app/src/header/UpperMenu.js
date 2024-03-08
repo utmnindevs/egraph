@@ -11,7 +11,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Button } from 'react-bootstrap';
 
-const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
+const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting }) => {
   const [fileName, setFileName] = useState("Untitled");
 
   const handleFileNameChange = (event) => {
@@ -59,7 +59,7 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
       </Dropdown.Toggle>
   
       <Dropdown.Menu>
-        <Dropdown.Item >Открыть</Dropdown.Item>
+        <Dropdown.Item onClick={handleOpenExisting}>Открыть</Dropdown.Item>
         <Dropdown.Item onClick={onDownloadFile}>Сохранить</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
