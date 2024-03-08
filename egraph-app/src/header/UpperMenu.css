@@ -5,33 +5,42 @@
     align-items: flex-start; 
     background-color: #fefefe;
     color: hsl(0, 0%, 0%);
-    padding: 5px;
+    
     border-bottom: px solid #ddd;
-   
+    justify-content: space-between
+    
   }
-  
-  .logo-and-file {
+  .logo-and-content {
     display: flex;
-    align-items: center;
-    font-size:small;
-  }
-  
-  .logo-and-file img {
-    margin-right: 10px;
+    margin-top: 10px;
     margin-left: 25px;
   }
-
+  .logo {
+    margin-right: 5px;
+    margin-left: 10px;
+    
+  }
+  .logo img {
+    width: 55px;
+  }
   .header-buttons {
-    margin-left: 60px;
     transition-duration: 0.4s;
     display: flex;
 
   }
 
+  #title_filename {
+    font-size: 20px; 
+    white-space: nowrap; 
+    margin: 3px;
+    margin-left: 4px;
+    
+  }
+
   .header-buttons button {
     background-color:white;
     border:white;
-    margin-left: 20px;
+    margin-left: 0px;
     margin-bottom: 10px;
     cursor: pointer;
     border-radius: 12px;
@@ -71,4 +80,3 @@
 }
 
 
- 

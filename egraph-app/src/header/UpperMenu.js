@@ -116,16 +116,18 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
   
   return (
     <div className="upper-menu">
-      <div className="logo-and-file">
-        <img src="logo.svg" alt="Logo" />
-        <h1 id='title_filename'
-          contentEditable
-          onBlur={handleFileNameChange}
-          suppressContentEditableWarning={true}
-        >
-          {fileName}
-        </h1>
-      </div>
+      <div className="logo-and-content">
+        <div className="logo">
+          <img src="logo.svg" alt="Logo" />
+        </div>
+    <div className="content">
+      <h1 id='title_filename'
+        contentEditable
+        onBlur={handleFileNameChange}
+        suppressContentEditableWarning={true}
+      >
+        {fileName}
+      </h1>
       <div className="header-buttons" >
         <button className="dark-mode-button" onClick={toggleDarkMode}>Dark Theme</button>
         <FileMenuDropDown className="hdr-button" name={'Файл'}/>
@@ -134,7 +136,9 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel }) => {
         <StartModelDropDown className="hdr-button" name= {'Модель'}/>
         <></>
       </div>
-    </div >
+    </div>
+  </div>
+</div>
   );
 };
 
