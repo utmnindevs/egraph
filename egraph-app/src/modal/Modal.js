@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Modal.css';
+import './style_modal/Modal.css';
 
 function Modal({ isOpen, onClose, handleOpenExisting }) {
   const [fileName, setFileName] = useState('');

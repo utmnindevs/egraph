@@ -1,6 +1,6 @@
 
 import React from 'react';
-import './LowerMenu.css';
+import './style_header/LowerMenu.css';
 
 const LowerMenu = () => {
   return (

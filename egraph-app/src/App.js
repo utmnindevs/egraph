@@ -14,8 +14,8 @@ import { Flow } from './graph/flow';
 import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
 
-import './App.css';
-import Modal from './Modal';
+import './style/App.css';
+import Modal from './modal/Modal';
 
 var g = new Graph();
 
@@ -158,48 +158,48 @@ function App() {
   }, [compartmentsUpdate]);
 
 
-  const handleOpenExisting = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-  
-    input.addEventListener('change', async event => {
-      const file = event.target.files[0];
-  
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith('.json')) {
-        try {
-          const fileContent = await file.text();
-          const jsonData = JSON.parse(fileContent);
-  
-          // Обновляем состояние компонентов на основе данных из файла
-          setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
-            id: compartment.id,
-            type: 'compartmentNode',
-            position: { x: 100 + index * 100, y: 100 + index * 100 }, // Устанавливаем разные координаты для каждой ноды
-            data: {
-              population: compartment.population,
-              name: compartment.name,
-              obj: compartment // Здесь вы можете сохранить полный объект от файла, если нужно
-            }
-          })));
-  
-          // Обновляем состояние потоков на основе данных из файла (если нужно)
-          // setGraphFlows(jsonData.flows);
-  
-          // Закрываем модальное окно
-          handleCloseModal();
-        } catch (error) {
-          console.error('Ошибка при чтении файла JSON:', error);
-          alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
-        }
-      } else {
-        alert('Пожалуйста, выберите файл с расширением .json');
+const handleOpenExisting = () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+
+  input.addEventListener('change', async event => {
+    const file = event.target.files[0];
+
+    const fileName = file.name.toLowerCase();
+    if (fileName.endsWith('.json')) {
+      try {
+        const fileContent = await file.text();
+        const jsonData = JSON.parse(fileContent);
+
+        // Обновляем состояние компонентов на основе данных из файла
+        setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
+          id: compartment.id,
+          type: 'compartmentNode',
+          position: { x: 100 + index * 100, y: 100 + index * 100 }, // Устанавливаем разные координаты для каждой ноды
+          data: {
+            population: compartment.population,
+            name: compartment.name,
+            obj: compartment // Здесь вы можете сохранить полный объект от файла, если нужно
+          }
+        })));
+
+        // Обновляем состояние потоков на основе данных из файла (если нужно)
+        // setGraphFlows(jsonData.flows);
+
+        // Закрываем модальное окно
+        handleCloseModal();
+      } catch (error) {
+        console.error('Ошибка при чтении файла JSON:', error);
+        alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
       }
-    });
-  
-    input.click();
-  };
+    } else {
+      alert('Пожалуйста, выберите файл с расширением .json');
+    }
+  });
+
+  input.click();
+};
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper} >
