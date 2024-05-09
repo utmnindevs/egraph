@@ -3,7 +3,7 @@ import { Flow } from "./flow";
 
 const compute_event = new Event("compute");
 
-class Graph {
+class EGraph {
     constructor(start) {
       this.id_to_flow_ = new Map();
       this.id_to_comp_ = new Map();
@@ -147,4 +147,4 @@ class Graph {
 
   }
 
-  export {Graph};
+  export {EGraph};
