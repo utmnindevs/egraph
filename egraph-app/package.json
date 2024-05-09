@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dagrejs/dagre": "^1.0.4",
+    "@dagrejs/dagre": "^1.1.2",
     "@svgdotjs/svg.js": "^3.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

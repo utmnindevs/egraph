@@ -17,7 +17,7 @@ import { generate_uuid_v4 } from './graph/helpers';
 
 import './App.css';
 import Modal from './Modal'; 
-import { SVG } from '@svgdotjs/svg.js'
+import { svgConverterFunction } from './Svgconverter.js';
 
 var dagre = require("@dagrejs/dagre");
 
@@ -73,26 +73,7 @@ gd.setEdge(s.GetId(), d.GetId());
 
 dagre.layout(gd, {minlen:0, ranker:"longest-path"});
 
-var draw = SVG().addTo('body').size(1000, 1000);
 
-
-gd.edges().forEach(function(e) {
-  var points = [];
-  gd.edge(e).points.forEach((p)=>{
-    points.push(p.x, p.y);
-  });
-  console.log(points)
-  draw.polyline(points).fill('none').stroke({color:'black',width:1,linecap:'round',linejoin:'round'});
- console.log("Edge " + e.v + " -> " + e.w + ": " + JSON.stringify(gd.edge(e)));
-});
-gd.nodes().forEach(function(v) {
-  draw.rect(30, 20).attr('x', gd.node(v).x-30/2).attr('y', gd.node(v).y-20/2).fill('aqua');
-  draw.text(gd.node(v).label.toString()).font({size: 10, anchor: 'middle'}).fill('black').attr('x', gd.node(v).x).attr('y',gd.node(v).y+10/2);
-  console.log("Node " + v + ": " + JSON.stringify(gd.node(v)));
-});
-
-var svg = draw.svg();
-console.log(svg)
 
 const initialNodes = [
   {
@@ -205,6 +186,7 @@ function App() {
   }
 
   useEffect(() => {
+    svgConverterFunction(gd);
     console.log(compartmentsUpdate);
     compartmentsUpdate.forEach(obj => {
       updateObject(obj.GetId(), obj.GetPopulation());
@@ -234,14 +216,16 @@ function App() {
           g.onCompute(g.GetStarted());
           updateNodesByObjects(g.GetComps());
           console.log(g.toJson());
+          
         }
         console.log(JSON.parse(g.toJson()));
         console.log('Done');
       }} />
       {/* <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/> */}
+      
     </div>
   );
 }
 
-
+export { gd };
 export default App;
