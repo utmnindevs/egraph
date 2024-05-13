@@ -7,6 +7,7 @@ import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeCh
 import 'reactflow/dist/style.css';
 
 import CompartmentNode from "./nodes/compartment_node"
+import './nodes/CompartmentNodeStyle.css'
 
 import { EGraph } from './graph/graph';
 import { Coordinates } from './graph/helpers';

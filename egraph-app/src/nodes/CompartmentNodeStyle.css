@@ -1,0 +1,23 @@
+.compartment-node{
+    height: 100px;
+    min-width: 205px;
+    width: fit-content;
+    background: #E2E2E2;
+    border-radius: 5px;
+}
+
+.compartment-node-header{
+    background: #63A9FF;
+    border-radius: 5px 5px 0 0;
+}
+
+.compartment-node-header label{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.compartment-node-body label{
+    padding: 20px;
+    margin: 10px;
+
+}

@@ -9,14 +9,19 @@ function CompartmentNode({ data }) {
   }, []);
  
   return (
-    <>
-      <Handle type="target" position={Position.Top} />
+    <div className='compartment-node'>
+      <div className='compartment-node-header'>
+        <label htmlFor="text"> {data.name.substr(0,2).toUpperCase()}: {data.name} </label>
         
-      <div><p><label htmlFor="text">Name: {data.name} </label></p>
-        <label htmlFor="text">Pop: {data.population.toFixed(2)} </label>
       </div>
-      <Handle type="source" position={Position.Bottom} id="a" />
-    </>
+
+      <div className='compartment-node-body'>
+        <label htmlFor="text">Population: {data.population.toFixed(2)} </label>
+      </div>
+   
+      {/* <Handle type="target" position={Position.Top} /> */}        
+      {/* <Handle type="source" position={Position.Bottom} id="a" /> */}
+    </div>
   );
 }
 
