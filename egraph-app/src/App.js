@@ -20,7 +20,7 @@ import './style/App.css';
 import Modal from './modal/Modal'; 
 import { svgConverterFunction } from './Svgconverter.js';
 
-var dagre = require("@dagrejs/dagre");
+var dagre = require("@xdashduck/dagre-tlayering");
 
 
 
