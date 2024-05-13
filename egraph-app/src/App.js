@@ -15,8 +15,8 @@ import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
 // import { SugiyamaLayering } from './graph/drawing/sugiyama';
 
-import './App.css';
-import Modal from './Modal'; 
+import './style/App.css';
+import Modal from './modal/Modal'; 
 import { svgConverterFunction } from './Svgconverter.js';
 
 var dagre = require("@dagrejs/dagre");
