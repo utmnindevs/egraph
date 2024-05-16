@@ -24,7 +24,7 @@ var dagre = require("@xdashduck/dagre-tlayering");
 
 
 
-const s = new Compartment("Suspectable", generate_uuid_v4(), 100);
+const s = new Compartment("Восприимчевые", generate_uuid_v4(), 100);
 const i1 = new Compartment("I1nfected2", generate_uuid_v4(), 1);
 const i2 = new Compartment("I2nfected1", generate_uuid_v4(), 1);
 const r = new Compartment("Rejected", generate_uuid_v4(), 0);
