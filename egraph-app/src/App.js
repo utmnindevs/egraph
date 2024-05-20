@@ -273,10 +273,6 @@ return (
     )}
   </div>
 );
-      {/* <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/> */}
-      
-    </div>
-  );
 }
 
 // export { gd };
