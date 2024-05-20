@@ -1,12 +1,19 @@
 import { Coordinates } from "./helpers"
 
 
+
 class Compartment extends Coordinates {
-    constructor(name, id, population, another) {
+    /**
+     * 
+     * @param {string} id - идентификатор узла
+     * @param {} comp_config - информация о компартменте: {name: , population: }
+     */
+    constructor(id, comp_config) {
       super();
-      this.name_ = name;
       this.id_ = id;
-      this.population_ = population;
+
+      this.name_ = comp_config.name;
+      this.population_ = comp_config.population;
     }
     GetPopulation() {
       return this.population_;

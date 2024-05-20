@@ -1,13 +1,18 @@
 
+import { Compartment } from "./compartment";
 import { Flow } from "./flow";
 
 const compute_event = new Event("compute");
 
 class EGraph {
-    constructor(start) {
+    /**
+     * 
+     * @param {Compartment} start - стартовый компартмент, если есть.
+     */
+    constructor(start = null) {
       this.id_to_flow_ = new Map();
       this.id_to_comp_ = new Map();
-      this.start_compartment_ = start;
+      this.start_compartment_ = start != null ? start : null;
     }
     AddCompartment(comp){
       const id_comp = comp.GetId();
@@ -24,10 +29,11 @@ class EGraph {
       }
       return this;
     }
-    AddComp(comp){
-      const id_comp = comp.GetId();
-      if(!this.id_to_comp_.has(id_comp)){
-        this.id_to_comp_.set(id_comp, comp);
+
+
+    AddComp(id, comp_config){
+      if(!this.id_to_comp_.has(id)){
+        this.id_to_comp_.set(id, new Compartment(id, comp_config));
       }
       return this;
     }
@@ -99,8 +105,13 @@ class EGraph {
     GetStarted() {
       return this.start_compartment_;
     }
-    UpdateStartedCompartment(new_start) {
-      this.start_compartment_ = new_start;
+
+    GetCompartment(compartment_id){
+      return this.id_to_comp_.find((item) => {item.GetId() === compartment_id});
+    }
+    setStartCompartment(compartment_id) {
+      let comp = this.GetCompartment(compartment_id);
+      this.start_compartment_ = comp;
     }
 
 
