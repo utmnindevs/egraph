@@ -1,23 +1,46 @@
 .compartment-node{
-    height: 100px;
-    min-width: 205px;
+    min-width: 200px;
     width: fit-content;
-    background: #E2E2E2;
-    border-radius: 5px;
+    height: fit-content;
 }
 
 .compartment-node-header{
     background: #63A9FF;
     border-radius: 5px 5px 0 0;
+    height: fit-content;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .compartment-node-header label{
-    padding-left: 20px;
-    padding-right: 20px;
+    font-size: 12px;
+    font-family: FiraSans;
+    font-weight: 600;
+    padding: 0 0 5px 0;
+}
+
+
+
+.start-compartment-check{
+    display: grid;
+    justify-content: end;
+    align-content: flex-end;
+}
+
+.start-compartment-check input{
+    color: black;
+}
+
+.compartment-node-body{
+    background: #E2E2E2;
+    border-radius: 0 0 5px 5px;
+    min-height: 100px;
+    height: fit-content;
+    
 }
 
 .compartment-node-body label{
-    padding: 20px;
     margin: 10px;
 
 }

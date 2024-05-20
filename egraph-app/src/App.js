@@ -32,7 +32,7 @@ const d = new Compartment("Dead", generate_uuid_v4(), 0);
 
 
 
-var g = new EGraph();
+var g = new EGraph(s);
 g.AddComp(s).AddComp(i1).AddComp(i2).AddComp(r).AddComp(d);
 
 const comps = g.GetComps();
@@ -148,40 +148,38 @@ function App() {
   const updateObject = (objectId, newValues) => {
     setGraphCompartments(graphObjects => {
       return graphObjects.map(obj => {
-        var point = {x: gd.node(gd.nodes().find((value) => {return value == obj.data.obj.GetId();})).x, 
-                  y: gd.node(gd.nodes().find((value) => {return value == obj.data.obj.GetId();})).y}
         if (obj.id === objectId) {
           obj.data = { ...obj.data, population: newValues };
-          obj.position = point
         }
         return obj;
       });
     }, []);
   };
 
+  const onNodesChange = useCallback(
+    (changes) => setGraphCompartments((nds) => applyNodeChanges(changes, nds)),
+    [],
+  )
+  
+
   const updateNodesByObjects = (compartments) => {
-    console.log(compartments);
     compartments.forEach(obj => {
       updateObject(obj.GetId(), obj.GetPopulation());
     });
   };
 
   const downloadFile = () => {
-    //console.log("downloaded");
-    //create file in browser
     const fileName = "my-file";
     const json = g.toJson();
     const blob = new Blob([json], { type: "application/json" });
     const href = URL.createObjectURL(blob);
 
-    // create "a" HTLM element with href to file
     const link = document.createElement("a");
     link.href = href;
     link.download = fileName + ".json";
     document.body.appendChild(link);
     link.click();
 
-    // clean up "a" element & remove ObjectURL
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
   }
@@ -254,33 +252,20 @@ const handleOpenExisting = () => {
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <ReactFlow
-
         nodeTypes={nodeTypes}
-
         nodes={compartmentsObjects}
-        onNodesChange={onGraphCompartmentChange}
+        onNodesChange={onNodesChange}
       >
 
 
         <Background color="#aaa" gap={16} />
         <Controls />
       </ReactFlow>
-      <button style={{ height: '40px', width: '50px' }} onClick={async () => {
-        for (let i = 0; i < 1; i++) {
-          await delay(500);
-          g.onCompute(g.GetStarted());
-          updateNodesByObjects(g.GetComps());
-          console.log(g.toJson());
-          
-        }
-        console.log(JSON.parse(g.toJson()));
-        console.log('Done');
-      }} />
       {/* <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/> */}
       
     </div>
   );
 }
 
-export { gd };
+// export { gd };
 export default App;
