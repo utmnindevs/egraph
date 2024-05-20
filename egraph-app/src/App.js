@@ -128,7 +128,8 @@ const nodeTypes = { compartmentNode: CompartmentNode };
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(true);
-  
+  const [activeTab, setActiveTab] = useState('flow'); 
+  const [svgContent, setSvgContent] = useState(''); // State for SVG content
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -194,7 +195,8 @@ function App() {
   }
 
   useEffect(() => {
-    svgConverterFunction(gd);
+    const svg = svgConverterFunction(gd);
+    setSvgContent(svg);
     console.log(compartmentsUpdate);
     compartmentsUpdate.forEach(obj => {
       updateObject(obj.GetId(), obj.GetPopulation());
@@ -245,22 +247,32 @@ const handleOpenExisting = () => {
   input.click();
 };
 
-  return (
-    <div className="reactflow-wrapper" ref={reactFlowWrapper} >
-      <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
+return (
+  <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+    <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
+    {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
-      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+    <div className="tab-buttons">
+      <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
+      <button className={activeTab === 'future' ? 'active' : ''} onClick={() => setActiveTab('future')}>Результат</button>
+    </div>
 
+    {activeTab === 'flow' ? (
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={compartmentsObjects}
         onNodesChange={onNodesChange}
       >
-
-
         <Background color="#aaa" gap={16} />
         <Controls />
       </ReactFlow>
+    ) : (
+      <div className="future-workspace" style={{ height: '500px', width: '800px', border: '1px solid #ccc' }}>
+          <div dangerouslySetInnerHTML={{ __html: svgContent }} />
+      </div>
+    )}
+  </div>
+);
       {/* <button style={{ height: '40px', width: '50px' }} onClick={downloadFile()}/> */}
       
     </div>

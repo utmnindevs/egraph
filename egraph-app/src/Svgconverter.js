@@ -43,4 +43,5 @@ export function svgConverterFunction(gd) {
 
     var svg = draw.svg();
     console.log(svg);
+    return draw.svg();  // Return SVG string
 }
