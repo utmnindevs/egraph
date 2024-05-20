@@ -92,3 +92,33 @@
       height: 500px;
   }
 }
+
+.tab-buttons {
+  margin-top: 10px;
+}
+
+.tab-buttons button {
+  margin-right: 5px;
+  padding: 8px 20px;
+  font-size: 13px;
+  cursor: pointer;
+  background-color: #f0f0f0; 
+  text-align: left;
+  border: 1px solid #ccc; 
+  outline: none; 
+}
+.tab-buttons button:focus {
+  outline: none; 
+}
+.tab-buttons .active {
+  background-color: #87CEEB; 
+  border-color: #87CEEB; 
+}
+
+.result-workspace {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
