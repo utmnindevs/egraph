@@ -51,6 +51,8 @@ function App() {
     let graphs = generateGraphClass();
     e_graph = graphs[0];
     dagre_graph = graphs[1];
+    const svg = svgConverterFunction(dagre_graph);
+    setSvgContent(svg);
     setGraphCompartments(getInitialNodes(e_graph));
   };
 

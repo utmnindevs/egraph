@@ -1,5 +1,6 @@
 import { Coordinates } from "./helpers"
 
+import { generate_uuid_v4 } from '../graph/helpers';
 
 
 class Compartment extends Coordinates {
