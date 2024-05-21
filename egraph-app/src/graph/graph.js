@@ -17,11 +17,11 @@ class EGraph {
   }
 
   /**
-   * 
+   * Добавляет в граф поток
    * @param {*} id 
    * @param {*} flow_config - {from: string, to: array, coef: number}
    * array - [ [string, number], ... ]
-   * @returns 
+   * @returns {EGraph}
    */
   AddFlow(id, flow_config) {
     let temp_flow = new Flow(id, {
@@ -35,6 +35,12 @@ class EGraph {
     return this;
   }
 
+  /**
+   * Добавляет в граф компартмент
+   * @param {int} id 
+   * @param {Map} comp_config - {name: , population: }
+   * @returns {EGraph}
+   */
   AddComp(id, comp_config) {
     if (!this.id_to_comp_.has(id)) {
       this.id_to_comp_.set(id, new Compartment(id, comp_config));
@@ -99,9 +105,7 @@ class EGraph {
   onCompute(comp) {
     this.ComputePopulation(comp);
     this.ApplyIterationPopulation(comp);
-    console.log(this);
   }
-  // ApplyIterationPopulation
   GetFlows() {
     return this.id_to_flow_;
   }
@@ -129,15 +133,18 @@ class EGraph {
   }
 
 
-  // serialization to json format
+  /**
+   * Сериализация графа в JSON формат
+   * @returns {string}
+   */
   toJson() {
     var compartments = [];
-    this.id_to_comp_.forEach((id, comp) => {
-      compartments.push(id.toString());
+    this.id_to_comp_.forEach((value, key) => {
+      compartments.push(value.toString());
     });
     var flows = [];
-    this.id_to_flow_.forEach((id, flow) => {
-      flows.push(id.toString());
+    this.id_to_flow_.forEach((value, key) => {
+      flows.push(value.toString());
     });
     return JSON.stringify({
       compartments,
@@ -145,6 +152,10 @@ class EGraph {
     });
   }
 
+  /**
+   * Конвертирует текущий эпидемиологический граф во множество содержащее ребра и узлы - {nodes: , edges: }
+   * @returns {Map}
+   */
   toNodeEdgeGraph() {
     var compartments = [];
     this.id_to_comp_.forEach((comp, id) => {
@@ -170,6 +181,7 @@ class EGraph {
   /**
    * Метод конвертации графа в граф для послойного отображения в svg картинке
    * @param {*} dagre_config - Параметры генерации картинки {label_w: , node_w: , node_h} 
+   * @returns {dagre.graphlib.Graph}
    */
   getDagreGraph(dagre_config){
     var dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 }); // мб здесь че нибудь

@@ -6,7 +6,10 @@ import { Compartment } from '../graph/compartment';
 
 var dagre = require("@xdashduck/dagre-tlayering");
 
-
+/**
+ * Генерация тестового графа, представляющий компартментальную модель.
+ * @returns {[EGraph, dagre.graphlib.Graph]} 2 графа, представляющие собой 1. EGraph, 2. DagreGraph для отрисовки.
+ */
 export function generateGraphClass() {
 
     var g = new EGraph();
@@ -26,9 +29,6 @@ export function generateGraphClass() {
     g.AddFlow(generate_uuid_v4(), {from: "Infected1", to: [["Rejected", 1]], coef: 0.3});
     g.AddFlow(generate_uuid_v4(), {from: "Rejected", to: [["Dead", 1]], coef: 0.01});
 
-    console.log(g.toNodeEdgeGraph())
-    
-    
     var gd = g.getDagreGraph({label_w: 100, node_w: 50, node_h: 50});
 
     return [g, gd];

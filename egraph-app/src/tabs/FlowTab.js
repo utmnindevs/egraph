@@ -8,7 +8,7 @@ import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeCh
  * нужно перенести сюда все взаимодействия с графом, при этом App.js должен знать о том в каком состоянии граф + если граф меняется в App.js(
  * например загрузка файла, то этот документ должен подгрузить на себя эти изменения.)
  */
-function FlowTab({ nodeTypes, nodes, onNodesChange }) {
+function FlowTab({ e_graph, nodeTypes, nodes, onNodesChange }) {
     
     return (
         <ReactFlow

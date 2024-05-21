@@ -22,9 +22,7 @@ var dagre = require("@xdashduck/dagre-tlayering");
 
 
 let e_graph = new EGraph();
-// TODO: перенести dagre в класс EGRAPH
 let dagre_graph = new dagre.graphlib.Graph({directed:true}).setGraph({rankdir: "LR", ranksep: 10});
-// let e_graph = graphs[0], dagre_graph = graphs[1];
 
 let initialNodes = [];
 
@@ -43,7 +41,6 @@ function App() {
   const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
 
   const handleCloseModal = () => {
-    InitialStandartNodes();
     setIsModalOpen(false);
   };
 
@@ -133,6 +130,7 @@ function App() {
         try {
           const fileContent = await file.text();
           const jsonData = JSON.parse(fileContent);
+          console.log(jsonData)
 
           // инициализация конечно есть, но проблема в том, что 
           // svg не работает при открытии нового, + не добавляется и не конструируется EGraph класс и его сокурсник в виде dagre
