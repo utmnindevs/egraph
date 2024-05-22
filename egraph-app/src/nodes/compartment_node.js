@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { Handle, Position } from 'reactflow';
 import React, { memo } from 'react';
 
-import CustomHandle from './CustomHandle';
+import CompartmentHandle from './CompartmentHandle';
  
 const handleStyle = { left: 10 };
  
@@ -10,6 +10,10 @@ function CompartmentNode({ data }) {
   const onChange = useCallback((evt) => {
     console.log(evt.target.value);
   }, []);
+
+  const constructHandleId = (id, type) => {
+    return "handle_comp_" + type + "_" + id + "_" + data.name.substr(0,2);
+  }
  
   return (
     <div class='compartment-node container'>
@@ -24,9 +28,9 @@ function CompartmentNode({ data }) {
 
       <div className='compartment-node-body nodrag row'>
         {/* <label htmlFor="text">Population: {data.population.toFixed(2)} </label> */}
-        <CustomHandle id='compartment_handle2' type="target" position={Position.Left} />        
-        <CustomHandle id='compartment_handle1' type="target" style={{top:60}} position={Position.Left} />        
-        <CustomHandle id='compartment_handle3' type="source" position={Position.Right} />        
+        <CompartmentHandle id={constructHandleId(1, 'target')}  type="target" position={Position.Left} />        
+        <CompartmentHandle id={constructHandleId(2, 'target')}  type="target" style={{top:60}} position={Position.Left} />        
+        <CompartmentHandle id={constructHandleId(1, 'source')}  type="source" position={Position.Right} />        
       </div>
    
        
