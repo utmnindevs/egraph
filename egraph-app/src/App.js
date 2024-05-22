@@ -130,7 +130,12 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow'); 
   const [svgContent, setSvgContent] = useState(''); 
-  
+
+  const [showModelBtn, setShowModelBtn] = useState(false);
+  const [showImageBtn, setShowImageBtn] = useState(false);
+  const [showResultsBtn, setShowResultsBtn] = useState(false);
+
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -145,6 +150,8 @@ function App() {
   const [compartmentsObjects, setGraphCompartments] = useState(initialNodes);
   const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
 
+
+  
   const updateObject = (objectId, newValues) => {
     setGraphCompartments(graphObjects => {
       return graphObjects.map(obj => {
@@ -237,13 +244,19 @@ function App() {
 
   return (
     <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-      <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
+      <Header 
+      handleShowModel = {setShowModelBtn} 
+      handleShowImage = {setShowImageBtn} 
+      handleShowResults={setShowResultsBtn}  
+      onDownloadFile={downloadFile} 
+      onRunModel={runModel} 
+      handleOpenExisting={handleOpenExisting} />
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className="tab-buttons">
-        <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
-        <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>
-        <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>
+        {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>}
+        {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>}
+        {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>}
       </div>
 
       {activeTab === 'flow' && (
