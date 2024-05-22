@@ -2,6 +2,7 @@
     min-width: 200px;
     width: fit-content;
     height: fit-content;
+    border-radius: 5px;
 }
 
 .compartment-node-header {
@@ -43,6 +44,11 @@
 .compartment-node-body label {
     margin: 10px;
 
+}
+
+.react-flow__node.selected{
+    box-shadow: 1px 1px 4px 2px rgba(0,0,0,.2);
+    border-radius: 5px;
 }
 
 
