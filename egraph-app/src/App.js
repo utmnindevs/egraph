@@ -2,7 +2,7 @@
 
 import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge,useEdgesState, applyEdgeChanges, applyNodeChanges } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -15,6 +15,8 @@ import Modal from './modal/Modal';
 import { svgConverterFunction } from './Svgconverter.js';
 
 import FlowTab from './tabs/FlowTab.js';
+import SideBarEditable from './sidebars/editable/SideBarEditable';
+
 
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 import { EGraph } from './graph/graph.js';
@@ -22,7 +24,7 @@ var dagre = require("@xdashduck/dagre-tlayering");
 
 
 let e_graph = new EGraph();
-let dagre_graph = new dagre.graphlib.Graph({directed:true}).setGraph({rankdir: "LR", ranksep: 10});
+let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
 
 let initialNodes = [];
 
@@ -40,7 +42,9 @@ function App() {
   const [compartmentsObjects, setGraphCompartments, onGraphCompartmentChange] = useState(initialNodes);
   const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const onConnect = useCallback((params) => setEdges((els) => addEdge({...params}, els)), []);
+  const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
+
+  const [editable_props, setEditableProps] = useState(null);
 
   const handleCloseModal = () => {
     InitialStandartNodes();
@@ -160,29 +164,41 @@ function App() {
     input.click();
   };
 
+
   return (
-    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+    <div className="reactflow-body">
       <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
-      <div className="tab-buttons">
-        <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
-        <button className={activeTab === 'future' ? 'active' : ''} onClick={() => setActiveTab('future')}>Результат</button>
-      </div>
+      <div className='reactflow_plane'>
+        {/* <SideBarEditable /> */}
 
-      {activeTab === 'flow' ? (
-        <FlowTab nodeTypes={nodeTypes}
-          nodes={compartmentsObjects}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect} />
-      ) : (
-        <div className="future-workspace" style={{ height: '500px', width: '800px', border: '1px solid #ccc' }}>
-          <div dangerouslySetInnerHTML={{ __html: svgContent }} />
+        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+
+          {/* <div className="tab-buttons">
+            <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
+            <button className={activeTab === 'future' ? 'active' : ''} onClick={() => setActiveTab('future')}>Результат</button>
+          </div> */}
+
+          {activeTab === 'flow' ? (
+            <FlowTab nodeTypes={nodeTypes}
+              nodes={compartmentsObjects}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              setEditableProps={setEditableProps} />
+          ) : (
+            <div className="future-workspace" style={{ height: '500px', width: '800px', border: '1px solid #ccc' }}>
+              <div dangerouslySetInnerHTML={{ __html: svgContent }} />
+            </div>
+          )}
         </div>
-      )}
+        {editable_props && <SideBarEditable {...editable_props} setStateMenu={setEditableProps} />}
+
+      </div>
     </div>
+
   );
 }
 
