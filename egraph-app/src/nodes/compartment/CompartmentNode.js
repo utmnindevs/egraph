@@ -22,7 +22,7 @@ function CompartmentNode({ data }) {
           <label htmlFor="text"> {data.name.substr(0,2).toUpperCase()}: {data.name} </label>
         </div>
         <div class="col-4 start-compartment-check">
-          <input class="form-check-radio nodrag" type="radio" value="" id="flexCheckDefault"></input>
+          {/* <input class="form-check-radio nodrag" type="radio" value="" id="flexCheckDefault"></input> */}
         </div>
       </div>
 

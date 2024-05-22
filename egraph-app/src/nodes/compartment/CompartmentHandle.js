@@ -1,5 +1,5 @@
 
-import './CompartmentHandle.css';
+import './style/CompartmentHandle.css';
 
 import React, { useCallback, useMemo } from 'react';
 import { getConnectedEdges, Handle, useNodeId, useStore } from 'reactflow';

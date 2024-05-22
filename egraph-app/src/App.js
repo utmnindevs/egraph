@@ -6,8 +6,8 @@ import ReactFlow, { Controls, Background, addEdge,useEdgesState, applyEdgeChange
 
 import 'reactflow/dist/style.css';
 
-import CompartmentNode from "./nodes/compartment_node"
-import './nodes/CompartmentNodeStyle.css'
+import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
+import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 
 import './style/App.css';
