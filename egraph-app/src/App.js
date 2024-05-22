@@ -1,5 +1,3 @@
-
-
 import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
@@ -15,10 +13,12 @@ import { Flow } from './graph/flow';
 import { Compartment } from './graph/compartment';
 import { generate_uuid_v4 } from './graph/helpers';
 // import { SugiyamaLayering } from './graph/drawing/sugiyama';
-
+import SvgTab from './SvgTab';
+import Results from './ResultsTab.js'; 
 import './style/App.css';
 import Modal from './modal/Modal'; 
 import { svgConverterFunction } from './Svgconverter.js';
+import ResultsTab from './ResultsTab.js';
 
 var dagre = require("@xdashduck/dagre-tlayering");
 
@@ -129,8 +129,8 @@ const nodeTypes = { compartmentNode: CompartmentNode };
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow'); 
-  const [svgContent, setSvgContent] = useState(''); // State for SVG content
-
+  const [svgContent, setSvgContent] = useState(''); 
+  
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -142,9 +142,8 @@ function App() {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes] = useState(initialNodes);
 
-  const [compartmentsObjects, setGraphCompartments, onGraphCompartmentChange] = useState(initialNodes);
+  const [compartmentsObjects, setGraphCompartments] = useState(initialNodes);
   const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
-
 
   const updateObject = (objectId, newValues) => {
     setGraphCompartments(graphObjects => {
@@ -154,14 +153,13 @@ function App() {
         }
         return obj;
       });
-    }, []);
+    });
   };
 
   const onNodesChange = useCallback(
     (changes) => setGraphCompartments((nds) => applyNodeChanges(changes, nds)),
-    [],
-  )
-  
+    []
+  );
 
   const updateNodesByObjects = (compartments) => {
     compartments.forEach(obj => {
@@ -183,7 +181,7 @@ function App() {
 
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
-  }
+  };
 
   const runModel = async () => {
     for (let i = 0; i < 1; i++) {
@@ -192,7 +190,7 @@ function App() {
       updateNodesByObjects(g.GetComps());
       console.log(g.toJson());
     }
-  }
+  };
 
   useEffect(() => {
     const svg = svgConverterFunction(gd);
@@ -203,77 +201,69 @@ function App() {
     });
   }, [compartmentsUpdate]);
 
+  const handleOpenExisting = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
 
-const handleOpenExisting = () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
+    input.addEventListener('change', async event => {
+      const file = event.target.files[0];
+      if (!file) return;
 
-  input.addEventListener('change', async event => {
-    const file = event.target.files[0];
-
-    const fileName = file.name.toLowerCase();
-    if (fileName.endsWith('.json')) {
       try {
         const fileContent = await file.text();
         const jsonData = JSON.parse(fileContent);
 
-        // Обновляем состояние компонентов на основе данных из файла
         setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
           id: compartment.id,
           type: 'compartmentNode',
-          position: { x: 100 + index * 100, y: 100 + index * 100 }, // Устанавливаем разные координаты для каждой ноды
+          position: compartment.position || { x: 100 + index * 100, y: 100 + index * 100 },
           data: {
             population: compartment.population,
             name: compartment.name,
-            obj: compartment // Здесь вы можете сохранить полный объект от файла, если нужно
+            obj: compartment
           }
         })));
 
-        // Обновляем состояние потоков на основе данных из файла (если нужно)
-        // setGraphFlows(jsonData.flows);
-
-        // Закрываем модальное окно
         handleCloseModal();
       } catch (error) {
         console.error('Ошибка при чтении файла JSON:', error);
         alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
       }
-    } else {
-      alert('Пожалуйста, выберите файл с расширением .json');
-    }
-  });
+    });
 
-  input.click();
-};
+    input.click();
+  };
 
-return (
-  <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-    <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
-    {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+  return (
+    <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+      <Header onDownloadFile={downloadFile} onRunModel={runModel} handleOpenExisting={handleOpenExisting} />
+      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
-    <div className="tab-buttons">
-      <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
-      <button className={activeTab === 'future' ? 'active' : ''} onClick={() => setActiveTab('future')}>Результат</button>
-    </div>
-
-    {activeTab === 'flow' ? (
-      <ReactFlow
-        nodeTypes={nodeTypes}
-        nodes={compartmentsObjects}
-        onNodesChange={onNodesChange}
-      >
-        <Background color="#aaa" gap={16} />
-        <Controls />
-      </ReactFlow>
-    ) : (
-      <div className="future-workspace" style={{ height: '500px', width: '800px', border: '1px solid #ccc' }}>
-          <div dangerouslySetInnerHTML={{ __html: svgContent }} />
+      <div className="tab-buttons">
+        <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>
+        <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>
+        <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>
       </div>
-    )}
-  </div>
-);
+
+      {activeTab === 'flow' && (
+          <ReactFlow
+            nodeTypes={nodeTypes}
+            nodes={compartmentsObjects}
+            onNodesChange={onNodesChange}
+          >
+            <Background color="#aaa" gap={16} />
+            <Controls />
+          </ReactFlow>
+        )}
+        {activeTab === 'image' && (
+          <SvgTab svgContent={svgContent} />
+        )}
+        {activeTab === 'results' && (
+          <ResultsTab />
+        )}
+    </div>
+  );
 }
 
-// export { gd };
 export default App;

@@ -11,9 +11,11 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Button } from 'react-bootstrap';
 
-const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting }) => {
+const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, onShowButtons  }) => {
   const [fileName, setFileName] = useState("Untitled");
-
+  const handleShowButtonsClick = () => {
+    onShowButtons(); // Вызываем функцию при нажатии на кнопку
+  };
   const handleFileNameChange = (event) => {
     setFileName(event.target.innerText);
   };
@@ -104,7 +106,7 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting 
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item onClick={onRunModel}>Запустить</Dropdown.Item>
-  
+        <Dropdown.Item  >Получить результаты</Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>
     );
