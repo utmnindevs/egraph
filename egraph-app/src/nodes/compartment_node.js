@@ -1,5 +1,8 @@
 import { useCallback } from 'react';
 import { Handle, Position } from 'reactflow';
+import React, { memo } from 'react';
+
+import CustomHandle from './CustomHandle';
  
 const handleStyle = { left: 10 };
  
@@ -20,13 +23,16 @@ function CompartmentNode({ data }) {
       </div>
 
       <div className='compartment-node-body nodrag row'>
-        <label htmlFor="text">Population: {data.population.toFixed(2)} </label>
+        {/* <label htmlFor="text">Population: {data.population.toFixed(2)} </label> */}
+        <CustomHandle id='compartment_handle2' type="target" position={Position.Left} />        
+        <CustomHandle id='compartment_handle1' type="target" style={{top:60}} position={Position.Left} />        
+        <CustomHandle id='compartment_handle3' type="source" position={Position.Right} />        
       </div>
    
-      {/* <Handle type="target" position={Position.Top} /> */}        
+       
       {/* <Handle type="source" position={Position.Bottom} id="a" /> */}
     </div>
   );
 }
 
-export default CompartmentNode;
+export default memo(CompartmentNode);
