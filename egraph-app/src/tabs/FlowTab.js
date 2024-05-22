@@ -1,4 +1,5 @@
-import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
+import { useCallback } from 'react';
+import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow, getConnectedEdges } from 'reactflow';
 
 
 /**
@@ -8,13 +9,17 @@ import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeCh
  * нужно перенести сюда все взаимодействия с графом, при этом App.js должен знать о том в каком состоянии граф + если граф меняется в App.js(
  * например загрузка файла, то этот документ должен подгрузить на себя эти изменения.)
  */
-function FlowTab({ e_graph, nodeTypes, nodes, onNodesChange }) {
+function FlowTab({ e_graph, edges, nodeTypes, nodes, onNodesChange, onEdgesChange, onConnect }) {
     
+
     return (
         <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodes}
-            onNodesChange={onNodesChange}>
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}>
 
             <Background color="#aaa" gap={16} />
             <Controls />

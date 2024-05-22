@@ -2,7 +2,7 @@
 
 import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge,useEdgesState, applyEdgeChanges, applyNodeChanges } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -39,8 +39,11 @@ function App() {
 
   const [compartmentsObjects, setGraphCompartments, onGraphCompartmentChange] = useState(initialNodes);
   const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const onConnect = useCallback((params) => setEdges((els) => addEdge({...params}, els)), []);
 
   const handleCloseModal = () => {
+    InitialStandartNodes();
     setIsModalOpen(false);
   };
 
@@ -170,7 +173,10 @@ function App() {
       {activeTab === 'flow' ? (
         <FlowTab nodeTypes={nodeTypes}
           nodes={compartmentsObjects}
-          onNodesChange={onNodesChange} />
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect} />
       ) : (
         <div className="future-workspace" style={{ height: '500px', width: '800px', border: '1px solid #ccc' }}>
           <div dangerouslySetInnerHTML={{ __html: svgContent }} />
