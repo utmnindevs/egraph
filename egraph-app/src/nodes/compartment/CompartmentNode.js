@@ -26,7 +26,7 @@ function CompartmentNode({ data }) {
         </div>
       </div>
 
-      <div className='compartment-node-body nodrag row'>
+      <div className='compartment-node-body row'>
         {/* <label htmlFor="text">Population: {data.population.toFixed(2)} </label> */}
         <CompartmentHandle id={constructHandleId(1, 'target')}  type="target" position={Position.Left} />        
         <CompartmentHandle id={constructHandleId(2, 'target')}  type="target" style={{top:60}} position={Position.Left} />        

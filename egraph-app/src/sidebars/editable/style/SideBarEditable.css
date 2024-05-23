@@ -23,6 +23,29 @@
     margin: 10px;
 }
 
+.side-bar-editable-body .content .count{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.side-bar-editable-body .button-inout{
+  height: 32px;
+  width: 32px;
+  margin-left: 10px;
+}
+
+.button-inout{
+  background-color: #CCE3FF;
+  border: 1px solid rgb(0,0,0, 0.2);
+  border-radius: .5rem;
+}
+
+.button-inout:hover {
+  background-color: #63A9FF;
+}
+
 
 /* CSS */
 .button-39 {

@@ -34,10 +34,10 @@ class Compartment extends Coordinates {
     GetAttr(){
       return this.name_.slice(0,2);
     }
-    UpdateCompartment(name = "", id = "", population = null) {
+    UpdateCompartment(name = "", population = null) {
       this.population_ = population ? population : this.population_;
-      this.name_ = name === "" ? name : this.name_;
-      this.id_ = id === "" ? id : this.id_;
+      this.name_ = !(name === "") ? name : this.name_;
+      return this;
     }
 
     // iteration population - +/-

@@ -70,13 +70,13 @@ function App() {
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
     compartmentsUpdate.forEach(obj => {
-      updateObject(obj.GetId(), obj.GetPopulation());
+      updateObject(obj.GetId(), {pop: obj.GetPopulation(), name: obj.GetName()});
     });
   }, [compartmentsUpdate]);
 
   const updateNodesByObjects = (compartments) => {
     compartments.forEach(obj => {
-      updateObject(obj.GetId(), obj.GetPopulation());
+      updateObject(obj.GetId(), {pop: obj.GetPopulation(), name: obj.GetName()});
     });
   };
 
@@ -97,7 +97,7 @@ function App() {
     setGraphCompartments(graphObjects => {
       return graphObjects.map(obj => {
         if (obj.id === objectId) {
-          obj.data = { ...obj.data, population: newValues };
+          obj.data = { ...obj.data, population: newValues.pop, name: newValues.name };
         }
         return obj;
       });
@@ -194,7 +194,10 @@ function App() {
             </div>
           )}
         </div>
-        {editable_props && <SideBarEditable {...editable_props} setStateMenu={setEditableProps} />}
+        {editable_props && <SideBarEditable {...editable_props}
+          setStateMenu={setEditableProps}
+          e_graph={e_graph}
+          setGraphNodes={updateNodesByObjects} />}
 
       </div>
     </div>
