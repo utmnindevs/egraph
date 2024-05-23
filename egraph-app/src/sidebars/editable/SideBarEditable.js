@@ -56,8 +56,6 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
      */
     const onButtonClick = useCallback(() => {
         e_graph.getCompartmentByName(nodeData.name).UpdateCompartment(nodeName, parseFloat(nodePopulation))
-        updateGraphNodes(e_graph.GetComps())
-
         setGraphNodes((nds) => {
             return nds.map((nd) => {
                 if (nd.id === node.id) {
@@ -68,6 +66,8 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
                 return nd;
             })
         })
+        updateGraphNodes(e_graph.GetComps())
+
 
         setStateMenu(null);
     }, [nodeIns, nodeOuts, nodeData, nodeName, nodePopulation, updateGraphNodes])
