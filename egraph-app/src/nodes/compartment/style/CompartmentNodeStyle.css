@@ -21,8 +21,6 @@
     padding: 0 0 5px 0;
 }
 
-
-
 .start-compartment-check {
     display: grid;
     justify-content: end;
@@ -39,6 +37,14 @@
     min-height: 50px;
     height: fit-content;
 
+}
+
+
+.compartment-node-body .handlers .compartment-handle{
+    padding: 7px;
+    /* background: orange; */
+    margin-top: 5px;
+    margin-bottom: 6px;
 }
 
 .compartment-node-body label {

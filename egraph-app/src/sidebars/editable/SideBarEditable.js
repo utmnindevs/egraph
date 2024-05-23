@@ -14,24 +14,6 @@ function SideBarEditable({ node, setStateMenu, e_graph, setGraphNodes, ...editab
     const [nodeName, setNodeName] = useState(node.data.name)
     const [nodePopulation, setNodePopulation] = useState(node.data.population)
 
-    // useEffect(() => {
-    //     nodeData.obj.name_ = "testing"
-
-    //     setGraphNodes((nds) => {
-    //         return nds.map((nd) => {
-    //             if(nd.id === node.id){
-    //                 nd.data = {
-    //                     ...nd.data,
-    //                     obj: nodeData.obj
-    //                 }
-    //                 console.log(nd.data)
-    //             }
-    //             return nd;
-    //         })
-    //     })
-
-    //     // setStateMenu(null);
-    // }, [nodeData, setGraphNodes])
 
     const onButtonClick = useCallback(() => {
         e_graph.getCompartmentByName(nodeData.name).UpdateCompartment(nodeName, parseFloat(nodePopulation))

@@ -1,8 +1,8 @@
 
 import './style/CompartmentHandle.css';
 
-import React, { useCallback, useMemo } from 'react';
-import { getConnectedEdges, Handle, useNodeId, useStore } from 'reactflow';
+import React, { useCallback, useMemo, useState  } from 'react';
+import { getConnectedEdges, Handle, useNodeId, useStore, useUpdateNodeInternals} from 'reactflow';
 
 const selector = (s) => ({
     nodeInternals: s.nodeInternals,
@@ -18,6 +18,9 @@ const selector = (s) => ({
 const CompartmentHandle = (props) => {
     const { nodeInternals, edges } = useStore(selector);
     const nodeId = useNodeId();
+    const updateNodeInternals = useUpdateNodeInternals();
+    
+    
 
     const isHandleConnectionValid = (connection) => {
         const node = nodeInternals.get(nodeId);
@@ -35,12 +38,14 @@ const CompartmentHandle = (props) => {
         else {
             return edges.filter((edge) => {
                 return edge.targetHandle === connection.targetHandle || edge.sourceHandle === connection.sourceHandle;
-            }).length < 1 && connection.targetHandle.includes('flow_target') // тут нужно заменить на разрешение подключение потоков
+            }).length < 1 && connection.targetHandle.includes('comp_target') // тут нужно заменить на разрешение подключение потоков
         }    
     };
 
     return (
-        <Handle {...props} isValidConnection={isHandleConnectionValid} ></Handle>
+        <div class="compartment-handle">
+        <Handle {...props} isValidConnection={isHandleConnectionValid}   ></Handle>
+        </div>
     );
 };
 

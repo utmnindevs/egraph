@@ -1,19 +1,43 @@
-import { useCallback } from 'react';
-import { Handle, Position } from 'reactflow';
+import { useCallback, useState } from 'react';
+import { Background, Handle, Position, useUpdateNodeInternals, useStore } from 'reactflow';
 import React, { memo } from 'react';
 
 import CompartmentHandle from './CompartmentHandle';
  
-const handleStyle = { left: 10 };
+const selector = (s) => ({
+  nodeInternals: s.nodeInternals,
+  edges: s.edges,
+});
  
 function CompartmentNode({ data }) {
   const onChange = useCallback((evt) => {
     console.log(evt.target.value);
   }, []);
 
+
+
   const constructHandleId = (id, type) => {
     return "handle_comp_" + type + "_" + id + "_" + data.name.substr(0,2);
   }
+
+  /**
+   * Конструирование хенделра путем его идентификатора, типа и позиции
+   * @param {{number, string, string}} param0 -  
+   * @returns 
+   */
+  function OrientationHandler({id, type, position}){
+
+    const st = {top: 20* id + 20}
+    return(
+      <>
+        <CompartmentHandle id={constructHandleId(id, type)} 
+        type={type} 
+        position={position === "Left" ? Position.Left : Position.Right}
+        style={{...st}}/>
+      </>
+    );
+  }
+
  
   return (
     <div class='compartment-node container'>
@@ -26,11 +50,18 @@ function CompartmentNode({ data }) {
         </div>
       </div>
 
-      <div className='compartment-node-body row'>
-        {/* <label htmlFor="text">Population: {data.population.toFixed(2)} </label> */}
-        <CompartmentHandle id={constructHandleId(1, 'target')}  type="target" position={Position.Left} />        
-        <CompartmentHandle id={constructHandleId(2, 'target')}  type="target" style={{top:60}} position={Position.Left} />        
-        <CompartmentHandle id={constructHandleId(1, 'source')}  type="source" position={Position.Right} />        
+      <div className='compartment-node-body row '>
+        <div class="handlers left col">
+          {Array.from({length: data.ins}, (_, index) => {
+            return (<OrientationHandler id={index+1} type={"target"} position={"Left"}/>)
+          })}
+        </div>
+        <div class="handlers right col"> 
+          {Array.from({length: data.ins}, (_, index) => {
+            return (<OrientationHandler id={index+1} type={"source"} position={"Right"}/>)
+          })}
+        </div>
+        
       </div>
    
        
