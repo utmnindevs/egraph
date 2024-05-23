@@ -2,15 +2,22 @@
 import { Coordinates } from "./helpers"
 import { Compartment } from "./compartment";
 
-class Flow  {
-    constructor(id, coef, x, y) {
-        this.x_ = x;
-        this.y_ = y;
-      this.from_ = null; // -> const Compartment*
-      this.to_coefs_ = new Map();
-      this.coef_ = coef;
+import { generate_uuid_v4 } from '../graph/helpers';
+
+class Flow  extends Coordinates{
+  /**
+   * 
+   * @param {*} flow_config - Параметры потока: {from: comp, to: [[,], [,]], coef: ,interpolar: } 
+   */
+    constructor(id, flow_config) {
+      super();
+      
       this.id_ = id;
-      this.interpolar_ = null;
+
+      this.from_ = flow_config.from; 
+      this.to_coefs_ = new Map(flow_config.to);
+      this.coef_ = flow_config.coef;
+      this.interpolar_ = flow_config.interpolar != undefined ? flow_config.interpolar : null;
       this.it_population_ = 0;
     }
     SetFromCompartment(from) {

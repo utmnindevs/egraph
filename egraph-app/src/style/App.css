@@ -65,16 +65,22 @@
   margin-bottom: 20px;
 }
 
-.providerflow .reactflow-wrapper {
-  flex-grow: 2;
-}
 
 .reactflow-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  /* position:fixed; */
+  height: 88vh;
+  width: 100vw;
+  flex-grow: 2;
+
+  /* top: 100px; */
+  /* left: 25px; */
+  /* right: 25px; */
+  /* bottom: 10px; */
+}
+
+.reactflow_plane{
+  display: flex;
+  column-gap: 5px;
 }
 
 .providerflow .selectall {
@@ -95,6 +101,7 @@
 
 .tab-buttons {
   margin-top: 10px;
+  /* margin-left: 25px; */
 }
 
 .tab-buttons button {

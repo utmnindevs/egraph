@@ -1,5 +1,7 @@
 import { SVG } from '@svgdotjs/svg.js';
 
+
+// TODO: надо чтобы он рисовал по ширине рисунка самого, сам подстраиваясь
 export function svgConverterFunction(gd) {
     var draw = SVG().size(1000, 1000);
 
@@ -21,19 +23,18 @@ export function svgConverterFunction(gd) {
 
     gd.nodes().forEach(function(v) {
         var node = gd.node(v);
-        if (node && typeof node.x !== 'undefined' && typeof node.y !== 'undefined') {
-            draw.rect(30, 30)
-                .attr('x', node.x - 10)
-                .attr('y', node.y - 10)
-                .fill('white')
-                .stroke({color: 'black', width: 1})
-                .radius(5);
-            
+        var rect = draw.rect(50, 50)
+            .attr('x', node.x - 24)
+            .attr('y', node.y - 24)
+            .fill('white')
+            .stroke({color:'black', width:1})
+            .radius(5);
+          
             draw.text(function(add) {
                 add.tspan(node.label.toString())
-                    .attr('x', node.x + 5)
-                    .attr('y', node.y + 7)
-                    .font({family: 'Arial', size: 10, anchor: 'middle'})
+                    .attr('x', node.x )
+                    .attr('y', node.y )
+                    .font({family: 'Arial', size: 10, anchor: 'middle'}) // Использование шрифта Roboto
                     .fill('black');
             });
 

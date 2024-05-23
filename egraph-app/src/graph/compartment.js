@@ -1,12 +1,20 @@
 import { Coordinates } from "./helpers"
 
+import { generate_uuid_v4 } from '../graph/helpers';
+
 
 class Compartment extends Coordinates {
-    constructor(name, id, population, another) {
+    /**
+     * 
+     * @param {string} id - идентификатор узла
+     * @param {} comp_config - информация о компартменте: {name: , population: }
+     */
+    constructor(id, comp_config) {
       super();
-      this.name_ = name;
       this.id_ = id;
-      this.population_ = population;
+
+      this.name_ = comp_config.name;
+      this.population_ = comp_config.population;
     }
     GetPopulation() {
       return this.population_;
@@ -26,10 +34,10 @@ class Compartment extends Coordinates {
     GetAttr(){
       return this.name_.slice(0,2);
     }
-    UpdateCompartment(name = "", id = "", population = null) {
+    UpdateCompartment(name = "", population = null) {
       this.population_ = population ? population : this.population_;
-      this.name_ = name === "" ? name : this.name_;
-      this.id_ = id === "" ? id : this.id_;
+      this.name_ = !(name === "") ? name : this.name_;
+      return this;
     }
 
     // iteration population - +/-

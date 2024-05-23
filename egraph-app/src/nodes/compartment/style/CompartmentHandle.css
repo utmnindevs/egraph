@@ -1,0 +1,20 @@
+.react-flow__handle {
+    background: rgba(226, 226, 226, 0.5);
+    border: 2px solid #63A9FF;
+    border-radius: 4px;
+    padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.react-flow__handle-connecting{
+    background: #ff6060;
+  }
+
+.react-flow__handle-valid   {
+    background: #55dd99;
+}
+
+/* .connectable {
+    background: #63A9FF;
+} */
