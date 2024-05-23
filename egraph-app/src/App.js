@@ -1,6 +1,6 @@
 import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -32,6 +32,7 @@ let initialNodes = [];
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 
+
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow');
@@ -42,6 +43,8 @@ function App() {
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
 
+  const reactFlowWrapper = useRef(null);
+
 
   const [nodes, setNodes] = useState(initialNodes);
 
@@ -51,6 +54,40 @@ function App() {
   const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
 
   const [editable_props, setEditableProps] = useState(null);
+
+
+  // Состояние для нижнего меню и переключение режима просмотра и редактирования
+  const [viewportState, setViewportState] = useState("view");
+
+  /**
+   * Улучшенный метод обновления состояния и вызвова окна редактирования с проверкой на текущее состояние
+   * всего viewport'а т.е. на то что включен режим "редактирования"
+   */
+  const updateEditableProps = useCallback((state) => {
+    if(viewportState === "edit"){
+      setEditableProps(state);
+    }
+    else{
+      setEditableProps(null);
+    }
+  }, [setEditableProps, viewportState])
+
+  const [adding_props, setAddingProps] = useState(null);
+
+
+
+  const updateViewportState = useCallback((new_state) => {
+    setViewportState(new_state);
+    if(new_state === "view"){
+      setEditableProps(null);
+      setAddingProps(null);
+    }
+    if(new_state === "edit"){
+      setAddingProps(true)
+    }
+  }, [setViewportState,setEditableProps])
+
+
 
   const handleCloseModal = () => {
     InitialStandartNodes();
@@ -70,7 +107,6 @@ function App() {
     resolve => setTimeout(resolve, ms)
   );
 
-  const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
     const svg = svgConverterFunction(dagre_graph);
@@ -178,6 +214,7 @@ function App() {
   }, [setActiveTab, setEditableProps])
 
   return (
+    <ReactFlowProvider>
     <div className="reactflow-body">
       <Header
         handleShowModel={setShowModelBtn}
@@ -185,11 +222,14 @@ function App() {
         handleShowResults={setShowResultsBtn}
         onDownloadFile={downloadFile}
         onRunModel={runModel}
-        handleOpenExisting={handleOpenExisting} />
+        handleOpenExisting={handleOpenExisting} 
+        
+        viewportState={viewportState} setViewportState={updateViewportState}
+        />
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className='reactflow_plane'>
-        <SideBarAdding/>
+        {adding_props && <SideBarAdding/>}
 
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
 
@@ -208,10 +248,12 @@ function App() {
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
-              setEditableProps={setEditableProps}
+              setEditableProps={updateEditableProps}
 
               setGraphNodes={setGraphCompartments}
-              updateNodesByObjects={updateNodesByObjects} />
+              updateNodesByObjects={updateNodesByObjects} 
+              
+              viewportState={viewportState}/>
           )}
           {activeTab === 'image' && (
             <SvgTab svgContent={svgContent} />
@@ -221,14 +263,14 @@ function App() {
           )}
         </div>
         {editable_props && <SideBarEditable {...editable_props}
-          setStateMenu={setEditableProps}
+          setStateMenu={updateEditableProps}
           e_graph={e_graph}
           updateGraphNodes={updateNodesByObjects}
           setGraphNodes={setGraphCompartments} />}
 
       </div>
     </div>
-
+    </ReactFlowProvider>
   );
 }
 

@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
-import ReactFlow, { Controls, Background, addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow, getConnectedEdges } from 'reactflow';
+import React, { useCallback, useState } from 'react';
+import ReactFlow, { Controls, Background, ReactFlowProvider, useStore } from 'reactflow';
 
 import SideBarEditable from '../sidebars/editable/SideBarEditable';
 import { generate_uuid_v4 } from '../graph/helpers';
 import { EGraph } from '../graph/graph';
+
 
 /**
  * Генерирует рендер вкладки конструирования модели, содержит методы манипуляции с ними:
@@ -22,9 +23,12 @@ function FlowTab({
     onConnect, 
     setEditableProps, 
     setGraphNodes,
-    updateNodesByObjects }) {
+    updateNodesByObjects,
+    viewportState }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+
+
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -82,6 +86,12 @@ function FlowTab({
 
     const onPaneCLick = useCallback(() => { setEditableProps(null); }, [setEditableProps])
 
+    const onDeleteKeyCode = useCallback(() => {setEditableProps(null); return "Delete"}, [setEditableProps])
+
+    const isViewState = !(viewportState === "view");
+
+
+
     return (
         <>
             <ReactFlow
@@ -95,7 +105,16 @@ function FlowTab({
                 onNodeClick={onNodeClick}
                 onPaneClick={onPaneCLick}
                 onDrop={onDrop}
-                onDragOver={onDragOver}>
+                onDragOver={onDragOver}
+                
+                
+                deleteKeyCode={"Delete"}
+
+                nodesDraggable={isViewState}
+                nodesConnectable={isViewState}
+                elementsSelectable={isViewState}
+                selectNodesOnDrag={false}
+                >
 
                 <Background color="#aaa" gap={16} />
                 <Controls />
