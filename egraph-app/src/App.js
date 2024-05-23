@@ -197,7 +197,8 @@ function App() {
         {editable_props && <SideBarEditable {...editable_props}
           setStateMenu={setEditableProps}
           e_graph={e_graph}
-          setGraphNodes={updateNodesByObjects} />}
+          updateGraphNodes={updateNodesByObjects}
+          setGraphNodes={setGraphCompartments} />}
 
       </div>
     </div>

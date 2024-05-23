@@ -53,7 +53,7 @@ export function getInitialNodes(e_graph) {
                     name: value.GetName(),
                     obj: value,
                     ins: 1,
-                    outs: 1
+                    outs: 2
                 }
             }
         )

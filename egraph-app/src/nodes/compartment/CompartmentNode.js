@@ -57,7 +57,7 @@ function CompartmentNode({ data }) {
           })}
         </div>
         <div class="handlers right col"> 
-          {Array.from({length: data.ins}, (_, index) => {
+          {Array.from({length: data.outs}, (_, index) => {
             return (<OrientationHandler id={index+1} type={"source"} position={"Right"}/>)
           })}
         </div>
