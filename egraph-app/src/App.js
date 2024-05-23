@@ -175,7 +175,10 @@ function App() {
         handleShowResults={setShowResultsBtn}
         onDownloadFile={downloadFile}
         onRunModel={runModel}
-        handleOpenExisting={handleOpenExisting} />
+        handleOpenExisting={handleOpenExisting}
+        setActiveTab={setActiveTab} 
+        
+        />
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className='reactflow_plane'>

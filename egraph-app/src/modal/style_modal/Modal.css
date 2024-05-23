@@ -18,7 +18,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 20px;
-  border: 1px solid #5798e7;
+  border: 1px solid #71C2FF;
   width: 80%;
   max-width: 432px;
 }
@@ -49,10 +49,10 @@
 
 
 .modal-button:hover {
-  background-color: #5798e7;
+  background-color: #5ea7de;
 }
 
 
 .modal-button:active {
-  background-color: #5798e7;
+  background-color: #5ea7de;
 }

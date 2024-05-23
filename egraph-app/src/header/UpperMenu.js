@@ -6,7 +6,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
-const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel }) => {
+const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
   const [fileName, setFileName] = useState("Untitled");
 
 
@@ -89,18 +89,21 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting,
     const handleShowResultsClick = () => {
       if (handleShowResults) {
         handleShowResults(true); 
+        setActiveTab('results');
       }
     };
 
     const handleShowImageClick = () => {
       if (handleShowImage) {
         handleShowImage(true); 
+        setActiveTab('image');
       }
     };
 
     const handleShowModelClick = () => {
       if (handleShowModel) {
         handleShowModel(true); 
+        
       }
     };
 
