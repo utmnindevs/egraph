@@ -20,6 +20,7 @@ import SideBarEditable from './sidebars/editable/SideBarEditable';
 
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 import { EGraph } from './graph/graph.js';
+import SideBarAdding from './sidebars/left/SideBarAdding.js';
 var dagre = require("@xdashduck/dagre-tlayering");
 
 
@@ -86,7 +87,8 @@ function App() {
   };
 
   const onNodesChange = useCallback(
-    (changes) => setGraphCompartments((nds) => applyNodeChanges(changes, nds)),
+    (changes) => setGraphCompartments(
+      (nds) => applyNodeChanges(changes, nds)),
     [],
   )
 
@@ -167,6 +169,14 @@ function App() {
     input.click();
   };
 
+  /**
+   * @param {string} state - название экрана
+   */
+  const setActiveTabWithReset = useCallback((state) => {
+    setEditableProps(null);
+    setActiveTab(state);
+  }, [setActiveTab, setEditableProps])
+
   return (
     <div className="reactflow-body">
       <Header
@@ -179,24 +189,29 @@ function App() {
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className='reactflow_plane'>
-        {/* <SideBarEditable /> */}
+        <SideBarAdding/>
 
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
 
           <div className="tab-buttons">
-            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>}
-            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>}
-            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>}
+            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
+            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
+            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
           </div>
 
           {activeTab === 'flow' && (
-            <FlowTab nodeTypes={nodeTypes}
+            <FlowTab 
+              e_graph={e_graph}  
+              nodeTypes={nodeTypes}
               nodes={compartmentsObjects}
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
-              setEditableProps={setEditableProps} />
+              setEditableProps={setEditableProps}
+
+              setGraphNodes={setGraphCompartments}
+              updateNodesByObjects={updateNodesByObjects} />
           )}
           {activeTab === 'image' && (
             <SvgTab svgContent={svgContent} />
