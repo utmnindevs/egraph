@@ -8,7 +8,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 import SvgTab from './SvgTab';
-import Results from './ResultsTab.js'; 
+import Results from './ResultsTab.js';
 import './style/App.css';
 import Modal from './modal/Modal';
 import { svgConverterFunction } from './Svgconverter.js';
@@ -34,7 +34,7 @@ const nodeTypes = { compartmentNode: CompartmentNode };
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow');
-  const [svgContent, setSvgContent] = useState(''); 
+  const [svgContent, setSvgContent] = useState('');
 
   const [showModelBtn, setShowModelBtn] = useState(false);
   const [showImageBtn, setShowImageBtn] = useState(false);
@@ -75,13 +75,13 @@ function App() {
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
     compartmentsUpdate.forEach(obj => {
-      updateObject(obj.GetId(), {pop: obj.GetPopulation(), name: obj.GetName()});
+      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName() });
     });
   }, [compartmentsUpdate]);
 
   const updateNodesByObjects = (compartments) => {
     compartments.forEach(obj => {
-      updateObject(obj.GetId(), {pop: obj.GetPopulation(), name: obj.GetName()});
+      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName() });
     });
   };
 
@@ -126,16 +126,13 @@ function App() {
   }
 
 
-
-
-
-    const handleOpenExisting = () => {
-      const input = document.createElement('input');
+  const handleOpenExisting = () => {
+    const input = document.createElement('input');
     input.type = 'file';
-      input.accept = '.json';
+    input.accept = '.json';
 
-      input.addEventListener('change', async event => {
-        const file = event.target.files[0];
+    input.addEventListener('change', async event => {
+      const file = event.target.files[0];
       if (!file) return;
 
       const fileName = file.name.toLowerCase();
@@ -150,7 +147,7 @@ function App() {
           setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
             id: compartment.id,
             type: 'compartmentNode',
-            position:  compartment.position || { x: 100 + index * 100, y: 100 + index * 100 },
+            position: compartment.position || { x: 100 + index * 100, y: 100 + index * 100 },
             data: {
               population: compartment.population,
               name: compartment.name,
@@ -170,44 +167,44 @@ function App() {
     input.click();
   };
 
-    return (
-      <div className="reactflow-body">
-        <Header 
-      handleShowModel = {setShowModelBtn} 
-      handleShowImage = {setShowImageBtn} 
-      handleShowResults={setShowResultsBtn}  
-      onDownloadFile={downloadFile} 
-      onRunModel={runModel} 
-      handleOpenExisting={handleOpenExisting} />
-        {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+  return (
+    <div className="reactflow-body">
+      <Header
+        handleShowModel={setShowModelBtn}
+        handleShowImage={setShowImageBtn}
+        handleShowResults={setShowResultsBtn}
+        onDownloadFile={downloadFile}
+        onRunModel={runModel}
+        handleOpenExisting={handleOpenExisting} />
+      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
-        <div className='reactflow_plane'>
+      <div className='reactflow_plane'>
         {/* <SideBarEditable /> */}
 
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
 
-          {/* <div className="tab-buttons">
-              {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>}
-              {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>}
-        {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>}
-            </div> */}
-
-            {activeTab === 'flow' && (
-                    <FlowTab nodeTypes={nodeTypes}
-                  nodes={compartmentsObjects}
-              edges={edges}
-                  onNodesChange={onNodesChange}
-                      onEdgesChange={onEdgesChange}
-                  onConnect={onConnect}
-                  setEditableProps={setEditableProps} />
-              )}
-              {activeTab === 'image' && (
-              <SvgTab svgContent={svgContent} />
-              )}
-        {activeTab === 'results' && (
-          <ResultsTab />
-              )}
+          <div className="tab-buttons">
+            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>}
+            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>}
+            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>}
           </div>
+
+          {activeTab === 'flow' && (
+            <FlowTab nodeTypes={nodeTypes}
+              nodes={compartmentsObjects}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              setEditableProps={setEditableProps} />
+          )}
+          {activeTab === 'image' && (
+            <SvgTab svgContent={svgContent} />
+          )}
+          {activeTab === 'results' && (
+            <ResultsTab />
+          )}
+        </div>
         {editable_props && <SideBarEditable {...editable_props}
           setStateMenu={setEditableProps}
           e_graph={e_graph}
@@ -217,7 +214,7 @@ function App() {
       </div>
     </div>
 
-    );
+  );
 }
 
 export default App;
