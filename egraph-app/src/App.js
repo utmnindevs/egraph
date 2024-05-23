@@ -53,7 +53,7 @@ function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
 
-  const [editable_props, setEditableProps] = useState(null);
+  const [editableProps, setEditableProps] = useState(null);
 
 
   // Состояние для нижнего меню и переключение режима просмотра и редактирования
@@ -262,7 +262,8 @@ function App() {
             <ResultsTab />
           )}
         </div>
-        {editable_props && <SideBarEditable {...editable_props}
+        {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}
+        {editableProps && <SideBarEditable {...editableProps}
           setStateMenu={updateEditableProps}
           e_graph={e_graph}
           updateGraphNodes={updateNodesByObjects}
