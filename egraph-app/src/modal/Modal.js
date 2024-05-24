@@ -11,9 +11,7 @@ import IconRender from './IconRender';
  * компартмента
  * @returns 
  */
-function Modal({isOpen, typeModal, content}) {
-
-    console.log(content.buttons_funcs_label)
+function Modal({isOpen, typeModal, content}) {    
     return (
         <div className={`modal ${isOpen ? 'open' : ''}`}>
             <div className="content">

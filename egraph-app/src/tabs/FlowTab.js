@@ -5,7 +5,7 @@ import SideBarEditable from '../sidebars/editable/SideBarEditable';
 import { generate_uuid_v4 } from '../graph/helpers';
 import { EGraph } from '../graph/graph';
 
-
+import ErrorModal from '../modal/ErrorModal';
 /**
  * Генерирует рендер вкладки конструирования модели, содержит методы манипуляции с ними:
  * Создание, редактирование, обновление узлов. 
@@ -28,7 +28,7 @@ function FlowTab({
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-
+    
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -114,6 +114,8 @@ function FlowTab({
                 nodesConnectable={isViewState}
                 elementsSelectable={isViewState}
                 selectNodesOnDrag={false}
+
+
                 >
 
                 <Background color="#aaa" gap={16} />
