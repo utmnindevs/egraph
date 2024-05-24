@@ -1,13 +1,25 @@
 .lower-menu {
   display: flex;
-  justify-content: space-around;
-  background-color: #71C2FF;
-  padding: 15px;
+  justify-content: flex-start;
+  background-color: #63A9FF;
+  padding: 2px;
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   margin-left: 25px;
   margin-right: 25px;
-  opacity: 50%;
+}
+
+.lower-menu .icons-toolbar{
+  display: flex;
+  justify-content: space-between;
+  margin-left: 10px;
+  margin-bottom: 4px;
+}
+
+.button-icon{
+  background: rgba(0, 0, 0, 0);
+  border: 0 solid #fff;
+  margin-left: 10px;
 }

@@ -1,6 +1,6 @@
 import Header from './header/Header';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 
@@ -20,6 +20,7 @@ import SideBarEditable from './sidebars/editable/SideBarEditable';
 
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 import { EGraph } from './graph/graph.js';
+import SideBarAdding from './sidebars/left/SideBarAdding.js';
 var dagre = require("@xdashduck/dagre-tlayering");
 
 
@@ -29,6 +30,7 @@ let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdi
 let initialNodes = [];
 
 const nodeTypes = { compartmentNode: CompartmentNode };
+
 
 
 function App() {
@@ -41,6 +43,8 @@ function App() {
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
 
+  const reactFlowWrapper = useRef(null);
+
 
   const [nodes, setNodes] = useState(initialNodes);
 
@@ -49,7 +53,41 @@ function App() {
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
 
-  const [editable_props, setEditableProps] = useState(null);
+  const [editableProps, setEditableProps] = useState(null);
+
+
+  // Состояние для нижнего меню и переключение режима просмотра и редактирования
+  const [viewportState, setViewportState] = useState("view");
+
+  /**
+   * Улучшенный метод обновления состояния и вызвова окна редактирования с проверкой на текущее состояние
+   * всего viewport'а т.е. на то что включен режим "редактирования"
+   */
+  const updateEditableProps = useCallback((state) => {
+    if(viewportState === "edit"){
+      setEditableProps(state);
+    }
+    else{
+      setEditableProps(null);
+    }
+  }, [setEditableProps, viewportState])
+
+  const [adding_props, setAddingProps] = useState(null);
+
+
+
+  const updateViewportState = useCallback((new_state) => {
+    setViewportState(new_state);
+    if(new_state === "view"){
+      setEditableProps(null);
+      setAddingProps(null);
+    }
+    if(new_state === "edit"){
+      setAddingProps(true)
+    }
+  }, [setViewportState,setEditableProps])
+
+
 
   const handleCloseModal = () => {
     InitialStandartNodes();
@@ -69,7 +107,6 @@ function App() {
     resolve => setTimeout(resolve, ms)
   );
 
-  const reactFlowWrapper = useRef(null);
 
   useEffect(() => {
     const svg = svgConverterFunction(dagre_graph);
@@ -86,7 +123,8 @@ function App() {
   };
 
   const onNodesChange = useCallback(
-    (changes) => setGraphCompartments((nds) => applyNodeChanges(changes, nds)),
+    (changes) => setGraphCompartments(
+      (nds) => applyNodeChanges(changes, nds)),
     [],
   )
 
@@ -167,7 +205,16 @@ function App() {
     input.click();
   };
 
+  /**
+   * @param {string} state - название экрана
+   */
+  const setActiveTabWithReset = useCallback((state) => {
+    setEditableProps(null);
+    setActiveTab(state);
+  }, [setActiveTab, setEditableProps])
+
   return (
+    <ReactFlowProvider>
     <div className="reactflow-body">
       <Header
         handleShowModel={setShowModelBtn}
@@ -178,28 +225,38 @@ function App() {
         handleOpenExisting={handleOpenExisting}
         setActiveTab={setActiveTab} 
         
+        
+        
+        viewportState={viewportState} setViewportState={updateViewportState}
         />
       {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className='reactflow_plane'>
-        {/* <SideBarEditable /> */}
+        {adding_props && <SideBarAdding/>}
 
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
 
           <div className="tab-buttons">
-            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTab('flow')}>Модель</button>}
-            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTab('image')}>Изображение</button>}
-            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTab('results')}>Результаты</button>}
+            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
+            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
+            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
           </div>
 
           {activeTab === 'flow' && (
-            <FlowTab nodeTypes={nodeTypes}
+            <FlowTab 
+              e_graph={e_graph}  
+              nodeTypes={nodeTypes}
               nodes={compartmentsObjects}
               edges={edges}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onConnect={onConnect}
-              setEditableProps={setEditableProps} />
+              setEditableProps={updateEditableProps}
+
+              setGraphNodes={setGraphCompartments}
+              updateNodesByObjects={updateNodesByObjects} 
+              
+              viewportState={viewportState}/>
           )}
           {activeTab === 'image' && (
             <SvgTab svgContent={svgContent} />
@@ -208,15 +265,16 @@ function App() {
             <ResultsTab />
           )}
         </div>
-        {editable_props && <SideBarEditable {...editable_props}
-          setStateMenu={setEditableProps}
+        {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}
+        {editableProps && <SideBarEditable {...editableProps}
+          setStateMenu={updateEditableProps}
           e_graph={e_graph}
           updateGraphNodes={updateNodesByObjects}
           setGraphNodes={setGraphCompartments} />}
 
       </div>
     </div>
-
+    </ReactFlowProvider>
   );
 }
 

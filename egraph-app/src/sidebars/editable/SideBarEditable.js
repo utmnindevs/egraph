@@ -12,8 +12,8 @@ import "./style/SideBarEditable.css"
  * @returns 
  */
 function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGraphNodes, ...editable_props }) {
-
-
+    // После переклика несколько раз выделяется onclick на узел, что и скорее всего приводит к неточности
+    // console.log(node)
     // Значения и обновления данных самого узла
     const [nodeData, setNodeData] = useState(node.data);
     const [nodeName, setNodeName] = useState(node.data.name)
@@ -56,6 +56,7 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
      */
     const onButtonClick = useCallback(() => {
         e_graph.getCompartmentByName(nodeData.name).UpdateCompartment(nodeName, parseFloat(nodePopulation))
+
         setGraphNodes((nds) => {
             return nds.map((nd) => {
                 if (nd.id === node.id) {
@@ -71,9 +72,6 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
 
         setStateMenu(null);
     }, [nodeIns, nodeOuts, nodeData, nodeName, nodePopulation, updateGraphNodes])
-
-    // TODO: решить баг с тем, что при выделении в не hover зоне то считает за клик, переклик или другие действия сразу закрывает правый сайдбар
-    // -> next TODO: добавить кнопку закрытия и режим редактирования в панели в виде кнопки, в котором есть возможность вызывать этот сайдбар
 
     return (
         <div class="side-bar-editable-body">

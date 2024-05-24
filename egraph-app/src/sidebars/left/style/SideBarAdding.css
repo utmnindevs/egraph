@@ -1,0 +1,24 @@
+.side-bar-adding-body{
+    background: rgba(228, 239, 255, 0.8);
+    min-width: 250px;
+    width: fit-content;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    font-family: FiraSans;
+    justify-content: flex-start;
+    border-radius: 0 10px 10px 0;
+    gap: 10px;
+}
+
+.side-bar-adding-body .header{
+    text-align: center;
+    margin-top: 10px;
+}
+
+.side-bar-adding-body .blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+}

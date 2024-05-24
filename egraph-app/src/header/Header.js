@@ -2,7 +2,7 @@ import React from 'react';
 import UpperMenu from './UpperMenu';
 import LowerMenu from './LowerMenu';
 
-const Header = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults,handleShowImage, handleShowModel,setActiveTab  }) => {
+const Header = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults,handleShowImage, handleShowModel, viewportState, setViewportState,setActiveTab  }) => {
   return (
     <header>
       <UpperMenu
@@ -15,7 +15,9 @@ const Header = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, ha
         handleShowModel={handleShowModel}
         setActiveTab = {setActiveTab}
       />
-      <LowerMenu />
+      <LowerMenu 
+      viewportState={viewportState} setViewportState={setViewportState}
+      />
     </header>
   );
 };

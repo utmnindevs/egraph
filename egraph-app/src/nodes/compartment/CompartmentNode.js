@@ -9,15 +9,16 @@ const selector = (s) => ({
   edges: s.edges,
 });
  
-function CompartmentNode({ data }) {
+
+function CompartmentNode({ data, isConnectable }) {
   const onChange = useCallback((evt) => {
     console.log(evt.target.value);
   }, []);
 
-
+  let all_ids = 0;
 
   const constructHandleId = (id, type) => {
-    return "handle_comp_" + type + "_" + id + "_" + data.name.substr(0,2);
+    return "handle_comp_" + type + "_" + (++all_ids) + "_" + data.name.substr(0,2);
   }
 
   /**
@@ -33,7 +34,7 @@ function CompartmentNode({ data }) {
         <CompartmentHandle id={constructHandleId(id, type)} 
         type={type} 
         position={position === "Left" ? Position.Left : Position.Right}
-        style={{...st}}/>
+        style={{...st}} isConnectable={isConnectable}/>
       </>
     );
   }
