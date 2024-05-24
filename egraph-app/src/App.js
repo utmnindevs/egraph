@@ -10,7 +10,7 @@ import './nodes/compartment//style/CompartmentNodeStyle.css'
 import SvgTab from './SvgTab';
 import Results from './ResultsTab.js';
 import './style/App.css';
-import Modal from './modal/Modal';
+import OpenModal from './modal/OpenModal.js';
 import { svgConverterFunction } from './Svgconverter.js';
 import ResultsTab from './ResultsTab.js';
 
@@ -21,6 +21,7 @@ import SideBarEditable from './sidebars/editable/SideBarEditable';
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 import { EGraph } from './graph/graph.js';
 import SideBarAdding from './sidebars/left/SideBarAdding.js';
+import Modal from './modal/Modal.js';
 var dagre = require("@xdashduck/dagre-tlayering");
 
 
@@ -44,6 +45,10 @@ function App() {
 
 
   const reactFlowWrapper = useRef(null);
+
+  // Для всех модальных окон
+  const [isModalOpne, setModalOpen] = useState(false);
+
 
 
   const [nodes, setNodes] = useState(initialNodes);
@@ -216,6 +221,7 @@ function App() {
   return (
     <ReactFlowProvider>
     <div className="reactflow-body">
+      {isModalOpne && <Modal isOpen={isModalOpne}/>}
       <Header
         handleShowModel={setShowModelBtn}
         handleShowImage={setShowImageBtn}
@@ -229,7 +235,7 @@ function App() {
         
         viewportState={viewportState} setViewportState={updateViewportState}
         />
-      {isModalOpen && <Modal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+      {isModalOpen && <OpenModal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
 
       <div className='reactflow_plane'>
         {adding_props && <SideBarAdding/>}

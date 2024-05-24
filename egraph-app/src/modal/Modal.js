@@ -1,41 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import './style_modal/Modal.css';
 
-function Modal({ isOpen, onClose, handleOpenExisting }) {
-  const [fileName, setFileName] = useState('');
-  const [autoSave, setAutoSave] = useState(false);
-  const [filePath, setFilePath] = useState('');
+import "./style_modal/Modal.css";
 
-  useEffect(() => {
-    const lastFileName = localStorage.getItem('lastFileName');
-    if (lastFileName) {
-      setFileName(lastFileName);
-    }
-    const lastFilePath = localStorage.getItem('lastFilePath');
-    if (lastFilePath) {
-      setFilePath(lastFilePath);
-    }
-    const autoSaveEnabled = localStorage.getItem('autoSave') === 'true';
-    setAutoSave(autoSaveEnabled);
-  }, []);
+import IconRender from './IconRender';
 
-  const handleCreateNew = () => {
+/**
+ * Шаблон модального окна, принимающий в себя параметры - Открыто ли окно, тип модального окна {"warning", "info", "another"} 
+ * и контент модального окна содержащий следующее: { header_text: "", body_text: "", buttons_funcs_label: [ [label, function], ... ] }
+ * TODO: Сделать body_text проверку на функцию, для того чтобы можно было передавать внутрь функцию для мб создания ещё каких-то выборов -> поможет в создании
+ * компартмента
+ * @returns 
+ */
+function Modal({isOpen, typeModal, content}) {
 
-  };
+    console.log(content.buttons_funcs_label)
+    return (
+        <div className={`modal ${isOpen ? 'open' : ''}`}>
+            <div className="content">
+                <div className="header">
+                    <IconRender icon_type={typeModal}/>
+                    <span>{content.header_text}</span>
+                </div>
+                <div className="body">
+                    <p>{content.body_text}</p>
+                </div>
+                <div className="buttons">
+                    {Array.from({length: content.buttons_funcs_label.length}, (_, index) => {
+                        return <button class="modal-button" onClick={content.buttons_funcs_label[index][1]}> {content.buttons_funcs_label[index][0]} </button>
+                    })}
+                </div>
+            </div>
 
+        </div>
+    )
 
-
-
-
-  return (
-    <div className={`modal ${isOpen ? 'open' : ''}`}>
-      <div className="modal-content">
-        <p>Хотите создать новый файл проекта или открыть существующий?</p>
-        <button class="modal-button" onClick={onClose}>Создать новый файл</button>
-        <button class="modal-button" onClick={handleOpenExisting}>Открыть существующий файл</button>
-      </div>
-    </div>
-  );
 }
+
 
 export default Modal;
