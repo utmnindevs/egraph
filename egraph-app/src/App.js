@@ -81,11 +81,13 @@ function App() {
 
   // Расшаренная установка обновления и добавления нового узла если такой был создан
   const setGraphNodesShare = useCallback(() => {
+    // console.log(addingNode)
     if(addingNode) {
       const comp = addingNode.data.obj;
       e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation()});
       setGraphCompartments((nds) => nds.concat(addingNode));
       setAddingNodeShare(null);
+      updateNodesByObjects(e_graph.GetComps());
     }
   }, [setGraphCompartments, addingNode])
 
@@ -266,6 +268,7 @@ function App() {
         />
             {isAddingModalOpen && <AddingModal
               isOpen={isAddingModalOpen}
+              addingNode={addingNode}
               createGraphNode={setGraphNodesShare}
               closeModal={onCloseAddingModal}/>}
 

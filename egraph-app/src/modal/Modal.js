@@ -11,7 +11,18 @@ import IconRender from './IconRender';
  * компартмента
  * @returns 
  */
-function Modal({isOpen, typeModal, content}) {    
+function Modal({isOpen, typeModal, content}) {   
+    
+    const renderBody = () => {
+        if(typeof(content.body_text) === 'string'){
+            return (<> {content.body_text} </>)
+        }
+
+        if(typeof(content.body_text) === 'function'){
+            return (<>{content.body_text()}</>)
+        }
+    }
+
     return (
         <div className={`modal ${isOpen ? 'open' : ''}`}>
             <div className="content">
@@ -20,7 +31,7 @@ function Modal({isOpen, typeModal, content}) {
                     <span>{content.header_text}</span>
                 </div>
                 <div className="body">
-                    <p>{content.body_text}</p>
+                    <p>{renderBody()}</p>
                 </div>
                 <div className="buttons">
                     {Array.from({length: content.buttons_funcs_label.length}, (_, index) => {

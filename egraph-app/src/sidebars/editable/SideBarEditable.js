@@ -55,11 +55,11 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
      * через стейты
      */
     const onButtonClick = useCallback(() => {
-        e_graph.getCompartmentByName(nodeData.name).UpdateCompartment(nodeName, parseFloat(nodePopulation))
 
         setGraphNodes((nds) => {
             return nds.map((nd) => {
                 if (nd.id === node.id) {
+                    e_graph.getCompartmentByName(nodeData.name).UpdateCompartment(nodeName, parseFloat(nodePopulation))
                     nd.data = { ...node.data, ins: nodeIns, outs: nodeOuts }
                     // TODO: проверка на существование подключенных узлов, если есть, то не менять и крикнуть пользователя
                     // иначе менять, т.к. появляется баг, что при удалении ребро остается, и после очередного добавления в него можно снова присоеденить
