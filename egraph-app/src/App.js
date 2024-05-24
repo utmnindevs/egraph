@@ -11,6 +11,7 @@ import SvgTab from './SvgTab';
 import Results from './ResultsTab.js';
 import './style/App.css';
 import OpenModal from './modal/OpenModal.js';
+import AddingModal from './modal/AddingModal.js';
 import { svgConverterFunction } from './Svgconverter.js';
 import ResultsTab from './ResultsTab.js';
 
@@ -64,15 +65,44 @@ function App() {
   // Состояние для нижнего меню и переключение режима просмотра и редактирования
   const [viewportState, setViewportState] = useState("view");
 
+
+  /**
+   * Состояния для добавления новых узлов
+   */
+  const [isAddingModalOpen, setAddingModalOpen] = useState(false);
+  const [addingNode, setAddingNode] = useState(null);
+  
+  // Расшаренная установка создаваемого узла с установлением выключения/включения модального окна для редактирования
+  const setAddingNodeShare = useCallback((node) => {
+    if(node){ setAddingModalOpen(true); }
+    else{ setAddingModalOpen(false); }
+    setAddingNode(node);
+  }, [setAddingNode, setAddingModalOpen])
+
+  // Расшаренная установка обновления и добавления нового узла если такой был создан
+  const setGraphNodesShare = useCallback(() => {
+    if(addingNode) {
+      const comp = addingNode.data.obj;
+      e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation()});
+      setGraphCompartments((nds) => nds.concat(addingNode));
+      setAddingNodeShare(null);
+    }
+  }, [setGraphCompartments, addingNode])
+
+  // Метод вызываемый при отмене создания нового узла
+  const onCloseAddingModal = useCallback(() => {
+    setAddingNode(null); setAddingModalOpen(false);
+  }, [setAddingNode, setAddingModalOpen]);
+
   /**
    * Улучшенный метод обновления состояния и вызвова окна редактирования с проверкой на текущее состояние
    * всего viewport'а т.е. на то что включен режим "редактирования"
    */
   const updateEditableProps = useCallback((state) => {
-    if(viewportState === "edit"){
+    if (viewportState === "edit") {
       setEditableProps(state);
     }
-    else{
+    else {
       setEditableProps(null);
     }
   }, [setEditableProps, viewportState])
@@ -83,14 +113,14 @@ function App() {
 
   const updateViewportState = useCallback((new_state) => {
     setViewportState(new_state);
-    if(new_state === "view"){
+    if (new_state === "view") {
       setEditableProps(null);
       setAddingProps(null);
     }
-    if(new_state === "edit"){
+    if (new_state === "edit") {
       setAddingProps(true)
     }
-  }, [setViewportState,setEditableProps])
+  }, [setViewportState, setEditableProps])
 
 
 
@@ -220,66 +250,70 @@ function App() {
 
   return (
     <ReactFlowProvider>
-    <div className="reactflow-body">
-      {isModalOpne && <Modal isOpen={isModalOpne}/>}
-      <Header
-        handleShowModel={setShowModelBtn}
-        handleShowImage={setShowImageBtn}
-        handleShowResults={setShowResultsBtn}
-        onDownloadFile={downloadFile}
-        onRunModel={runModel}
-        handleOpenExisting={handleOpenExisting}
-        setActiveTab={setActiveTab} 
-        
-        
-        
-        viewportState={viewportState} setViewportState={updateViewportState}
+      <div className="reactflow-body">
+        <Header
+          handleShowModel={setShowModelBtn}
+          handleShowImage={setShowImageBtn}
+          handleShowResults={setShowResultsBtn}
+          onDownloadFile={downloadFile}
+          onRunModel={runModel}
+          handleOpenExisting={handleOpenExisting}
+          setActiveTab={setActiveTab}
+
+
+
+          viewportState={viewportState} setViewportState={updateViewportState}
         />
-      {isModalOpen && <OpenModal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+            {isAddingModalOpen && <AddingModal
+              isOpen={isAddingModalOpen}
+              createGraphNode={setGraphNodesShare}
+              closeModal={onCloseAddingModal}/>}
 
-      <div className='reactflow_plane'>
-        {adding_props && <SideBarAdding/>}
+        <div className='reactflow_plane'>
+          {adding_props && <SideBarAdding />}
 
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+          <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            {/* все модальные окна */}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+            <div className="tab-buttons">
+              {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
+              {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
+              {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
+            </div>
 
-          <div className="tab-buttons">
-            {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
-            {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
-            {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
+            {activeTab === 'flow' && (
+              <FlowTab
+                e_graph={e_graph}
+                nodeTypes={nodeTypes}
+                nodes={compartmentsObjects}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                setEditableProps={updateEditableProps}
+
+                setAddingNode={setAddingNodeShare}
+
+                updateNodesByObjects={updateNodesByObjects}
+
+                viewportState={viewportState} />
+            )}
+            {activeTab === 'image' && (
+              <SvgTab svgContent={svgContent} />
+            )}
+            {activeTab === 'results' && (
+              <ResultsTab />
+            )}
           </div>
+          {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}
+          {editableProps && <SideBarEditable {...editableProps}
+            setStateMenu={updateEditableProps}
+            e_graph={e_graph}
+            updateGraphNodes={updateNodesByObjects}
+            setGraphNodes={setGraphCompartments} />}
 
-          {activeTab === 'flow' && (
-            <FlowTab 
-              e_graph={e_graph}  
-              nodeTypes={nodeTypes}
-              nodes={compartmentsObjects}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
-              setEditableProps={updateEditableProps}
-
-              setGraphNodes={setGraphCompartments}
-              updateNodesByObjects={updateNodesByObjects} 
-              
-              viewportState={viewportState}/>
-          )}
-          {activeTab === 'image' && (
-            <SvgTab svgContent={svgContent} />
-          )}
-          {activeTab === 'results' && (
-            <ResultsTab />
-          )}
         </div>
-        {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}
-        {editableProps && <SideBarEditable {...editableProps}
-          setStateMenu={updateEditableProps}
-          e_graph={e_graph}
-          updateGraphNodes={updateNodesByObjects}
-          setGraphNodes={setGraphCompartments} />}
-
       </div>
-    </div>
     </ReactFlowProvider>
   );
 }

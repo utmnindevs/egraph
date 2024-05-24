@@ -6,6 +6,9 @@ import { generate_uuid_v4 } from '../graph/helpers';
 import { EGraph } from '../graph/graph';
 
 import ErrorModal from '../modal/ErrorModal';
+import OpenModal from '../modal/OpenModal';
+import AddingModal from '../modal/AddingModal';
+import { Compartment } from '../graph/compartment';
 /**
  * Генерирует рендер вкладки конструирования модели, содержит методы манипуляции с ними:
  * Создание, редактирование, обновление узлов. 
@@ -13,22 +16,24 @@ import ErrorModal from '../modal/ErrorModal';
  * нужно перенести сюда все взаимодействия с графом, при этом App.js должен знать о том в каком состоянии граф + если граф меняется в App.js(
  * например загрузка файла, то этот документ должен подгрузить на себя эти изменения.)
  */
-function FlowTab({ 
-    e_graph, 
-    edges, 
-    nodeTypes, 
-    nodes, 
-    onNodesChange, 
-    onEdgesChange, 
-    onConnect, 
-    setEditableProps, 
+function FlowTab({
+    e_graph,
+    edges,
+    nodeTypes,
+    nodes,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    setEditableProps,
     setGraphNodes,
     updateNodesByObjects,
-    viewportState }) {
+    viewportState,
+    setAddingNode }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    
+
+
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -49,28 +54,27 @@ function FlowTab({
                 y: event.clientY,
             });
 
-            e_graph.AddComp(generate_uuid_v4(), {name: "testing", population: 1});
+            let comp = new Compartment(generate_uuid_v4(), { name: "testing", population: 1 });
             // TODO: Решить баг с тем, что хендлеры ху*во работают
-            let comp = e_graph.getCompartmentByName("testing");
             const newNode = {
                 id: comp.GetId(),
                 type,
                 position,
-                data: { 
+                data: {
                     population: comp.GetPopulation(),
                     name: comp.GetName(),
                     obj: comp,
                     ins: 1,
                     outs: 1
-                 },
+                },
             };
 
-            setGraphNodes((nds) => nds.concat(newNode));
+            setAddingNode(newNode);
         },
-        [e_graph, reactFlowInstance],
+        [e_graph, reactFlowInstance, setAddingNode],
     );
 
-    
+
 
     const onNodeClick = useCallback(
         (event, node) => {
@@ -86,7 +90,7 @@ function FlowTab({
 
     const onPaneCLick = useCallback(() => { setEditableProps(null); }, [setEditableProps])
 
-    const onDeleteKeyCode = useCallback(() => {setEditableProps(null); return "Delete"}, [setEditableProps])
+    const onDeleteKeyCode = useCallback(() => { setEditableProps(null); return "Delete" }, [setEditableProps])
 
     const isViewState = !(viewportState === "view");
 
@@ -94,6 +98,8 @@ function FlowTab({
 
     return (
         <>
+
+
             <ReactFlow
                 nodeTypes={nodeTypes}
                 nodes={nodes}
@@ -106,8 +112,8 @@ function FlowTab({
                 onPaneClick={onPaneCLick}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-                
-                
+
+
                 deleteKeyCode={"Delete"}
 
                 nodesDraggable={isViewState}
@@ -116,12 +122,13 @@ function FlowTab({
                 selectNodesOnDrag={false}
 
 
-                >
+            >
 
                 <Background color="#aaa" gap={16} />
                 <Controls />
 
             </ReactFlow>
+
         </>
     );
 
