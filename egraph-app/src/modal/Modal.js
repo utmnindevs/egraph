@@ -29,7 +29,7 @@ function Modal({ isOpen, typeModal, content, handleSubmit }) {
                     <IconRender icon_type={typeModal} />
                     <span>{content.header_text}</span>
                 </div>
-                <form className='needs-validation'>
+                <form >
                     <div className="body">
                         <p>{renderBody()}</p>
                     </div>
