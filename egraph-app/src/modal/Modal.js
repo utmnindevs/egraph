@@ -12,7 +12,7 @@ import IconRender from './IconRender';
 function Modal({ isOpen, typeModal, content, handleSubmit }) {
 
     const renderBody = () => {
-        if (typeof (content.body_text) === 'string') {
+        if (typeof (content.body_text) === 'string' || 'object') {
             return (<> {content.body_text} </>)
         }
 

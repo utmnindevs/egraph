@@ -3,11 +3,14 @@
     min-width: 250px;
     width: fit-content;
     margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
     font-family: FiraSans;
     border-radius: 10px 0 0 10px;
+}
+.side-bar-editable-body .form-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .side-bar-editable-body .button{
