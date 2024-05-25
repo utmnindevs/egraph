@@ -17,6 +17,7 @@ import ResultsTab from './ResultsTab.js';
 
 import FlowTab from './tabs/FlowTab.js';
 import SideBarEditable from './sidebars/editable/SideBarEditable';
+import NodeInspector from './debugs/NodeInspector.js';
 
 
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
@@ -34,8 +35,10 @@ let initialNodes = [];
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 
-
 function App() {
+
+  const [devView, setDevView] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
@@ -261,10 +264,12 @@ function App() {
           handleOpenExisting={handleOpenExisting}
           setActiveTab={setActiveTab}
 
-
+          setDevView={setDevView} devView={devView}
 
           viewportState={viewportState} setViewportState={updateViewportState}
         />
+                {devView && <NodeInspector/>}
+
             {isAddingModalOpen && <AddingModal
               isOpen={isAddingModalOpen}
               addingNode={addingNode}
@@ -299,6 +304,8 @@ function App() {
                 updateNodesByObjects={updateNodesByObjects}
 
                 viewportState={viewportState} />
+
+                
             )}
             {activeTab === 'image' && (
               <SvgTab svgContent={svgContent} />

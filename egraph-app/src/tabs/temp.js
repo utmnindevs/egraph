@@ -52,8 +52,8 @@ export function getInitialNodes(e_graph) {
                     population: value.GetPopulation(),
                     name: value.GetName(),
                     obj: value,
-                    ins: 1,
-                    outs: 2
+                    ins: 0,
+                    outs: 0
                 }
             }
         )

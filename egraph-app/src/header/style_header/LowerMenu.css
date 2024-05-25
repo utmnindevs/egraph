@@ -14,12 +14,13 @@
 .lower-menu .icons-toolbar{
   display: flex;
   justify-content: space-between;
-  margin-left: 10px;
+  margin-left: 15px;
   margin-bottom: 4px;
 }
 
 .button-icon{
   background: rgba(0, 0, 0, 0);
   border: 0 solid #fff;
-  margin-left: 10px;
+  margin-right: 10px;
+
 }

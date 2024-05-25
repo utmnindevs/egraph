@@ -2,8 +2,21 @@ import React from 'react';
 import UpperMenu from './UpperMenu';
 import LowerMenu from './LowerMenu';
 
-const Header = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults,handleShowImage, handleShowModel, viewportState, setViewportState,setActiveTab  }) => {
-  return (
+const Header = ({ 
+  rfInstance, 
+  onDownloadFile, 
+  onRunModel, 
+  handleOpenExisting, 
+  handleShowResults,
+  handleShowImage, 
+  handleShowModel, 
+  viewportState, 
+  setViewportState,
+  setActiveTab,
+  setDevView,
+  devView  }) => {
+  
+    return (
     <header>
       <UpperMenu
         rfInstance={rfInstance}
@@ -17,6 +30,7 @@ const Header = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, ha
       />
       <LowerMenu 
       viewportState={viewportState} setViewportState={setViewportState}
+      setDevView={setDevView} devView={devView}
       />
     </header>
   );
