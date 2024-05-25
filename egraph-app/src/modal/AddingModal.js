@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Modal from './Modal';
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 
 
 const Validators = {
-    text: {   
+    text: {
         pattern: {
-            value: /^[A-ZА-Я][a-zа-яА-ЯA-Z]{3,19}$/gm,
+            value: /^[A-ZА-Я][a-zа-яА-ЯA-Z]{3,19}$/,
             message: "С большой буквы, от 4х до 20ти букв"
         },
     },
@@ -18,9 +18,23 @@ const Validators = {
     }
 }
 
-function ErrorMessage({errors, type}){
-    return(
-        <span style={{fontSize:'10px', color:"red"}}>{errors[type]?.message}</span>
+function ErrorMessage({ errors, type }) {
+    return (
+        <span style={{ fontSize: '10px', color: "red" }}>{errors[type]?.message}</span>
+    )
+}
+
+const Input = ({ type, inputType, span, errors, register }) => {
+    return (
+        <>
+            <ErrorMessage errors={errors} type={type} />
+            <div class="input-group input-group-sm mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-sm">{span}</span>
+                <input type={inputType} class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                    {...register} required
+                />
+            </div>
+        </>
     )
 }
 
@@ -33,7 +47,11 @@ function ErrorMessage({errors, type}){
  * @returns 
  */
 function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
-    const { register, handleSubmit, setError, formState: { errors } } = useForm({mode:'onSubmit'});
+    const { register, handleSubmit, setError, formState: { errors } } = useForm({
+        mode: 'onSubmit', defaultValues: {
+            name: ""
+        }
+    });
 
 
     const onSubmit = useCallback((form_data) => {
@@ -44,71 +62,42 @@ function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
         createGraphNode()
     }, [createGraphNode]);
 
-    // нужно как-то обновлять стейтмент errors чтобы получать их, иначе никак не отображать в первый раз
-    const renderBodyInputs = useCallback(() => {
+    const renderBodyInputs = () => {
         return (
             <>
-                <ErrorMessage errors={errors} type={'name'}/>
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Название</span>
-                    <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                        {...register("name", {
-                            required: true,
-                            pattern: Validators.text.pattern
-                          })} required
-                        />  
-                </div>
+                <Input type={'name'} inputType={'text'} span={'Название'} errors={errors} register={register('name', {
+                    required: true,
+                    pattern: Validators.text.pattern
+                })} />
 
-                <ErrorMessage errors={errors} type={'population'}/>
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Популяция</span>
-                    <input type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                        {...register("population", {
-                            required: true,
-                            pattern: Validators.number.pattern
-                        })} required
-                        />
-                </div>
+                <Input type={'population'} inputType={'number'} span={'Популяция'} errors={errors} register={register('population', {
+                    required: true,
+                    pattern: Validators.number.pattern
+                })} />
 
-                <ErrorMessage errors={errors} type={'ins'}/>
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Кол-во входных</span>
-                    <input type="number" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                        {...register("ins", {
-                            required: true,
-                            pattern: Validators.number.pattern
-                        })} required
-                        />
-                </div>
+                <Input type={'ins'} inputType={'number'} span={'Кол-во входных'} errors={errors} register={register('ins', {
+                    required: true,
+                    pattern: Validators.number.pattern
+                })} />
 
-                <ErrorMessage errors={errors} type={'outs'}/>
-                <div class="input-group input-group-sm mb-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm">Кол-во выходных</span>
-                    <input  type="number" max="10" min="0" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
-                        {...register("outs", {
-                            required: true,
-                            pattern: Validators.number.pattern
-                        })} required
-                        />
-                </div>
+                <Input type={'outs'} inputType={'number'} span={'Кол-во выходных'} errors={errors} register={register('outs', {
+                    required: true,
+                    pattern: Validators.number.pattern
+                })} />
             </>
         )
-
-    }, []);
-
-    
+    };
 
     return (
-
-            <Modal isOpen={isOpen} typeModal={"another"}
-                content={{
-                    header_text: "Добавление нового узла",
-                    body_text: renderBodyInputs,
-                    buttons_funcs_label: [
-                        ['Создать', handleSubmit(onSubmit)],
-                        ['Отмена', closeModal]
-                    ]
-                }} handleSubmit={handleSubmit(onSubmit)} />
+        <Modal isOpen={isOpen} typeModal={"another"}
+            content={{
+                header_text: "Добавление нового узла",
+                body_text: renderBodyInputs,
+                buttons_funcs_label: [
+                    ['Создать', handleSubmit(onSubmit)],
+                    ['Отмена', closeModal]
+                ]
+            }} handleSubmit={handleSubmit(onSubmit)} />
     )
 
 }
