@@ -16,6 +16,10 @@ class EGraph {
     this.start_compartment_ = start != null ? start : null;
   }
 
+  getStartedCompartment(){
+    return this.start_compartment_;
+  }
+
   /**
    * Добавляет в граф поток
    * @param {*} id 
@@ -55,11 +59,20 @@ class EGraph {
       this.id_to_flow_.delete(id_flow);
     }
   }
-  DeleteComp(comp) {
+  DeleteComp(comp) { // TODO: переписать удаление компартмента, с учетом что от потоков тоже отсоеденились
     const id_comp = comp.GetId();
     if (this.id_to_comp_.has(id_comp)) {
       this.id_to_comp_.delete(id_comp);
     }
+    let flow = this.FindFlowByFromComp(comp);
+    if(flow){
+      flow.DeleteFromCompartment(comp);
+    }
+    flow = this.FindFlowByToComp(comp);
+    if(flow){
+      flow.DeleteToCompartment(comp);
+    }
+    
   }
   FindFlowByFromComp(comp) {
     for (const [name, ptr] of this.id_to_flow_) {
@@ -117,9 +130,12 @@ class EGraph {
   }
 
   getCompartmentByName(compartment_name) {
-    let compartment = [...this.id_to_comp_.entries()].filter(([ k, v ]) => v.GetName() === compartment_name)
+    if(compartment_name){
+      let compartment = [...this.id_to_comp_.entries()].filter(([ k, v ]) => v.GetName() === compartment_name)
       .map(([k, v]) => v);
-    return compartment[0];
+      return compartment[0];
+    }
+    
   }
 
   getCompartmentById(compartment_id) {
@@ -164,11 +180,16 @@ class EGraph {
 
     var flows_sources = [];
     this.id_to_flow_.forEach((flow, id) => {
-      flow.to_coefs_.forEach((id_comp, comp) => {
-        flows_sources.push({
-          v: flow.from_, w: comp
+      if(!flow.to_coefs_.size){
+        flows_sources.push({v: flow.from_, w: null})
+      }
+      else{
+        flow.to_coefs_.forEach((id_comp, comp) => {
+          flows_sources.push({
+            v: flow.from_, w: comp
+          })
         })
-      })
+      }
     });
 
     const graph = {
@@ -192,7 +213,7 @@ class EGraph {
       dagre_graph.setNode(nd.GetId(), {label: nd.GetAttr(), width: dagre_config.node_w, height: dagre_config.node_h });
     })
     node_edge_graph.edges.forEach((e) => {
-      dagre_graph.setEdge(e.v.GetId(), e.w.GetId());
+      dagre_graph.setEdge(e.v?.GetId(), e.w?.GetId());
     })
 
     dagre.layout(dagre_graph, { minlen: 0, ranker: "longest-path" });

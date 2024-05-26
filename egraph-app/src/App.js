@@ -167,6 +167,9 @@ function App() {
     [],
   )
 
+  
+
+
   const runModel = async () => {
     for (let i = 0; i < 1; i++) {
       await delay(500);
@@ -311,7 +314,7 @@ function App() {
               <SvgTab svgContent={svgContent} />
             )}
             {activeTab === 'results' && (
-              <ResultsTab />
+              <ResultsTab e_graph={e_graph} />
             )}
           </div>
           {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}

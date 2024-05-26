@@ -25,7 +25,8 @@ export function generateGraphClass() {
     g.AddFlow(generate_uuid_v4(), {from: "Suspectable", to: [
         ["I1nfected2", 0.8], ["Infected1", 0.2]
     ], coef: 0.6});
-    g.AddFlow(generate_uuid_v4(), {from: "I1nfected2", to: [["Rejected", 0.2], ["Dead", 0.8]], coef: 0.5});
+    //[["Rejected", 0.2], ["Dead", 0.8]]
+    g.AddFlow(generate_uuid_v4(), {from: "I1nfected2", to: [], coef: 0.5});
     g.AddFlow(generate_uuid_v4(), {from: "Infected1", to: [["Rejected", 1]], coef: 0.3});
     g.AddFlow(generate_uuid_v4(), {from: "Rejected", to: [["Dead", 1]], coef: 0.01});
 

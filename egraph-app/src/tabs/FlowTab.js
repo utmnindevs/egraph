@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import ReactFlow, { Controls, Background, ReactFlowProvider, useStore } from 'reactflow';
+import ReactFlow, { Controls, Background, ReactFlowProvider, useStore, useNodes } from 'reactflow';
 
 import SideBarEditable from '../sidebars/editable/SideBarEditable';
 import { generate_uuid_v4 } from '../graph/helpers';
@@ -31,11 +31,11 @@ function FlowTab({
 
 
 
-
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
     }, []);
+
 
     const onDrop = useCallback(
         (event) => {
@@ -91,7 +91,15 @@ function FlowTab({
 
     const isViewState = !(viewportState === "view");
 
-
+    const onNodesDelete = useCallback(
+        (deleted) => {
+            deleted.forEach((node) => {
+                if(node.type === "compartmentNode"){
+                    e_graph.DeleteComp(node.data.obj)
+                }
+            })
+        }
+    )
 
     return (
         <>
@@ -103,6 +111,7 @@ function FlowTab({
                 edges={edges}
                 onInit={setReactFlowInstance}
                 onNodesChange={onNodesChange}
+                onNodesDelete={onNodesDelete}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 onNodeClick={onNodeClick}
