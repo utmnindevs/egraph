@@ -1,43 +1,60 @@
-import Header from './header/Header';
+// import libraries methodes
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress } from 'reactflow';
 
+// import styles
 import 'reactflow/dist/style.css';
+import './style/App.css';
 
+
+// import debugers
+import NodeInspector from './debugs/NodeInspector.js';
+
+// import tabs
+import SvgTab from './SvgTab';
+import ResultsTab from './ResultsTab.js';
+import FlowTab from './tabs/FlowTab.js';
+
+// import modals
+import SideBarAdding from './sidebars/left/SideBarAdding.js';
+import SideBarEditable from './sidebars/editable/SideBarEditable';
+import OpenModal from './modal/OpenModal.js';
+import Header from './header/Header';
+import AddingModal from './modal/AddingModal.js';
+
+// import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
-import SvgTab from './SvgTab';
-import Results from './ResultsTab.js';
-import './style/App.css';
-import OpenModal from './modal/OpenModal.js';
-import AddingModal from './modal/AddingModal.js';
-import { svgConverterFunction } from './Svgconverter.js';
-import ResultsTab from './ResultsTab.js';
+// import save methodes
+import { saveFileToLocalStorage } from './handlers/Save.js';
 
-import FlowTab from './tabs/FlowTab.js';
-import SideBarEditable from './sidebars/editable/SideBarEditable';
-import NodeInspector from './debugs/NodeInspector.js';
-
-
-import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
+// import graph methodes
 import { EGraph } from './graph/graph.js';
-import SideBarAdding from './sidebars/left/SideBarAdding.js';
-import Modal from './modal/Modal.js';
+import { svgConverterFunction } from './Svgconverter.js';
+import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 var dagre = require("@xdashduck/dagre-tlayering");
 
 
+
+// initialize
 let e_graph = new EGraph();
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
-
 let initialNodes = [];
 
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 
+
+
 function App() {
 
+  const crtlAndDPressed = useKeyPress(['Shift+f', 'Shift+F']);
+
+  // state for debuger
   const [devView, setDevView] = useState(false);
+  
+  
 
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('flow');
@@ -194,6 +211,8 @@ function App() {
     const json = e_graph.toJson();
     const blob = new Blob([json], { type: "application/json" });
     const href = URL.createObjectURL(blob);
+    saveFileToLocalStorage(fileName + ".json", href)
+
 
     const link = document.createElement("a");
     link.href = href;
@@ -271,7 +290,7 @@ function App() {
 
           viewportState={viewportState} setViewportState={updateViewportState}
         />
-                {devView && <NodeInspector/>}
+                {(devView)&& <NodeInspector/>}
 
             {isAddingModalOpen && <AddingModal
               isOpen={isAddingModalOpen}
