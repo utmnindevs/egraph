@@ -18,16 +18,16 @@ import FlowTab from './tabs/FlowTab.js';
 // import modals
 import SideBarAdding from './sidebars/left/SideBarAdding.js';
 import SideBarEditable from './sidebars/editable/SideBarEditable';
-import OpenModal from './modal/OpenModal.js';
-import Header from './header/Header';
 import AddingModal from './modal/AddingModal.js';
+import { OpenModal, NameAndTemplateModal } from './modal/OpenModal.js';
+import Header from './header/Header';
 
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage } from './handlers/Save.js';
+import { saveFileToLocalStorage, saveFile, onSaveFileAs } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -55,8 +55,11 @@ function App() {
   const [devView, setDevView] = useState(false);
   
   
-
+  // all modals
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isChooseFileNameModalOpen, setFileNameModalOpen] = useState(false);
+
+
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
 
@@ -145,10 +148,22 @@ function App() {
 
 
 
-  const handleCloseModal = () => {
-    InitialStandartNodes();
-    setIsModalOpen(false);
-  };
+  const onCreateClick = useCallback((state) => {
+    setIsModalOpen(state);
+    setFileNameModalOpen(!state);
+  }, [setIsModalOpen, setFileNameModalOpen]);
+
+  /**
+   * Метод для создания нового файла путем вызова всплывающего окна
+   */
+  const createNewFile = useCallback((form_data) => {
+    onSaveFileAs(
+      e_graph.toJson(), 
+      form_data.file_name + form_data.file_format, 
+      () => {setFileNameModalOpen(false); InitialStandartNodes();}
+    );
+  }, [setFileNameModalOpen])
+
 
   const InitialStandartNodes = () => {
     let graphs = generateGraphClass();
@@ -206,24 +221,6 @@ function App() {
     }, []);
   };
 
-  const downloadFile = () => {
-    const fileName = "my-file";
-    const json = e_graph.toJson();
-    const blob = new Blob([json], { type: "application/json" });
-    const href = URL.createObjectURL(blob);
-    saveFileToLocalStorage(fileName + ".json", href)
-
-
-    const link = document.createElement("a");
-    link.href = href;
-    link.download = fileName + ".json";
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(href);
-  }
-
 
   const handleOpenExisting = () => {
     const input = document.createElement('input');
@@ -253,7 +250,7 @@ function App() {
               obj: compartment
             }
           })));
-          handleCloseModal();
+          onCreateClick();
         } catch (error) {
           console.error('Ошибка при чтении файла JSON:', error);
           alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
@@ -278,10 +275,10 @@ function App() {
     <ReactFlowProvider>
       <div className="reactflow-body">
         <Header
+          e_graph={e_graph}
           handleShowModel={setShowModelBtn}
           handleShowImage={setShowImageBtn}
           handleShowResults={setShowResultsBtn}
-          onDownloadFile={downloadFile}
           onRunModel={runModel}
           handleOpenExisting={handleOpenExisting}
           setActiveTab={setActiveTab}
@@ -303,7 +300,9 @@ function App() {
 
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             {/* все модальные окна */}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} onClose={handleCloseModal} handleOpenExisting={handleOpenExisting} />}
+            {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => {onCreateClick(true);}}/>}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => {onCreateClick(false);}} handleOpenExisting={handleOpenExisting} />}
+
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
               {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}

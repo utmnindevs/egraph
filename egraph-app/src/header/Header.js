@@ -2,9 +2,10 @@ import React from 'react';
 import UpperMenu from './UpperMenu';
 import LowerMenu from './LowerMenu';
 
+
 const Header = ({ 
+  e_graph,
   rfInstance, 
-  onDownloadFile, 
   onRunModel, 
   handleOpenExisting, 
   handleShowResults,
@@ -14,13 +15,13 @@ const Header = ({
   setViewportState,
   setActiveTab,
   setDevView,
-  devView  }) => {
+  devView  }) => {    
   
     return (
     <header>
       <UpperMenu
         rfInstance={rfInstance}
-        onDownloadFile={onDownloadFile}
+        e_graph={e_graph}
         onRunModel={onRunModel}
         handleOpenExisting={handleOpenExisting}
         handleShowResults={handleShowResults} 

@@ -1,41 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import './style_header/UpperMenu.css';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
-import DropdownButton from 'react-bootstrap/DropdownButton';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
-const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
+import { onSaveFileAs } from '../handlers/Save';
+
+const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
   const [fileName, setFileName] = useState("Untitled");
-
-
-  const onDownloadJson = useCallback(() => {
-    const saveStateAndDownload = async () => {
-      if (rfInstance) {
-        localStorage.setItem("nodes", JSON.stringify(rfInstance.getNodes()));
-
-        fetch('http://127.0.0.1:8000/api/convertToJson', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: localStorage.getItem("nodes"),
-        }).then(res => res.json()).then(response => {
-          const element = document.createElement("a"); 
-          const textFile = new Blob(["{\"Compartments\": [" + JSON.stringify(response) + "]}"], { type: 'application/json' }); //так плохо делать, но пока костыльно 
-          element.href = URL.createObjectURL(textFile); 
-          element.download = document.getElementById("title_filename").innerHTML + ".json"; 
-          document.body.appendChild(element); 
-          element.click(); 
-        })
-        .catch(error => console.error('Error: ', error));
-      }
-    };
-
-    saveStateAndDownload();
-  }, [rfInstance]);
 
   const handleFileNameChange = (event) => {
     setFileName(event.target.innerText);
@@ -50,7 +22,7 @@ const UpperMenu = ({ rfInstance, onDownloadFile, onRunModel, handleOpenExisting,
   
         <Dropdown.Menu>
           <Dropdown.Item onClick={handleOpenExisting}>Открыть</Dropdown.Item>
-          <Dropdown.Item onClick={onDownloadFile}>Сохранить</Dropdown.Item>
+          <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );

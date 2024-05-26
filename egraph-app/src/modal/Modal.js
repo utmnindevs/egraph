@@ -22,14 +22,14 @@ function Modal({ isOpen, typeModal, content, handleSubmit }) {
     }
     return (
 
-        <div className={`modal ${isOpen ? 'open' : ''}`}>
+        <div className={`modal ${isOpen ? 'open' : ''} ${typeModal}`}>
 
             <div className="content">
                 <div className="header">
                     <IconRender icon_type={typeModal} />
                     <span>{content.header_text}</span>
                 </div>
-                <form >
+                <form className="modal_form">
                     <div className="body">
                         <p>{renderBody()}</p>
                     </div>
