@@ -42,6 +42,9 @@ let e_graph = new EGraph();
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
 let initialNodes = [];
 
+let graph_blob = new Blob([], { type: "application/json"})
+let graph_file = new File([], "untitled.js", { type: "application/json"})
+
 const nodeTypes = { compartmentNode: CompartmentNode };
 
 
@@ -157,10 +160,11 @@ function App() {
    * Метод для создания нового файла путем вызова всплывающего окна
    */
   const createNewFile = useCallback((form_data) => {
+    InitialStandartNodes();
     onSaveFileAs(
       e_graph.toJson(), 
       form_data.file_name + form_data.file_format, 
-      () => {setFileNameModalOpen(false); InitialStandartNodes();}
+      () => {setFileNameModalOpen(false);}
     );
   }, [setFileNameModalOpen])
 

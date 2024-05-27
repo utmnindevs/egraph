@@ -4,7 +4,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
-import { onSaveFileAs } from '../handlers/Save';
+import { onSaveFileAs, onEditCurrentFile } from '../handlers/Save';
+
+var handle_test = null;
+
 
 const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
   const [fileName, setFileName] = useState("Untitled");
@@ -22,6 +25,7 @@ const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handle
   
         <Dropdown.Menu>
           <Dropdown.Item onClick={handleOpenExisting}>Открыть</Dropdown.Item>
+          <Dropdown.Item onClick={() => {onEditCurrentFile("test")}}>Сохранить</Dropdown.Item>
           <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
@@ -120,6 +124,8 @@ const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handle
             <EditMenuDropDown className="hdr-button" name={'Правка'} />
             <AboutMenuDropDown className="hdr-button" name={'Справка'} />
             <StartModelDropDown className="hdr-button" name={'Модель'} />
+            {true && <div style={{fontSize: '10px', color: 'rgba(0,0,0,0.5)'}}> Все изменения сохранены</div>}
+
           </div>
         </div>
       </div>
