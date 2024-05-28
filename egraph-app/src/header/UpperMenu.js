@@ -4,10 +4,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
-import { onSaveFileAs, onEditCurrentFile } from '../handlers/Save';
+import { onSaveFileAs, onEditCurrentFile, openFile } from '../handlers/Save';
 
 
-const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
+const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
   const [fileName, setFileName] = useState("Untitled");
 
   const handleFileNameChange = (event) => {
@@ -22,7 +22,7 @@ const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handle
         </Dropdown.Toggle>
   
         <Dropdown.Menu>
-          <Dropdown.Item onClick={handleOpenExisting}>Открыть</Dropdown.Item>
+          <Dropdown.Item onClick={() => {openFile(onChooseFile)}}>Открыть</Dropdown.Item>
           <Dropdown.Item onClick={() => {onEditCurrentFile(e_graph.toJson())}}>Сохранить</Dropdown.Item>
           <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>

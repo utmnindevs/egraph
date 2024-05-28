@@ -43,12 +43,24 @@ export const saveFile = async (blob, filename) => {
     }
 };
 
-export const openFile = async () => {
-    try {
-        const [handle] = await window.showOpenFilePicker();
-        return handle.getFile();
-    } catch (err) {
-        console.error(err.name, err.message);
+export const openFile = async (mainpulate_blob) => {
+    if(bfsa.supported){
+        const file = await bfsa.fileOpen({
+            extensions: [".json", ".egraph"],
+            description: "JSON/EGraph files",
+            startIn: "documents"
+        }).then(
+            async(handle) => {
+                await set(recentFileTag, handle.handle);
+                if(mainpulate_blob){
+                    const file = await handle.handle?.getFile()
+                    mainpulate_blob(await file.text())
+                };
+                saveFileToLocalStorage(handle.name)
+            }
+        ).catch((reson) => {
+            console.log(reson);
+        })
     }
 };
 

@@ -5,6 +5,7 @@ import { InputWithSelect, Validators } from '../handlers/Input';
 import Modal from './Modal';
 
 import './style_modal/OpenModal.css';
+import { openFile } from '../handlers/Save';
 
 
 export function OpenModal({ isOpen, onCreate, handleOpenExisting }) {
@@ -13,13 +14,13 @@ export function OpenModal({ isOpen, onCreate, handleOpenExisting }) {
       <Modal isOpen={isOpen} typeModal={"device"} content={
         {
           header_text: "Это устройство",
-          body_text: "Изменить место хранения",
+          body_text: "Изменить место хранения <- стиль поправить",
           buttons_funcs_label: [
             ["Создать новую модель", onCreate],
-            ["Открыть существующую модель", handleOpenExisting]
+            ["Открыть существующую", handleOpenExisting]
           ]
         }
-      } />
+      } isFormed={false}/>
     </>
   );
 }

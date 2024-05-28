@@ -27,7 +27,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist, getContentOfLastFile } from './handlers/Save.js';
+import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -39,7 +39,7 @@ const fileExist = await checkIsHandleExist();
 
 
 // initialize
-let e_graph = new EGraph(null, await getContentOfLastFile());
+let e_graph = new EGraph(null, await getContentOfLastFile()); // -> useState mb nice
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
 let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 
@@ -223,47 +223,11 @@ function App() {
     }, []);
   };
 
-
-  const handleOpenExisting = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-
-    input.addEventListener('change', async event => {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith('.json')) {
-        try {
-          const fileContent = await file.text();
-          const jsonData = JSON.parse(fileContent);
-          console.log(jsonData)
-
-          // инициализация конечно есть, но проблема в том, что 
-          // svg не работает при открытии нового, + не добавляется и не конструируется EGraph класс и его сокурсник в виде dagre
-          setGraphCompartments(jsonData.compartments.map((compartment, index) => ({
-            id: compartment.id,
-            type: 'compartmentNode',
-            position: compartment.position || { x: 100 + index * 100, y: 100 + index * 100 },
-            data: {
-              population: compartment.population,
-              name: compartment.name,
-              obj: compartment
-            }
-          })));
-          onCreateClick();
-        } catch (error) {
-          console.error('Ошибка при чтении файла JSON:', error);
-          alert('Ошибка при чтении файла JSON. Пожалуйста, убедитесь, что файл содержит корректные данные.');
-        }
-      } else {
-        alert('Пожалуйста, выберите файл с расширением .json');
-      }
-    });
-
-    input.click();
-  };
+  const chooseExistFile = useCallback((blobText) => {
+    e_graph = new EGraph(null, blobText);
+    setGraphCompartments(getInitialNodes(e_graph));
+    setIsModalOpen(false);
+  }, [setGraphCompartments, setIsModalOpen])
 
   /**
    * @param {string} state - название экрана
@@ -282,7 +246,6 @@ function App() {
           handleShowImage={setShowImageBtn}
           handleShowResults={setShowResultsBtn}
           onRunModel={runModel}
-          handleOpenExisting={handleOpenExisting}
           setActiveTab={setActiveTab}
 
           setDevView={setDevView} devView={devView}
@@ -303,7 +266,7 @@ function App() {
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             {/* все модальные окна */}
             {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => {onCreateClick(true);}}/>}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => {onCreateClick(false);}} handleOpenExisting={handleOpenExisting} />}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => {onCreateClick(false);}} handleOpenExisting={() => {openFile(chooseExistFile)}}/>}
 
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}

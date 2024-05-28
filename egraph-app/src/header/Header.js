@@ -5,9 +5,8 @@ import LowerMenu from './LowerMenu';
 
 const Header = ({ 
   e_graph,
-  rfInstance, 
   onRunModel, 
-  handleOpenExisting, 
+  onChooseFile,
   handleShowResults,
   handleShowImage, 
   handleShowModel, 
@@ -20,10 +19,9 @@ const Header = ({
     return (
     <header>
       <UpperMenu
-        rfInstance={rfInstance}
         e_graph={e_graph}
         onRunModel={onRunModel}
-        handleOpenExisting={handleOpenExisting}
+        onChooseFile={onChooseFile}
         handleShowResults={handleShowResults} 
         handleShowImage={handleShowImage}
         handleShowModel={handleShowModel}
