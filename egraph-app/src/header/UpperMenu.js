@@ -6,8 +6,6 @@ import { Button } from 'react-bootstrap';
 
 import { onSaveFileAs, onEditCurrentFile } from '../handlers/Save';
 
-var handle_test = null;
-
 
 const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
   const [fileName, setFileName] = useState("Untitled");

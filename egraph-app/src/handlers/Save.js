@@ -1,3 +1,4 @@
+import { get, set } from 'idb-keyval';
 const bfsa = require("browser-fs-access")
 
 const recentFileTag = ".current_file"
@@ -7,12 +8,16 @@ export function getRecentFile() {
     return file;
 }
 
-export function saveFileToLocalStorage(file_name, url) {
+export function saveFileToLocalStorage(file_name) {
     const file = getRecentFile();
     // if (!(file?.name === file_name)) {
         
     // }
-    localStorage.setItem(recentFileTag, JSON.stringify({ name: file_name, url: url }));
+    localStorage.setItem(recentFileTag, JSON.stringify({ name: file_name }));
+}
+
+export function saveFileToIndexedDB(file_name, url){
+    const file = getRecentFile();
 }
 
 export function getContentOfRecentFile() {
@@ -57,11 +62,11 @@ export const onSaveFileAs = async (content, filename, after_close) => {
             description: "JSON/EGraph files"
         }).then(
             async (handle) => {
+                await set(recentFileTag, handle);
+
                 if(after_close){after_close()};
-                console.log(JSON.stringify(handle.getFile()))
-                saveFileToLocalStorage(handle.name, URL.createObjectURL(blob)) // Скорее утечка памяти будет
-                const new_blob = new File(["test"], handle.name, {type: "application/json"});
-                await bfsa.saveFile(new_blob, undefined, handle, true);
+                saveFileToLocalStorage(handle.name) // Скорее утечка памяти будет
+                
             }
         ).catch((reson) => {
             console.log(reson);
@@ -70,29 +75,20 @@ export const onSaveFileAs = async (content, filename, after_close) => {
     }
   }
 
-  /*
-    Временное сохранение, получение контента из недавнего файла.  
-  let file = await fetch(current_file.url)
-        .then((res) => res.blob())
-        .then((blob) => new File([blob], current_file.name, {type: "application/json"}))
-
-  */
+export const checkIsHandleExist = async() => {
+    const recentFileOrNull = getRecentFile();
+    const fileHandleOrUndefined = await get(recentFileTag);
+    if(recentFileOrNull && fileHandleOrUndefined){
+        return true;
+    }
+    return false;
+}
 
 export const onEditCurrentFile = async (new_content) => {
-    // раз будет перезапись а не добавление, то справедливости ради, блоб даже не нужен, нам нужен путь куда
-    // перезаписать файл и всё.
     let current_file = getContentOfRecentFile();    
     const new_blob = new File([new_content], current_file.name, {type: "application/json"});
-    let file = await fetch(current_file.url)
-        .then((res) => res.blob())
-        .then((blob) => new Blob([blob], {type: "application/json"}))
-    
-    await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsText()
-    })
-
-
-    // await bfsa.fileSave(file)
-    console.log(file.text().then((val) => console.log(val)))
+    const fileHandleOrUndefined = await get(recentFileTag);
+    if(fileHandleOrUndefined){
+        await bfsa.fileSave(new_blob, {fileName: fileHandleOrUndefined.name}, fileHandleOrUndefined, true);
+    }
 }

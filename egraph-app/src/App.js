@@ -27,7 +27,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage, saveFile, onSaveFileAs } from './handlers/Save.js';
+import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -56,12 +56,25 @@ function App() {
 
   // state for debuger
   const [devView, setDevView] = useState(false);
+
+  // for saving file
   
   
   // all modals
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isChooseFileNameModalOpen, setFileNameModalOpen] = useState(false);
 
+  // const isRecentFileExist = useCallback(() => {
+    // const isExist = checkIsHandleExist();
+    // setIsModalOpen(!isExist);
+// 
+  // }, [setIsModalOpen])
+
+  // const isRecentFileExist = useCallback(() => {
+  //   const isExistPromise = checkIsHandleExist();
+  //   isExistPromise.then((res) => {setIsModalOpen(!res && isModalOpen && !isChooseFileNameModalOpen)});
+  // }, [setIsModalOpen])
+  // isRecentFileExist();
 
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
