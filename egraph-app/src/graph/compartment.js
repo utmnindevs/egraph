@@ -15,6 +15,7 @@ class Compartment extends Coordinates {
 
       this.name_ = comp_config.name;
       this.population_ = comp_config.population;
+      this.is_started_ = false;
     }
     GetPopulation() {
       return this.population_;
@@ -24,6 +25,9 @@ class Compartment extends Coordinates {
     }
     SetPopulationFromDiff(diff_population){
       this.population_ += diff_population;
+    }
+    SetIsStarted(isStarted){
+      this.is_started_ = isStarted;
     }
     GetName() {
       return this.name_;
@@ -44,12 +48,14 @@ class Compartment extends Coordinates {
     // method: ApplyIterationPopulation
 
     toString(){
-      return {
+      let stringData = {
         id: this.id_,
         name: this.name_,
         attr: this.name_.slice(0,1),
-        population: this.population_,
-      };
+        population: this.population_, 
+      } 
+      if(this.is_started_){stringData.is_started = this.is_started_}
+      return stringData;
     }
   }
 

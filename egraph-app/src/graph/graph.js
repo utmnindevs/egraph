@@ -1,6 +1,7 @@
 
 import { Compartment } from "./compartment";
 import { Flow } from "./flow";
+import { generate_uuid_v4 } from "./helpers";
 
 var dagre = require("@xdashduck/dagre-tlayering");
 
@@ -10,10 +11,13 @@ class EGraph {
    * 
    * @param {Compartment} start - стартовый компартмент, если есть.
    */
-  constructor(start = null) {
+  constructor(start = null, jsonData = undefined) {
     this.id_to_flow_ = new Map();
     this.id_to_comp_ = new Map();
     this.start_compartment_ = start != null ? start : null;
+    if(jsonData){
+      this.deserializeJSON(jsonData)
+    }
   }
 
   getStartedCompartment(){
@@ -30,7 +34,7 @@ class EGraph {
   AddFlow(id, flow_config) {
     let temp_flow = new Flow(id, {
       from: this.getCompartmentByName(flow_config.from),
-      to: flow_config.to.map(obj => ([this.getCompartmentByName(obj[0]), obj[1]])),
+      to: flow_config.to.map(obj => ([this.getCompartmentByName(obj.name), obj.coef])),
       coef: flow_config.coef
     })
     if (!this.id_to_flow_.has(id)) {
@@ -146,6 +150,7 @@ class EGraph {
   setStartCompartment(compartment_name) {
     let comp = this.getCompartmentByName(compartment_name);
     this.start_compartment_ = comp;
+    comp.SetIsStarted(true)
   }
 
 
@@ -221,6 +226,26 @@ class EGraph {
     return dagre_graph;
   }
 
+  deserializeJSON(jsonData){
+    const parsedData = JSON.parse(jsonData);
+    if(this.jsonIsValid(jsonData)){
+      parsedData.compartments.forEach((data) => {
+        this.AddComp(data.id, {name: data.name, population: data.population})
+        if(data.is_started){
+          this.setStartCompartment(data.name)
+        }
+      })
+      parsedData.flows.forEach((data) => {
+        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef})
+      })
+    }
+    return this;
+  }
+
+  jsonIsValid(jsonData){
+    const parsedData = JSON.parse(jsonData);
+    return parsedData.compartments && parsedData.flows;
+  }
 
 }
 

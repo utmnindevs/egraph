@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval';
+import { get, set, del } from 'idb-keyval';
 const bfsa = require("browser-fs-access")
 
 const recentFileTag = ".current_file"
@@ -78,8 +78,14 @@ export const onSaveFileAs = async (content, filename, after_close) => {
 export const checkIsHandleExist = async() => {
     const recentFileOrNull = getRecentFile();
     const fileHandleOrUndefined = await get(recentFileTag);
-    if(recentFileOrNull && fileHandleOrUndefined){
-        return true;
+    if(fileHandleOrUndefined){
+        const stateFile = fileHandleOrUndefined.getFile().then((res) => {
+            return true;
+        }).catch( async (err) => {
+            await del(recentFileTag);
+            return false;
+        })
+        return await stateFile;
     }
     return false;
 }
@@ -89,6 +95,30 @@ export const onEditCurrentFile = async (new_content) => {
     const new_blob = new File([new_content], current_file.name, {type: "application/json"});
     const fileHandleOrUndefined = await get(recentFileTag);
     if(fileHandleOrUndefined){
-        await bfsa.fileSave(new_blob, {fileName: fileHandleOrUndefined.name}, fileHandleOrUndefined, true);
+        const tt = await verifyPermission(fileHandleOrUndefined);
+        if(tt){
+            await bfsa.fileSave(new_blob, 
+                {fileName: fileHandleOrUndefined.name}, 
+                fileHandleOrUndefined, true)
+                .catch((err) => {console.log(err)});
+        }
     }
+}
+
+export const verifyPermission = async (fileHandle) => {
+    if((await fileHandle.requestPermission({mode: 'readwrite'})) === 'granted'){
+        return true;
+    }
+    return false;
+}
+
+export const getContentOfLastFile = async() => {
+    if(await checkIsHandleExist()){
+        const fileHandle = await get(recentFileTag);
+        const file = await fileHandle.getFile();
+        const content = await file.text();
+        return content;
+    }
+    
+    return undefined;
 }

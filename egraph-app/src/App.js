@@ -27,7 +27,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist } from './handlers/Save.js';
+import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist, getContentOfLastFile } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -35,18 +35,15 @@ import { svgConverterFunction } from './Svgconverter.js';
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 var dagre = require("@xdashduck/dagre-tlayering");
 
+const fileExist = await checkIsHandleExist();
 
 
 // initialize
-let e_graph = new EGraph();
+let e_graph = new EGraph(null, await getContentOfLastFile());
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
-let initialNodes = [];
-
-let graph_blob = new Blob([], { type: "application/json"})
-let graph_file = new File([], "untitled.js", { type: "application/json"})
+let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 
 const nodeTypes = { compartmentNode: CompartmentNode };
-
 
 
 
@@ -61,20 +58,9 @@ function App() {
   
   
   // all modals
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(!fileExist);
   const [isChooseFileNameModalOpen, setFileNameModalOpen] = useState(false);
 
-  // const isRecentFileExist = useCallback(() => {
-    // const isExist = checkIsHandleExist();
-    // setIsModalOpen(!isExist);
-// 
-  // }, [setIsModalOpen])
-
-  // const isRecentFileExist = useCallback(() => {
-  //   const isExistPromise = checkIsHandleExist();
-  //   isExistPromise.then((res) => {setIsModalOpen(!res && isModalOpen && !isChooseFileNameModalOpen)});
-  // }, [setIsModalOpen])
-  // isRecentFileExist();
 
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
@@ -88,7 +74,6 @@ function App() {
 
   // Для всех модальных окон
   const [isModalOpne, setModalOpen] = useState(false);
-
 
 
   const [nodes, setNodes] = useState(initialNodes);

@@ -68,10 +68,11 @@ class Flow  extends Coordinates{
 
     toString(){
 
-      const to_comps = {};
-      this.to_coefs_.forEach((coef, comp) => {
-        to_comps[comp.name_] = coef;
-      })
+      const to_comps = [];
+      this.to_coefs_.forEach((_coef, comp) => to_comps.push({
+        name: comp.name_,
+        coef: _coef
+      }))
       return {
         id: this.id_,
         from: this.from_.name_,
