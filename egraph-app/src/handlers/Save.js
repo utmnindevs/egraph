@@ -75,17 +75,24 @@ export const onSaveFileAs = async (content, filename, after_close) => {
     }
   }
 
+  // TODO: есть баг при котором обновления почему-то нет..
+  // при этом этот баг появляется если закрыть и открыть снова страницу
 export const checkIsHandleExist = async() => {
     const recentFileOrNull = getRecentFile();
     const fileHandleOrUndefined = await get(recentFileTag);
     if(fileHandleOrUndefined){
+        // Если нет постоянного доступа то он не даст открыть файл, нужно будет
+        // открывать снова
+        if(true){
         const stateFile = fileHandleOrUndefined.getFile().then((res) => {
             return true;
         }).catch( async (err) => {
+            console.log(err)
             await del(recentFileTag);
             return false;
         })
         return await stateFile;
+    }
     }
     return false;
 }

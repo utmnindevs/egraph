@@ -23,7 +23,7 @@ const UpperMenu = ({ rfInstance, e_graph, onRunModel, handleOpenExisting, handle
   
         <Dropdown.Menu>
           <Dropdown.Item onClick={handleOpenExisting}>Открыть</Dropdown.Item>
-          <Dropdown.Item onClick={() => {onEditCurrentFile("test")}}>Сохранить</Dropdown.Item>
+          <Dropdown.Item onClick={() => {onEditCurrentFile(e_graph.toJson())}}>Сохранить</Dropdown.Item>
           <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
