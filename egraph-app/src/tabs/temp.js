@@ -14,11 +14,11 @@ export function generateGraphClass() {
 
     var g = new EGraph();
 
-    g.AddComp(generate_uuid_v4(), { name: "Suspectable", population: 100 })
-        .AddComp(generate_uuid_v4(), {name: "I1nfected2", population: 1})
-        .AddComp(generate_uuid_v4(), {name: "Infected1", population: 1})
-        .AddComp(generate_uuid_v4(), {name: "Rejected", population: 0})
-        .AddComp(generate_uuid_v4(), {name: "Dead", population: 0})
+    g.AddComp(generate_uuid_v4(), { name: "Suspectable", population: 100, x: 100, y: 100})
+        .AddComp(generate_uuid_v4(), {name: "I1nfected2", population: 1, x: 200, y: 200})
+        .AddComp(generate_uuid_v4(), {name: "Infected1", population: 1, x: 300, y: 300})
+        .AddComp(generate_uuid_v4(), {name: "Rejected", population: 0, x: 400, y: 400})
+        .AddComp(generate_uuid_v4(), {name: "Dead", population: 0, x: 500, y: 600})
 
     g.setStartCompartment("Suspectable");
 
@@ -48,7 +48,7 @@ export function getInitialNodes(e_graph) {
         initial_nodes.push(
             {
                 id: key, type: 'compartmentNode',
-                position: { x: coord_index, y: coord_index },
+                position: value.GetPosition(),
                 data: {
                     population: value.GetPopulation(),
                     name: value.GetName(),

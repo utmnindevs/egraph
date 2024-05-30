@@ -10,7 +10,7 @@ class Flow  extends Coordinates{
    * @param {*} flow_config - Параметры потока: {from: comp, to: [[,], [,]], coef: ,interpolar: } 
    */
     constructor(id, flow_config) {
-      super();
+      super(flow_config.x, flow_config.y);
       
       this.id_ = id;
 

@@ -10,7 +10,7 @@ class Compartment extends Coordinates {
      * @param {} comp_config - информация о компартменте: {name: , population: }
      */
     constructor(id, comp_config) {
-      super();
+      super(comp_config.x, comp_config.y);
       this.id_ = id;
 
       this.name_ = comp_config.name;
@@ -52,8 +52,13 @@ class Compartment extends Coordinates {
         id: this.id_,
         name: this.name_,
         attr: this.name_.slice(0,1),
-        population: this.population_, 
+        population: this.population_,
+        position: {
+          x: this.x_,
+          y: this.y_
+        } 
       } 
+      console.log(super.GetPosition())
       if(this.is_started_){stringData.is_started = this.is_started_}
       return stringData;
     }

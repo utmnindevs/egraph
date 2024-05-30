@@ -230,7 +230,8 @@ class EGraph {
     const parsedData = JSON.parse(jsonData);
     if(this.jsonIsValid(jsonData)){
       parsedData.compartments.forEach((data) => {
-        this.AddComp(data.id, {name: data.name, population: data.population})
+        const position = data.position;
+        this.AddComp(data.id, {name: data.name, population: data.population, x: position?.x, y: position?.y})
         if(data.is_started){
           this.setStartCompartment(data.name)
         }

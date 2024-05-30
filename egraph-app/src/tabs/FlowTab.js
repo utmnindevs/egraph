@@ -51,7 +51,7 @@ function FlowTab({
                 y: event.clientY,
             });
 
-            let comp = new Compartment(generate_uuid_v4(), { name: "testing", population: 1 });
+            let comp = new Compartment(generate_uuid_v4(), { name: "testing", population: 1, x: position.x, y: position.y });
             // TODO: Решить баг с тем, что хендлеры ху*во работают
             const newNode = {
                 id: comp.GetId(),

@@ -4,7 +4,7 @@ import React from 'react';
 function ResultsTab({ e_graph }) {
   const edge_node_graph = e_graph.toNodeEdgeGraph();
   return (
-    <div className="results-workspace" style={{ height: '500px', width: '800px' }}>
+    <div className="results-workspace" style={{ }}>
       <p>
         {
           Array.from({length: edge_node_graph.nodes.length}, (_, index) => {
@@ -15,6 +15,8 @@ function ResultsTab({ e_graph }) {
                   id: {edge_node_graph.nodes[index]?.id_} 
                   ,name: {edge_node_graph.nodes[index]?.name_} 
                   ,pop.: {edge_node_graph.nodes[index]?.population_}
+                  ,x: {edge_node_graph.nodes[index]?.x_}
+                  ,y: {edge_node_graph.nodes[index]?.y_}
                   {'}'}
                 </div>
               </>

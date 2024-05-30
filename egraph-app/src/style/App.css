@@ -94,7 +94,6 @@
 
   .providerflow aside {
       width: 50%;
-      max-width: 250px;
       height: 500px;
   }
 }
@@ -128,4 +127,5 @@
   justify-content: center;
   border: 1px solid #ccc;
   background-color: #f0f0f0;
+  width: fit-content;
 }
