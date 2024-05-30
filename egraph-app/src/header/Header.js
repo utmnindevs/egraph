@@ -14,7 +14,8 @@ const Header = ({
   setViewportState,
   setActiveTab,
   setDevView,
-  devView  }) => {    
+  devView,
+  onCreateNew  }) => {    
   
     return (
     <header>
@@ -26,10 +27,11 @@ const Header = ({
         handleShowImage={handleShowImage}
         handleShowModel={handleShowModel}
         setActiveTab = {setActiveTab}
+        onCreateNew={onCreateNew}
       />
       <LowerMenu 
       viewportState={viewportState} setViewportState={setViewportState}
-      setDevView={setDevView} devView={devView}
+      setDevView={setDevView} devView={devView} onRunModel={onRunModel}
       />
     </header>
   );

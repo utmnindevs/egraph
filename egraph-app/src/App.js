@@ -155,6 +155,10 @@ function App() {
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
 
+  const onCreateFromHeader = useCallback((state) => {
+    setFileNameModalOpen(!state);
+  }, [setFileNameModalOpen]);
+
   /**
    * Метод для создания нового файла путем вызова всплывающего окна
    */
@@ -216,10 +220,6 @@ function App() {
     [],
   )
 
-  
-  
-
-
   const runModel = async () => {
     for (let i = 0; i < 1; i++) {
       await delay(500);
@@ -266,7 +266,11 @@ function App() {
 
           setDevView={setDevView} devView={devView}
 
-          viewportState={viewportState} setViewportState={updateViewportState}
+          viewportState={viewportState} 
+          setViewportState={updateViewportState}
+
+          onCreateNew={onCreateFromHeader}
+
         />
                 {(devView)&& <NodeInspector/>}
 

@@ -4,11 +4,11 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
-import { onSaveFileAs, onEditCurrentFile, openFile } from '../handlers/Save';
+import { onSaveFileAs, onEditCurrentFile, openFile, getRecentFile } from '../handlers/Save';
 
 
-const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab  }) => {
-  const [fileName, setFileName] = useState("Untitled");
+const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab,  onCreateNew  }) => {
+  const [fileName, setFileName] = useState(getRecentFile()?.name || "untitled");
 
   const handleFileNameChange = (event) => {
     setFileName(event.target.innerText);
@@ -22,7 +22,10 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         </Dropdown.Toggle>
   
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => {openFile(onChooseFile)}}>Открыть</Dropdown.Item>
+          <Dropdown.Item onClick={() => {onCreateNew(false)}}>Создать...</Dropdown.Item>
+          <Dropdown.Item onClick={() => {openFile(onChooseFile)}}>Открыть из...</Dropdown.Item>
+          <Dropdown.Item onClick={() => {}}>Открыть недавнее</Dropdown.Item>
+          <hr></hr>
           <Dropdown.Item onClick={() => {onEditCurrentFile(e_graph.toJson())}}>Сохранить</Dropdown.Item>
           <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>
