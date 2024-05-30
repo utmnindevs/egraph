@@ -56,7 +56,7 @@ function FlowTab({
             const newNode = {
                 id: comp.GetId(),
                 type,
-                position,
+                position: comp.GetPosition(),
                 data: {
                     population: comp.GetPopulation(),
                     name: comp.GetName(),
@@ -97,8 +97,9 @@ function FlowTab({
                 if(node.type === "compartmentNode"){
                     e_graph.DeleteComp(node.data.obj)
                 }
+                setEditableProps(null)
             })
-        }
+        }, [setEditableProps]
     )
 
     return (

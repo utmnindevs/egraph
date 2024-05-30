@@ -58,7 +58,6 @@ class Compartment extends Coordinates {
           y: this.y_
         } 
       } 
-      console.log(super.GetPosition())
       if(this.is_started_){stringData.is_started = this.is_started_}
       return stringData;
     }

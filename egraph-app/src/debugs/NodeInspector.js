@@ -3,8 +3,6 @@ import { useNodes, EdgeLabelRenderer, useEdges, useKeyPress } from 'reactflow';
 export default function NodeInspector() {
   const nodes = useNodes();
   const edges = useEdges();
-  // const spacePressed = useKeyPress('Space');
-  // console.log(spacePressed)
   return (
     <EdgeLabelRenderer>
       <div className="react-flow__devtools-nodeinspector">

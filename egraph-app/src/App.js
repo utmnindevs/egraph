@@ -1,6 +1,6 @@
 // import libraries methodes
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress, useNodes } from 'reactflow';
 
 // import styles
 import 'reactflow/dist/style.css';
@@ -107,7 +107,8 @@ function App() {
   const setGraphNodesShare = useCallback(() => {
     if(addingNode) {
       const comp = addingNode.data.obj;
-      e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation()});
+      const position = comp.GetPosition();
+      e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y});
       setGraphCompartments((nds) => nds.concat(addingNode));
       setAddingNodeShare(null);
       updateNodesByObjects(e_graph.GetComps());
@@ -185,22 +186,37 @@ function App() {
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
     compartmentsUpdate.forEach(obj => {
-      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName() });
+      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition()});
     });
   }, [compartmentsUpdate]);
 
   const updateNodesByObjects = (compartments) => {
     compartments.forEach(obj => {
-      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName() });
+      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
     });
   };
 
+  const applyNodesChanges2Egraph = useCallback((changes, nds) => {
+    changes.forEach((change) => {
+      if(change?.type === 'position'){
+        const posAbsolute = change.positionAbsolute;
+        if(posAbsolute){
+          nds.filter((node, _) => { return node.id === change.id })[0]?.data?.obj.UpdatePosition(posAbsolute)
+        }
+      }
+    })
+  })
+
   const onNodesChange = useCallback(
     (changes) => setGraphCompartments(
-      (nds) => applyNodeChanges(changes, nds)),
+      (nds) => {
+
+        applyNodesChanges2Egraph(changes, nds);
+        return applyNodeChanges(changes, nds);}),
     [],
   )
 
+  
   
 
 

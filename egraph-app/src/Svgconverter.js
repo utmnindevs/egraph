@@ -46,6 +46,5 @@ export function svgConverterFunction(gd) {
     });
 
     var svg = draw.svg();
-    console.log(svg);
     return svg;
 }

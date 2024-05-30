@@ -9,6 +9,10 @@ class Coordinates {
     GetPosition(){
         return {x: this.x_, y: this.y_}
     }
+    UpdatePosition(position){
+        this.x_ = position?.x || this.x_;
+        this.y_ = position?.y || this.y_;
+    }
 }
 
 
