@@ -109,9 +109,10 @@ function App() {
       const comp = addingNode.data.obj;
       const position = comp.GetPosition();
       e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y});
+      addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
       setGraphCompartments((nds) => nds.concat(addingNode));
-      setAddingNodeShare(null);
       updateNodesByObjects(e_graph.GetComps());
+      setAddingNodeShare(null);
     }
   }, [setGraphCompartments, addingNode])
 
@@ -189,6 +190,7 @@ function App() {
   useEffect(() => {
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
+    console.log("something happened")
     compartmentsUpdate.forEach(obj => {
       updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition()});
     });
@@ -205,7 +207,9 @@ function App() {
       if(change?.type === 'position'){
         const posAbsolute = change.positionAbsolute;
         if(posAbsolute){
-          nds.filter((node, _) => { return node.id === change.id })[0]?.data?.obj.UpdatePosition(posAbsolute)
+          
+          const node = nds.filter((node, _) => { return node.id === change.id })[0]
+          node?.data?.obj.UpdatePosition(posAbsolute)
         }
       }
     })
