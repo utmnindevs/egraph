@@ -27,7 +27,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile } from './handlers/Save.js';
+import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRecentFile } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -113,9 +113,10 @@ function App() {
       const comp = addingNode.data.obj;
       const position = comp.GetPosition();
       e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y});
+      addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
       setGraphCompartments((nds) => nds.concat(addingNode));
-      setAddingNodeShare(null);
       updateNodesByObjects(e_graph.GetComps());
+      setAddingNodeShare(null);
     }
   }, [setGraphCompartments, addingNode])
 
@@ -155,7 +156,7 @@ function App() {
 
 
   const onCreateClick = useCallback((state) => {
-    setIsModalOpen(state);
+    setIsModalOpen(state && (getRecentFile() === null));
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
 
@@ -193,6 +194,7 @@ function App() {
   useEffect(() => {
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
+    console.log("something happened")
     compartmentsUpdate.forEach(obj => {
       updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition()});
     });
@@ -209,7 +211,9 @@ function App() {
       if(change?.type === 'position'){
         const posAbsolute = change.positionAbsolute;
         if(posAbsolute){
-          nds.filter((node, _) => { return node.id === change.id })[0]?.data?.obj.UpdatePosition(posAbsolute)
+          
+          const node = nds.filter((node, _) => { return node.id === change.id })[0]
+          node?.data?.obj.UpdatePosition(posAbsolute)
         }
       }
     })
@@ -274,7 +278,7 @@ function App() {
           viewportState={viewportState} 
           setViewportState={updateViewportState}
 
-          onCreateNew={onCreateFromHeader}
+          onCreateNew={() => {onCreateClick(false)}}
 
         />
                 {(devView)&& <NodeInspector/>}
