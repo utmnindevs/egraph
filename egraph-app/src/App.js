@@ -27,7 +27,7 @@ import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
 // import save methodes
-import { saveFileToLocalStorage, saveFile, onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile } from './handlers/Save.js';
+import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRecentFile } from './handlers/Save.js';
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
@@ -152,7 +152,7 @@ function App() {
 
 
   const onCreateClick = useCallback((state) => {
-    setIsModalOpen(state);
+    setIsModalOpen(state && (getRecentFile() === null));
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
 
@@ -273,7 +273,7 @@ function App() {
           viewportState={viewportState} 
           setViewportState={updateViewportState}
 
-          onCreateNew={onCreateFromHeader}
+          onCreateNew={() => {onCreateClick(false)}}
 
         />
                 {(devView)&& <NodeInspector/>}

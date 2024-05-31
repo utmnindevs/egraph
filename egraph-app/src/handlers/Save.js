@@ -1,19 +1,16 @@
 import { get, set, del } from 'idb-keyval';
 const bfsa = require("browser-fs-access")
 
-const recentFileTag = ".current_file"
+const curretnFileTag = ".current_file"
 
 export function getRecentFile() {
-    const file = JSON.parse(localStorage.getItem(recentFileTag)) || null;
+    const file = JSON.parse(localStorage.getItem(curretnFileTag)) || null;
     return file;
 }
 
 export function saveFileToLocalStorage(file_name) {
     const file = getRecentFile();
-    // if (!(file?.name === file_name)) {
-        
-    // }
-    localStorage.setItem(recentFileTag, JSON.stringify({ name: file_name }));
+    localStorage.setItem(curretnFileTag, JSON.stringify({ name: file_name, storage: "device" }));
 }
 
 export function saveFileToIndexedDB(file_name, url){
@@ -21,7 +18,7 @@ export function saveFileToIndexedDB(file_name, url){
 }
 
 export function getContentOfRecentFile() {
-    return JSON.parse(localStorage.getItem(recentFileTag));
+    return JSON.parse(localStorage.getItem(curretnFileTag));
 }
 
 export const saveFile = async (blob, filename) => {
@@ -51,7 +48,7 @@ export const openFile = async (mainpulate_blob) => {
             startIn: "documents"
         }).then(
             async(handle) => {
-                await set(recentFileTag, handle.handle);
+                await set(curretnFileTag, handle.handle);
                 if(mainpulate_blob){
                     const file = await handle.handle?.getFile()
                     mainpulate_blob(await file.text())
@@ -74,7 +71,7 @@ export const onSaveFileAs = async (content, filename, after_close) => {
             description: "JSON/EGraph files"
         }).then(
             async (handle) => {
-                await set(recentFileTag, handle);
+                await set(curretnFileTag, handle);
 
                 if(after_close){after_close()};
                 saveFileToLocalStorage(handle.name) // Скорее утечка памяти будет
@@ -91,7 +88,7 @@ export const onSaveFileAs = async (content, filename, after_close) => {
   // при этом этот баг появляется если закрыть и открыть снова страницу
 export const checkIsHandleExist = async() => {
     const recentFileOrNull = getRecentFile();
-    const fileHandleOrUndefined = await get(recentFileTag);
+    const fileHandleOrUndefined = await get(curretnFileTag);
     if(fileHandleOrUndefined){
         // Если нет постоянного доступа то он не даст открыть файл, нужно будет
         // открывать снова
@@ -100,7 +97,7 @@ export const checkIsHandleExist = async() => {
             return true;
         }).catch( async (err) => {
             console.log(err)
-            await del(recentFileTag);
+            await del(curretnFileTag);
             return false;
         })
         return await stateFile;
@@ -112,7 +109,7 @@ export const checkIsHandleExist = async() => {
 export const onEditCurrentFile = async (new_content) => {
     let current_file = getContentOfRecentFile();    
     const new_blob = new File([new_content], current_file.name, {type: "application/json"});
-    const fileHandleOrUndefined = await get(recentFileTag);
+    const fileHandleOrUndefined = await get(curretnFileTag);
     if(fileHandleOrUndefined){
         const tt = await verifyPermission(fileHandleOrUndefined);
         if(tt){
@@ -133,7 +130,7 @@ export const verifyPermission = async (fileHandle) => {
 
 export const getContentOfLastFile = async() => {
     if(await checkIsHandleExist()){
-        const fileHandle = await get(recentFileTag);
+        const fileHandle = await get(curretnFileTag);
         const file = await fileHandle.getFile();
         const content = await file.text();
         return content;
