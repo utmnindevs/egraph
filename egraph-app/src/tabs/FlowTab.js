@@ -1,11 +1,13 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import ReactFlow, { Controls, Background, ReactFlowProvider, useStore, useNodes } from 'reactflow';
+import ReactFlow, { Controls, Background, ReactFlowProvider, useStore, useReactFlow, useNodes, useViewport, useOnViewportChange } from 'reactflow';
 
 import SideBarEditable from '../sidebars/editable/SideBarEditable';
 import { generate_uuid_v4 } from '../graph/helpers';
 import { EGraph } from '../graph/graph';
 
 import { Compartment } from '../graph/compartment';
+
+
 /**
  * Генерирует рендер вкладки конструирования модели, содержит методы манипуляции с ними:
  * Создание, редактирование, обновление узлов. 
@@ -25,11 +27,19 @@ function FlowTab({
     setGraphNodes,
     updateNodesByObjects,
     viewportState,
-    setAddingNode }) {
+    setViewportState,
+    setAddingNode,
+    viewportSettings }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+    const {x ,y, zoom } = useViewport();
 
+
+
+    useOnViewportChange({
+        onEnd: (viewport) => setViewportState(viewport),
+      });
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -104,8 +114,6 @@ function FlowTab({
 
     return (
         <>
-
-
             <ReactFlow
                 nodeTypes={nodeTypes}
                 nodes={nodes}
@@ -127,7 +135,7 @@ function FlowTab({
                 nodesConnectable={isViewState}
                 elementsSelectable={isViewState}
                 selectNodesOnDrag={false}
-
+                defaultViewport={viewportSettings}
 
             >
 

@@ -1,6 +1,6 @@
 // import libraries methodes
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress, useNodes } from 'reactflow';
+import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes } from 'reactflow';
 
 // import styles
 import 'reactflow/dist/style.css';
@@ -45,11 +45,15 @@ let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 
 const nodeTypes = { compartmentNode: CompartmentNode };
 
+let viewportSettings_ = { x: 0, y: 0, zoom: 1}; // базовая настройка вьюпорта, временная
 
 
 function App() {
 
   const crtlAndDPressed = useKeyPress(['Shift+f', 'Shift+F']);
+
+  const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
+
 
   // state for debuger
   const [devView, setDevView] = useState(false);
@@ -249,6 +253,7 @@ function App() {
    * @param {string} state - название экрана
    */
   const setActiveTabWithReset = useCallback((state) => {
+
     setEditableProps(null);
     setActiveTab(state);
   }, [setActiveTab, setEditableProps])
@@ -308,8 +313,12 @@ function App() {
                 setAddingNode={setAddingNodeShare}
 
                 updateNodesByObjects={updateNodesByObjects}
+                viewportState={viewportState}
 
-                viewportState={viewportState} />
+                setViewportState={setViewportSettings} 
+                viewportSettings={viewportSettings}
+                
+                />
 
                 
             )}
