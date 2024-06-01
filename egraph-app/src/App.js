@@ -302,6 +302,7 @@ function App() {
               {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
               {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
             </div>
+            
 
             {activeTab === 'flow' && (
               <FlowTab

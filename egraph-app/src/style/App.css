@@ -105,21 +105,25 @@
 
 .tab-buttons button {
   margin-right: 5px;
+  font-size: .675rem;
   padding: 8px 20px;
   font-size: 13px;
   cursor: pointer;
-  background-color: #f0f0f0; 
+  background-color: #CCE3FF;
   text-align: left;
-  border: 1px solid #ccc; 
+  border: 1px solid rgb(0,0,0, 0.1);
+  border-radius: .5rem .5rem 0 0;
   outline: none; 
+  font-family: FiraSans;
 }
 .tab-buttons button:focus {
   outline: none; 
 }
 .tab-buttons .active {
-  background-color: #63A9FF; 
-  border-color: #87CEEB; 
-}
+  background-color: white; 
+  border-color: #87CEEB;
+  border-bottom: white;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px -1.95px 2.6px;}
 
 .result-workspace {
   display: flex;
