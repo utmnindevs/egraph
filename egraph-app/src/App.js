@@ -26,6 +26,8 @@ import Header from './header/Header';
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
 
+import FlowNode from './nodes/flow/FlowNode.js';
+
 // import save methodes
 import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRecentFile } from './handlers/Save.js';
 
@@ -43,28 +45,22 @@ let e_graph = new EGraph(null, await getContentOfLastFile()); // -> useState mb 
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
 let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 
-const nodeTypes = { compartmentNode: CompartmentNode };
+const nodeTypes = { compartmentNode: CompartmentNode, flowNode: FlowNode };
 
-let viewportSettings_ = { x: 0, y: 0, zoom: 1}; // базовая настройка вьюпорта, временная
+let viewportSettings_ = { x: 0, y: 0, zoom: 1 }; // базовая настройка вьюпорта, временная
 
 
 function App() {
 
-  const crtlAndDPressed = useKeyPress(['Shift+f', 'Shift+F']);
-
+  const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
-
 
   // state for debuger
   const [devView, setDevView] = useState(false);
 
-  // for saving file
-  
-  
   // all modals
   const [isModalOpen, setIsModalOpen] = useState(!fileExist);
   const [isChooseFileNameModalOpen, setFileNameModalOpen] = useState(false);
-
 
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
@@ -74,16 +70,14 @@ function App() {
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
 
-  const reactFlowWrapper = useRef(null);
-
   // Для всех модальных окон
   const [isModalOpne, setModalOpen] = useState(false);
 
 
   const [nodes, setNodes] = useState(initialNodes);
 
-  const [compartmentsObjects, setGraphCompartments, onGraphCompartmentChange] = useState(initialNodes);
-  const [compartmentsUpdate, setCompartmentsUpdate] = useState([]);
+  const [graphObjects, setGraphObjects, onGraphObjectChange] = useState(initialNodes);
+  const [objectsUpdate, setObjectsUpdate] = useState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
 
@@ -99,26 +93,27 @@ function App() {
    */
   const [isAddingModalOpen, setAddingModalOpen] = useState(false);
   const [addingNode, setAddingNode] = useState(null);
-  
+
   // Расшаренная установка создаваемого узла с установлением выключения/включения модального окна для редактирования
   const setAddingNodeShare = useCallback((node) => {
-    if(node){ setAddingModalOpen(true); }
-    else{ setAddingModalOpen(false); }
+    if (node) { setAddingModalOpen(true); }
+    else { setAddingModalOpen(false); }
     setAddingNode(node);
   }, [setAddingNode, setAddingModalOpen])
 
+
   // Расшаренная установка обновления и добавления нового узла если такой был создан
   const setGraphNodesShare = useCallback(() => {
-    if(addingNode) {
+    if (addingNode) {
       const comp = addingNode.data.obj;
       const position = comp.GetPosition();
-      e_graph.AddComp(comp.GetId(), {name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y});
+      e_graph.AddComp(comp.GetId(), { name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y });
       addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
-      setGraphCompartments((nds) => nds.concat(addingNode));
+      setGraphObjects((nds) => nds.concat(addingNode));
       updateNodesByObjects(e_graph.GetComps());
       setAddingNodeShare(null);
     }
-  }, [setGraphCompartments, addingNode])
+  }, [setGraphObjects, addingNode])
 
   // Метод вызываемый при отмене создания нового узла
   const onCloseAddingModal = useCallback(() => {
@@ -160,6 +155,8 @@ function App() {
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
 
+
+
   const onCreateFromHeader = useCallback((state) => {
     setFileNameModalOpen(!state);
   }, [setFileNameModalOpen]);
@@ -170,9 +167,9 @@ function App() {
   const createNewFile = useCallback((form_data) => {
     InitialStandartNodes();
     onSaveFileAs(
-      e_graph.toJson(), 
-      form_data.file_name + form_data.file_format, 
-      () => {setFileNameModalOpen(false);}
+      e_graph.toJson(),
+      form_data.file_name + form_data.file_format,
+      () => { setFileNameModalOpen(false); }
     );
   }, [setFileNameModalOpen])
 
@@ -183,7 +180,7 @@ function App() {
     dagre_graph = graphs[1];
     const svg = svgConverterFunction(dagre_graph);
     setSvgContent(svg);
-    setGraphCompartments(getInitialNodes(e_graph));
+    setGraphObjects(getInitialNodes(e_graph));
   };
 
   const delay = ms => new Promise(
@@ -191,27 +188,41 @@ function App() {
   );
 
 
-  useEffect(() => {
-    const svg = svgConverterFunction(dagre_graph);
-    setSvgContent(svg);
-    console.log("something happened")
-    compartmentsUpdate.forEach(obj => {
-      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition()});
-    });
-  }, [compartmentsUpdate]);
+  // useEffect(() => {
+  //   objectsUpdate.forEach(obj => {
+  //     updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
+  //   });
+  // }, [objectsUpdate]);
 
-  const updateNodesByObjects = (compartments) => {
-    compartments.forEach(obj => {
-      updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
+  const updateNodesByObjects = (objects) => {
+    objects.forEach(obj => {
+      // updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
+      updateObject(obj);
     });
+  };
+  
+  const updateObject = (graphObject) => {
+    setGraphObjects(graphObjects => {
+      return graphObjects.map(obj => {
+        if (obj.id === graphObject.GetId()) {
+          const objType = obj.type;
+          if(objType === 'compartmentNode' ){
+            obj.data = { ...obj.data, population: graphObject.GetPopulation(), name: graphObject.GetName(), position: graphObject.GetPosition() };
+            return obj;
+          } else {
+            obj.data = { ...obj.data} // something for flow
+          }          
+        }
+      });
+    }, []);
   };
 
   const applyNodesChanges2Egraph = useCallback((changes, nds) => {
     changes.forEach((change) => {
-      if(change?.type === 'position'){
+      if (change?.type === 'position') {
         const posAbsolute = change.positionAbsolute;
-        if(posAbsolute){
-          
+        if (posAbsolute) {
+
           const node = nds.filter((node, _) => { return node.id === change.id })[0]
           node?.data?.obj.UpdatePosition(posAbsolute)
         }
@@ -220,11 +231,12 @@ function App() {
   })
 
   const onNodesChange = useCallback(
-    (changes) => setGraphCompartments(
+    (changes) => setGraphObjects(
       (nds) => {
 
         applyNodesChanges2Egraph(changes, nds);
-        return applyNodeChanges(changes, nds);}),
+        return applyNodeChanges(changes, nds);
+      }),
     [],
   )
 
@@ -236,28 +248,17 @@ function App() {
     }
   }
 
-  const updateObject = (objectId, newValues) => {
-    setGraphCompartments(graphObjects => {
-      return graphObjects.map(obj => {
-        if (obj.id === objectId) {
-          obj.data = { ...obj.data, population: newValues.pop, name: newValues.name };
-        }
-        return obj;
-      });
-    }, []);
-  };
 
   const chooseExistFile = useCallback((blobText) => {
     e_graph = new EGraph(null, blobText);
-    setGraphCompartments(getInitialNodes(e_graph));
+    setGraphObjects(getInitialNodes(e_graph));
     setIsModalOpen(false);
-  }, [setGraphCompartments, setIsModalOpen])
+  }, [setGraphObjects, setIsModalOpen])
 
   /**
    * @param {string} state - название экрана
    */
   const setActiveTabWithReset = useCallback((state) => {
-
     setEditableProps(null);
     setActiveTab(state);
   }, [setActiveTab, setEditableProps])
@@ -272,75 +273,48 @@ function App() {
           handleShowResults={setShowResultsBtn}
           onRunModel={runModel}
           setActiveTab={setActiveTab}
-
           setDevView={setDevView} devView={devView}
-
-          viewportState={viewportState} 
+          viewportState={viewportState}
           setViewportState={updateViewportState}
-
-          onCreateNew={() => {onCreateClick(false)}}
-
+          onCreateNew={() => { onCreateClick(false) }}
         />
-                {(devView)&& <NodeInspector/>}
-
-            {isAddingModalOpen && <AddingModal
-              isOpen={isAddingModalOpen}
-              addingNode={addingNode}
-              createGraphNode={setGraphNodesShare}
-              closeModal={onCloseAddingModal}/>}
+        {(devView) && <NodeInspector />}
+        {isAddingModalOpen && <AddingModal isOpen={isAddingModalOpen} addingNode={addingNode} createGraphNode={setGraphNodesShare} closeModal={onCloseAddingModal} />}
 
         <div className='reactflow_plane'>
           {adding_props && <SideBarAdding />}
-
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-            {/* все модальные окна */}
-            {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => {onCreateClick(true);}}/>}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => {onCreateClick(false);}} handleOpenExisting={() => {openFile(chooseExistFile)}}/>}
+            {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => { onCreateClick(true); }} />}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
 
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
               {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
               {showResultsBtn && <button className={activeTab === 'results' ? 'active' : ''} onClick={() => setActiveTabWithReset('results')}>Результаты</button>}
             </div>
-            
 
             {activeTab === 'flow' && (
               <FlowTab
                 e_graph={e_graph}
                 nodeTypes={nodeTypes}
-                nodes={compartmentsObjects}
+                nodes={graphObjects}
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 setEditableProps={updateEditableProps}
-
                 setAddingNode={setAddingNodeShare}
-
                 updateNodesByObjects={updateNodesByObjects}
                 viewportState={viewportState}
-
-                setViewportState={setViewportSettings} 
+                setViewportState={setViewportSettings}
                 viewportSettings={viewportSettings}
-                
-                />
-
-                
-            )}
+              />)}
             {activeTab === 'image' && (
-              <SvgTab svgContent={svgContent} />
-            )}
+              <SvgTab svgContent={svgContent} />)}
             {activeTab === 'results' && (
-              <ResultsTab e_graph={e_graph} />
-            )}
+              <ResultsTab e_graph={e_graph} />)}
           </div>
-          {/* Где-то вызывается много раз side bar из-за чего возможно и не появляются новые данные */}
-          {editableProps && <SideBarEditable {...editableProps}
-            setStateMenu={updateEditableProps}
-            e_graph={e_graph}
-            updateGraphNodes={updateNodesByObjects}
-            setGraphNodes={setGraphCompartments} />}
-
+          {editableProps && <SideBarEditable {...editableProps} setStateMenu={updateEditableProps} e_graph={e_graph} updateGraphNodes={updateNodesByObjects} setGraphNodes={setGraphObjects} />}
         </div>
       </div>
     </ReactFlowProvider>

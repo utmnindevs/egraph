@@ -33,3 +33,5 @@ function FlowNode({ data }) {
         </div>
     );
 }
+
+export default memo(FlowNode);
