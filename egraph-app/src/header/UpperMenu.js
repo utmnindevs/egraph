@@ -7,7 +7,7 @@ import { Button } from 'react-bootstrap';
 import { onSaveFileAs, onEditCurrentFile, openFile, getRecentFile } from '../handlers/Save';
 
 
-const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab,  onCreateNew  }) => {
+const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab, setActiveTabWithReset, onCreateNew  }) => {
   const [fileName, setFileName] = useState(getRecentFile()?.name || "untitled");
 
   const handleFileNameChange = (event) => {
@@ -91,8 +91,8 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item onClick={() => { onRunModel() }}>Запустить </Dropdown.Item>
-          <Dropdown.Item onClick ={() => {handleShowImageClick(); handleShowModelClick(); }}>Получить изображение</Dropdown.Item>
-          <Dropdown.Item onClick ={() => {handleShowResultsClick(); handleShowModelClick();}}>Получить результаты</Dropdown.Item>
+          <Dropdown.Item onClick ={() => {setActiveTabWithReset(); handleShowImageClick(); handleShowModelClick(); }}>Получить изображение</Dropdown.Item>
+          <Dropdown.Item onClick ={() => {setActiveTabWithReset(); handleShowResultsClick(); handleShowModelClick();}}>Получить результаты</Dropdown.Item>
           
 
         </Dropdown.Menu>

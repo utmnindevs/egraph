@@ -15,6 +15,7 @@ const Header = ({
   setActiveTab,
   setDevView,
   devView,
+  setActiveTabWithReset,
   onCreateNew  }) => {    
   
     return (
@@ -28,6 +29,7 @@ const Header = ({
         handleShowModel={handleShowModel}
         setActiveTab = {setActiveTab}
         onCreateNew={onCreateNew}
+        setActiveTabWithReset={setActiveTabWithReset}  // добавлено
       />
       <LowerMenu 
       viewportState={viewportState} setViewportState={setViewportState}

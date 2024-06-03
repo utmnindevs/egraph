@@ -272,7 +272,7 @@ function App() {
           handleShowResults={setShowResultsBtn}
           onRunModel={runModel}
           setActiveTab={setActiveTab}
-
+          setActiveTabWithReset={setActiveTabWithReset}  // добавлено
           setDevView={setDevView} devView={devView}
 
           viewportState={viewportState} 
