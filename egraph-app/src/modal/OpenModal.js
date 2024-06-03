@@ -7,8 +7,7 @@ import Modal from './Modal';
 import './style_modal/OpenModal.css';
 import { openFile } from '../handlers/Save';
 
-
-export function OpenModal({ isOpen, onCreate, handleOpenExisting }) {
+export function OpenModal({ isOpen, onCreate, handleOpenExisting, handleCancel }) {
   return (
     <>
       <Modal isOpen={isOpen} typeModal={"device"} content={
@@ -20,16 +19,22 @@ export function OpenModal({ isOpen, onCreate, handleOpenExisting }) {
             ["Открыть существующую", handleOpenExisting]
           ]
         }
-      } isFormed={false}/>
+      } isFormed={false} onCancel={handleCancel}/>
     </>
   );
 }
+
+
 
 export function NameAndTemplateModal({ isOpen, onCancel, onCreate }) {
   const { register, handleSubmit, setError, formState: { errors } } = useForm({ mode: 'onSubmit' });
   const onSubmit = useCallback((form_data) => {
     onCreate(form_data);
   });
+
+  const handleCancel = () => {
+    onCancel();
+  };
 
   const render_body_form = () => {
     return (<>
@@ -56,7 +61,7 @@ export function NameAndTemplateModal({ isOpen, onCancel, onCreate }) {
           body_text: render_body_form(),
           buttons_funcs_label: [
             ["Создать", handleSubmit(onSubmit)],
-            ["Отмена", onCancel]
+            ["Отмена", handleCancel]
           ]
         }}/>
     </>

@@ -72,6 +72,7 @@ function App() {
 
   // Для всех модальных окон
   const [isModalOpne, setModalOpen] = useState(false);
+const [isModelOpened, setIsModelOpened] = useState(false);
 
 
   const [nodes, setNodes] = useState(initialNodes);
@@ -146,10 +147,13 @@ function App() {
     }
   }, [setViewportState, setEditableProps])
 
-  const onCreateClick = useCallback((state) => {
-    setIsModalOpen(state && (getRecentFile() === null));
-    setFileNameModalOpen(!state);
-  }, [setIsModalOpen, setFileNameModalOpen]);
+
+
+const onCreateClick = useCallback((state) => {
+  setIsModalOpen(state && !fileExist); // Открывать модальное окно только если файл не существует
+  setFileNameModalOpen(!state);
+}, [setIsModalOpen, setFileNameModalOpen, fileExist]);
+
 
   /**
    * Метод для создания нового файла путем вызова всплывающего окна
