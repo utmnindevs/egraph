@@ -70,10 +70,6 @@ function App() {
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
 
-  // Для всех модальных окон
-  const [isModalOpne, setModalOpen] = useState(false);
-const [isModelOpened, setIsModelOpened] = useState(false);
-
 
   const [nodes, setNodes] = useState(initialNodes);
 
