@@ -35,7 +35,9 @@ class EGraph {
     let temp_flow = new Flow(id, {
       from: this.getCompartmentByName(flow_config.from),
       to: flow_config.to.map(obj => ([this.getCompartmentByName(obj.name), obj.coef])),
-      coef: flow_config.coef
+      coef: flow_config.coef,
+      x: flow_config.x,
+      y: flow_config.y
     })
     if (!this.id_to_flow_.has(id)) {
       this.id_to_flow_.set(id, temp_flow);
@@ -141,9 +143,12 @@ class EGraph {
     }
     
   }
-
+  getFlowById(flow_id){
+    let flow = [...this.id_to_flow_.entries()].filter(([k, v]) => { return k === flow_id;}).map(([k, v]) => v);
+    return flow[0];
+  }
   getCompartmentById(compartment_id) {
-    let compartment = [...this.id_to_comp_.entries()].filter(({ k, v }) => k === compartment_id)
+    let compartment = [...this.id_to_comp_.entries()].filter(([ k, v ]) => k === compartment_id)
       .map(([k, v]) => v);
     return compartment[0];
   }
@@ -237,7 +242,8 @@ class EGraph {
         }
       })
       parsedData.flows.forEach((data) => {
-        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef})
+        const position = data.position;
+        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, x: position?.x, y: position?.y})
       })
     }
     return this;

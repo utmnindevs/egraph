@@ -14,7 +14,7 @@ function FlowNode({ data }) {
         <div className='flow-node container'>
             <div className='row flow-node-header'>
                 <div className='col-sm-8'>
-                    <label htmlFor='text'> ПОТОК </label>
+                    <label htmlFor='text'> FLOW | prob: A({data.obj?.coef_}) </label>
                 </div>
             </div>
 
@@ -23,7 +23,6 @@ function FlowNode({ data }) {
                     при создании новых, нужно чтобы пользователь задавал следующее распределение.
                 */}
                 <div className='info col'>
-                    <label> Coef: </label>
                 </div>
                 {/* <div className='induced col'>
                     <button className='induced-button'> Check </button>

@@ -47,7 +47,7 @@ let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 
 const nodeTypes = { compartmentNode: CompartmentNode, flowNode: FlowNode };
 
-let viewportSettings_ = { x: 0, y: 0, zoom: 1 }; // базовая настройка вьюпорта, временная
+let viewportSettings_ = undefined; // базовая настройка вьюпорта, временная
 
 
 function App() {
@@ -135,8 +135,6 @@ function App() {
 
   const [adding_props, setAddingProps] = useState(null);
 
-
-
   const updateViewportState = useCallback((new_state) => {
     setViewportState(new_state);
     if (new_state === "view") {
@@ -148,18 +146,10 @@ function App() {
     }
   }, [setViewportState, setEditableProps])
 
-
-
   const onCreateClick = useCallback((state) => {
     setIsModalOpen(state && (getRecentFile() === null));
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
-
-
-
-  const onCreateFromHeader = useCallback((state) => {
-    setFileNameModalOpen(!state);
-  }, [setFileNameModalOpen]);
 
   /**
    * Метод для создания нового файла путем вызова всплывающего окна
@@ -188,18 +178,15 @@ function App() {
   );
 
 
-  // useEffect(() => {
-  //   objectsUpdate.forEach(obj => {
-  //     updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
-  //   });
-  // }, [objectsUpdate]);
-
   const updateNodesByObjects = (objects) => {
     objects.forEach(obj => {
-      // updateObject(obj.GetId(), { pop: obj.GetPopulation(), name: obj.GetName(), position: obj.GetPosition() });
       updateObject(obj);
     });
   };
+
+  useEffect(() => {
+    objectsUpdate.forEach(obj => updateObject(obj));
+  }, [objectsUpdate])
   
   const updateObject = (graphObject) => {
     setGraphObjects(graphObjects => {
@@ -207,13 +194,14 @@ function App() {
         if (obj?.id === graphObject?.GetId()) {
           const objType = obj.type;
           if(objType === 'compartmentNode' ){
-            obj.data = { ...obj.data, population: graphObject.GetPopulation(), name: graphObject.GetName(), position: graphObject.GetPosition() };
+            obj.data = { ...obj.data, population: graphObject.GetPopulation(), name: graphObject.GetName(), position: graphObject.GetPosition() };            
             return obj;
           } else {
             obj.data = { ...obj.data} // something for flow
             return obj;
           }          
         }
+        return obj;
       });
     }, []);
   };
@@ -223,7 +211,6 @@ function App() {
       if (change?.type === 'position') {
         const posAbsolute = change.positionAbsolute;
         if (posAbsolute) {
-
           const node = nds.filter((node, _) => { return node.id === change.id })[0]
           node?.data?.obj.UpdatePosition(posAbsolute)
         }
@@ -234,7 +221,6 @@ function App() {
   const onNodesChange = useCallback(
     (changes) => setGraphObjects(
       (nds) => {
-
         applyNodesChanges2Egraph(changes, nds);
         return applyNodeChanges(changes, nds);
       }),
@@ -309,6 +295,7 @@ function App() {
                 viewportState={viewportState}
                 setViewportState={setViewportSettings}
                 viewportSettings={viewportSettings}
+                setViewportSettings={setViewportSettings}
               />)}
             {activeTab === 'image' && (
               <SvgTab svgContent={svgContent} />)}

@@ -10,7 +10,7 @@ export const Validators = {
     },
     number: {
         pattern: {
-            value: /^[0-9]*$/gm,
+            value: /^[0-9]+$/gm,
             message: "Только положительные"
         }
     },
@@ -18,6 +18,12 @@ export const Validators = {
         pattern: {
             value: /^[^<>?*:/\\"|]+$/gm,
             message: "Имя файла не может содержать: <>?*:/\\\"|"
+        }
+    },
+    float_number: {
+        pattern: {
+            value: /^[0-9]+[.,]?[0-9]+$/gm,
+            message: "Число с плавающей запятой"
         }
     }
 }
