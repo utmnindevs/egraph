@@ -34,6 +34,9 @@ class Flow  extends Coordinates{
         delete this.interpolar_;
       }
     }
+    UpdateCoef(coef){
+      this.coef_ = coef;
+    }
     UpdateToComaprtmentCoef(to, coef) {
       if (this.to_coefs_.has(to)) {
         this.to_coefs_.set(to, coef);
@@ -67,7 +70,6 @@ class Flow  extends Coordinates{
     }
 
     toString(){
-
       const to_comps = [];
       this.to_coefs_.forEach((_coef, comp) => to_comps.push({
         name: comp.name_,
@@ -78,6 +80,10 @@ class Flow  extends Coordinates{
         from: this.from_.name_,
         to: to_comps,
         coef: this.coef_,
+        position: {
+          x: this.x_,
+          y: this.y_,
+        }
       };
     }
   }

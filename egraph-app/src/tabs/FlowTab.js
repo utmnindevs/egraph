@@ -29,12 +29,15 @@ function FlowTab({
     viewportState,
     setViewportState,
     setAddingNode,
-    viewportSettings }) {
+    viewportSettings,
+    setViewportSettings }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
     const {x ,y, zoom } = useViewport();
-
+    const {fitView} = useReactFlow();
+    
+    
 
 
     useOnViewportChange({
@@ -85,12 +88,10 @@ function FlowTab({
 
     const onNodeClick = useCallback(
         (event, node) => {
-            if (node.type === 'compartmentNode') {
-                event.preventDefault();
-                setEditableProps({
-                    node: node
-                })
-            }
+            event.preventDefault();
+            setEditableProps({
+                node: node
+            })
         },
         [setEditableProps]
     )
@@ -127,7 +128,7 @@ function FlowTab({
                 onPaneClick={onPaneCLick}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-
+                fitView={viewportSettings ? false : true}
 
                 deleteKeyCode={"Delete"}
 

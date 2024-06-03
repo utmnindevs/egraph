@@ -29,13 +29,13 @@ function SideBarAdding() {
                 </div>
 
                 <div class="flow ">
-                <div class='compartment-node container'>
-                        <div class="row compartment-node-header ">
+                <div class='flow-node container'>
+                        <div class="row flow-node-header ">
                             <div class="col-sm-8">
                                 <label htmlFor="text"> Поток </label>
                             </div>
                         </div>
-                        <div className='compartment-node-body row '></div>
+                        <div className='flow-node-body row '></div>
                     </div>
                 </div>
 

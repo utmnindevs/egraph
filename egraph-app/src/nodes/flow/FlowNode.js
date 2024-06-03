@@ -2,6 +2,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { Background, Handle, Position, useUpdateNodeInternals, useStore, NodeProps } from 'reactflow';
 import React, { memo, useEffect } from 'react';
 
+import './style/FlowNodeStyle.css'
+
 /**
  * Узел представляющий поток
  * @param {React.FC<NodeProps>} param0 
@@ -12,7 +14,7 @@ function FlowNode({ data }) {
         <div className='flow-node container'>
             <div className='row flow-node-header'>
                 <div className='col-sm-8'>
-                    <label htmlFor='text'> ПОТОК </label>
+                    <label htmlFor='text'> FLOW | prob: A({data.obj?.coef_}) </label>
                 </div>
             </div>
 
@@ -20,12 +22,11 @@ function FlowNode({ data }) {
                 {/* Выходные хендлеры должны показывать коэффициент перехода, в точности
                     при создании новых, нужно чтобы пользователь задавал следующее распределение.
                 */}
-                <div className='info'>
-                    <label> Коэффициент перехода </label>
+                <div className='info col'>
                 </div>
-                <div className='induced'>
-                    <button> Check </button>
-                </div>
+                {/* <div className='induced col'>
+                    <button className='induced-button'> Check </button>
+                </div> */}
                 {/* При создании индуцированности должен создаваться новый хендл
                     снизу.
                 */}
@@ -33,3 +34,5 @@ function FlowNode({ data }) {
         </div>
     );
 }
+
+export default memo(FlowNode);
