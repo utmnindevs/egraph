@@ -70,7 +70,6 @@ function App() {
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
 
-
   const [nodes, setNodes] = useState(initialNodes);
 
   const [graphObjects, setGraphObjects, onGraphObjectChange] = useState(initialNodes);
@@ -260,7 +259,7 @@ const onCreateClick = useCallback((state) => {
           handleShowResults={setShowResultsBtn}
           onRunModel={runModel}
           setActiveTab={setActiveTab}
-          setActiveTabWithReset={setActiveTabWithReset}  // добавлено
+          setActiveTabWithReset={setActiveTabWithReset}  
           setDevView={setDevView} devView={devView}
           viewportState={viewportState}
           setViewportState={updateViewportState}
