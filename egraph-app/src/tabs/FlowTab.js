@@ -36,9 +36,6 @@ function FlowTab({
 
     const {x ,y, zoom } = useViewport();
     const {fitView} = useReactFlow();
-    
-    
-
 
     useOnViewportChange({
         onEnd: (viewport) => setViewportState(viewport),
@@ -128,7 +125,6 @@ function FlowTab({
                 onPaneClick={onPaneCLick}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-                fitView={viewportSettings ? false : true}
 
                 deleteKeyCode={"Delete"}
 
