@@ -204,13 +204,14 @@ function App() {
   const updateObject = (graphObject) => {
     setGraphObjects(graphObjects => {
       return graphObjects.map(obj => {
-        if (obj.id === graphObject.GetId()) {
+        if (obj?.id === graphObject?.GetId()) {
           const objType = obj.type;
           if(objType === 'compartmentNode' ){
             obj.data = { ...obj.data, population: graphObject.GetPopulation(), name: graphObject.GetName(), position: graphObject.GetPosition() };
             return obj;
           } else {
             obj.data = { ...obj.data} // something for flow
+            return obj;
           }          
         }
       });

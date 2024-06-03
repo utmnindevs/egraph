@@ -44,7 +44,6 @@ export function getInitialNodes(e_graph) {
     var initial_nodes = [];
     let coord_index = 0;
     e_graph.GetComps().forEach((value, key) => {
-        coord_index += 100;
         initial_nodes.push(
             {
                 id: key, type: 'compartmentNode',
@@ -59,6 +58,18 @@ export function getInitialNodes(e_graph) {
             }
         )
     });
+    e_graph.GetFlows().forEach((value, key) => {
+        coord_index += 100;
+        initial_nodes.push(
+            {
+                id: key, type: 'flowNode',
+                position: value.GetPosition(),
+                data: {
+                    obj: value,
+                }
+            }
+        )
+    })
     return initial_nodes;
 
 }

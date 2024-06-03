@@ -1,12 +1,12 @@
-.compartment-node {
+.flow-node {
     min-width: 200px;
     width: fit-content;
     height: fit-content;
     border-radius: 5px;
 }
 
-.compartment-node-header {
-    background: #63A9FF;
+.flow-node-header {
+    background: #bddbff;
     border-radius: 5px 5px 0 0;
     height: fit-content;
     display: flex;
@@ -14,40 +14,41 @@
     align-items: center;
 }
 
-.compartment-node-header label {
+.flow-node-header label {
     font-size: 12px;
     font-family: FiraSans;
     font-weight: 600;
     padding: 0 0 5px 0;
 }
 
-.start-compartment-check {
+.start-flow-check {
     display: grid;
     justify-content: end;
     align-content: flex-end;
 }
 
-.start-compartment-check input {
+.start-flow-check input {
     color: black;
 }
 
-.compartment-node-body {
+.flow-node-body {
     background: rgba(226, 226, 226, 0.5);
     border-radius: 0 0 5px 5px;
     min-height: 50px;
     height: fit-content;
     font-size: 12px;
+
 }
 
 
-.compartment-node-body .handlers .compartment-handle{
+.flow-node-body .handlers .flow-handle{
     padding: 7px;
     /* background: orange; */
     margin-top: 5px;
     margin-bottom: 6px;
 }
 
-.compartment-node-body label {
+.flow-node-body label {
     margin: 10px;
 
 }
