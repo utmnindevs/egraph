@@ -37,6 +37,7 @@
     min-height: 50px;
     height: fit-content;
     font-size: 12px;
+    display: block;
 
 }
 
@@ -59,3 +60,15 @@
 }
 
 
+.right-handler {
+    display: flex;
+    
+    justify-content: end;
+    
+}
+
+.handler-text {
+    margin-top: 4px; 
+    margin-right: 10px;
+    font-size: 10px;
+}

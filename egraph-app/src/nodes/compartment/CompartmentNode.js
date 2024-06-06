@@ -76,12 +76,14 @@ function CompartmentNode({ data, isConnectable }) {
       </div>
 
       <div key="test" className='compartment-node-body row '>
-        <label>pop</label>
+      
         <div class="handlers left col">
-          {targetHandles}
+          <OrientationHandler id={1} style={{top: positionHandle(1)}} type={"target"} position={"Left"}/>
+          { data.obj.name_ === "Rejected" &&  <OrientationHandler id={2} style={{top: positionHandle(2)}} type={"target"} position={"Left"}/> }
         </div>
         <div class="handlers right col"> 
-          {sourceHandles}
+        <OrientationHandler id={1} style={{top: positionHandle(1)}} type={"source"} position={"Right"}/>
+          {}
         </div>
         
       </div>

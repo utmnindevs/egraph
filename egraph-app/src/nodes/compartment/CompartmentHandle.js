@@ -38,7 +38,7 @@ const CompartmentHandle = (props) => {
         else {
             return edges.filter((edge) => {
                 return edge.targetHandle === connection.targetHandle || edge.sourceHandle === connection.sourceHandle;
-            }).length < 1 && connection.targetHandle.includes('comp_target') // тут нужно заменить на разрешение подключение потоков
+            }).length < 1 && connection.targetHandle.includes('flow_target') // тут нужно заменить на разрешение подключение потоков
         }    
     };
 
