@@ -1,11 +1,9 @@
-// import libraries methodes
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes } from 'reactflow';
 
 // import styles
 import 'reactflow/dist/style.css';
 import './style/App.css';
-
 
 // import debugers
 import NodeInspector from './debugs/NodeInspector.js';
@@ -21,6 +19,7 @@ import SideBarEditable from './sidebars/editable/SideBarEditable';
 import AddingModal from './modal/AddingModal.js';
 import { OpenModal, NameAndTemplateModal } from './modal/OpenModal.js';
 import Header from './header/Header';
+import KeyboardShortcutsModal from './modal/KeyboardshortcutsModal.js'; // Импортируйте новое модальное окно
 
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
@@ -39,7 +38,6 @@ var dagre = require("@xdashduck/dagre-tlayering");
 
 const fileExist = await checkIsHandleExist();
 
-
 // initialize
 let e_graph = new EGraph(null, await getContentOfLastFile()); // -> useState mb nice
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
@@ -49,9 +47,7 @@ const nodeTypes = { compartmentNode: CompartmentNode, flowNode: FlowNode };
 
 let viewportSettings_ = undefined; // базовая настройка вьюпорта, временная
 
-
 function App() {
-
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
 
@@ -69,10 +65,9 @@ function App() {
   const [showImageBtn, setShowImageBtn] = useState(false);
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
-
   // Для всех модальных окон
   const [isModalOpne, setModalOpen] = useState(false);
-
+  const [isKeyboardShortcutsModalOpen, setKeyboardShortcutsModalOpen] = useState(false); // Добавлено состояние для модального окна горячих клавиш
 
   const [nodes, setNodes] = useState(initialNodes);
 
@@ -83,14 +78,10 @@ function App() {
 
   const [editableProps, setEditableProps] = useState(null);
 
-
   // Состояние для нижнего меню и переключение режима просмотра и редактирования
   const [viewportState, setViewportState] = useState("view");
 
-
-  /**
-   * Состояния для добавления новых узлов
-   */
+  // Состояния для добавления новых узлов
   const [isAddingModalOpen, setAddingModalOpen] = useState(false);
   const [addingNode, setAddingNode] = useState(null);
 
@@ -100,7 +91,6 @@ function App() {
     else { setAddingModalOpen(false); }
     setAddingNode(node);
   }, [setAddingNode, setAddingModalOpen])
-
 
   // Расшаренная установка обновления и добавления нового узла если такой был создан
   const setGraphNodesShare = useCallback(() => {
@@ -120,10 +110,8 @@ function App() {
     setAddingNode(null); setAddingModalOpen(false);
   }, [setAddingNode, setAddingModalOpen]);
 
-  /**
-   * Улучшенный метод обновления состояния и вызвова окна редактирования с проверкой на текущее состояние
-   * всего viewport'а т.е. на то что включен режим "редактирования"
-   */
+  // Улучшенный метод обновления состояния и вызвова окна редактирования с проверкой на текущее состояние
+  // всего viewport'а т.е. на то что включен режим "редактирования"
   const updateEditableProps = useCallback((state) => {
     if (viewportState === "edit") {
       setEditableProps(state);
@@ -151,9 +139,7 @@ function App() {
     setFileNameModalOpen(!state);
   }, [setIsModalOpen, setFileNameModalOpen]);
 
-  /**
-   * Метод для создания нового файла путем вызова всплывающего окна
-   */
+  // Метод для создания нового файла путем вызова всплывающего окна
   const createNewFile = useCallback((form_data) => {
     InitialStandartNodes();
     onSaveFileAs(
@@ -162,7 +148,6 @@ function App() {
       () => { setFileNameModalOpen(false); }
     );
   }, [setFileNameModalOpen])
-
 
   const InitialStandartNodes = () => {
     let graphs = generateGraphClass();
@@ -176,7 +161,6 @@ function App() {
   const delay = ms => new Promise(
     resolve => setTimeout(resolve, ms)
   );
-
 
   const updateNodesByObjects = (objects) => {
     objects.forEach(obj => {
@@ -235,16 +219,13 @@ function App() {
     }
   }
 
-
   const chooseExistFile = useCallback((blobText) => {
     e_graph = new EGraph(null, blobText);
     setGraphObjects(getInitialNodes(e_graph));
     setIsModalOpen(false);
   }, [setGraphObjects, setIsModalOpen])
 
-  /**
-   * @param {string} state - название экрана
-   */
+  // @param {string} state - название экрана
   const setActiveTabWithReset = useCallback((state) => {
     setEditableProps(null);
     setActiveTab(state);
@@ -260,7 +241,7 @@ function App() {
           handleShowResults={setShowResultsBtn}
           onRunModel={runModel}
           setActiveTab={setActiveTab}
-          setActiveTabWithReset={setActiveTabWithReset}  // добавлено
+          setActiveTabWithReset={setActiveTabWithReset}  
           setDevView={setDevView} devView={devView}
           viewportState={viewportState}
           setViewportState={updateViewportState}
@@ -268,6 +249,7 @@ function App() {
         />
         {(devView) && <NodeInspector />}
         {isAddingModalOpen && <AddingModal isOpen={isAddingModalOpen} addingNode={addingNode} createGraphNode={setGraphNodesShare} closeModal={onCloseAddingModal} />}
+        {isKeyboardShortcutsModalOpen && <KeyboardShortcutsModal isOpen={isKeyboardShortcutsModalOpen} handleClose={() => setKeyboardShortcutsModalOpen(false)} />}
 
         <div className='reactflow_plane'>
           {adding_props && <SideBarAdding />}

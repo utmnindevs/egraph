@@ -5,10 +5,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button } from 'react-bootstrap';
 
 import { onSaveFileAs, onEditCurrentFile, openFile, getRecentFile } from '../handlers/Save';
+import KeyboardShortcutsModal from '../modal/KeyboardshortcutsModal'; 
 
-
-const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel,setActiveTab, setActiveTabWithReset, onCreateNew  }) => {
+const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel, setActiveTab, setActiveTabWithReset, onCreateNew }) => {
   const [fileName, setFileName] = useState(getRecentFile()?.name || "untitled");
+  const [isKeyboardShortcutsModalOpen, setKeyboardShortcutsModalOpen] = useState(false); // Состояние для модального окна
 
   const handleFileNameChange = (event) => {
     setFileName(event.target.innerText);
@@ -20,14 +21,14 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
           {params.name}
         </Dropdown.Toggle>
-  
+
         <Dropdown.Menu>
-          <Dropdown.Item onClick={() => {onCreateNew(false)}}>Создать...</Dropdown.Item>
-          <Dropdown.Item onClick={() => {openFile(onChooseFile)}}>Открыть из...</Dropdown.Item>
-          <Dropdown.Item onClick={() => {}}>Открыть недавнее</Dropdown.Item>
+          <Dropdown.Item onClick={() => { onCreateNew(false) }}>Создать...</Dropdown.Item>
+          <Dropdown.Item onClick={() => { openFile(onChooseFile) }}>Открыть из...</Dropdown.Item>
+          <Dropdown.Item onClick={() => { }}>Открыть недавнее</Dropdown.Item>
           <hr></hr>
-          <Dropdown.Item onClick={() => {onEditCurrentFile(e_graph.toJson())}}>Сохранить</Dropdown.Item>
-          <Dropdown.Item onClick={() => {onSaveFileAs(e_graph.toJson())}}>Сохранить как...</Dropdown.Item>
+          <Dropdown.Item onClick={() => { onEditCurrentFile(e_graph.toJson()) }}>Сохранить</Dropdown.Item>
+          <Dropdown.Item onClick={() => { onSaveFileAs(e_graph.toJson()) }}>Сохранить как...</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
@@ -39,9 +40,9 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
           {params.name}
         </Dropdown.Toggle>
-  
+
         <Dropdown.Menu>
-          <Dropdown.Item>Тут могла быть ваша реклама</Dropdown.Item>
+          <Dropdown.Item onClick={() => setKeyboardShortcutsModalOpen(true)}>Горячие клавиши</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
@@ -53,34 +54,34 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         <Dropdown.Toggle as={CustomToggle} id="dropdown-custom-components">
           {params.name}
         </Dropdown.Toggle>
-  
+
         <Dropdown.Menu>
           <Dropdown.Item>Лос пенгвинос маласе ласкаре</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
   }
-  
+
   const StartModelDropDown = ({ name }) => {
 
     const handleShowResultsClick = () => {
       if (handleShowResults) {
-        handleShowResults(true); 
+        handleShowResults(true);
         setActiveTab('results');
       }
     };
 
     const handleShowImageClick = () => {
       if (handleShowImage) {
-        handleShowImage(true); 
+        handleShowImage(true);
         setActiveTab('image');
       }
     };
 
     const handleShowModelClick = () => {
       if (handleShowModel) {
-        handleShowModel(true); 
-        
+        handleShowModel(true);
+
       }
     };
 
@@ -91,19 +92,17 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item onClick={() => { onRunModel() }}>Запустить </Dropdown.Item>
-          <Dropdown.Item onClick ={() => {setActiveTabWithReset(); handleShowImageClick(); handleShowModelClick(); }}>Получить изображение</Dropdown.Item>
-          <Dropdown.Item onClick ={() => {setActiveTabWithReset(); handleShowResultsClick(); handleShowModelClick();}}>Получить результаты</Dropdown.Item>
-          
-
+          <Dropdown.Item onClick={() => { setActiveTabWithReset(); handleShowImageClick(); handleShowModelClick(); }}>Получить изображение</Dropdown.Item>
+          <Dropdown.Item onClick={() => { setActiveTabWithReset(); handleShowResultsClick(); handleShowModelClick(); }}>Получить результаты</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
   };
-  
+
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
   }
-  
+
   return (
     <div className="upper-menu">
       <div className="logo-and-content">
@@ -125,11 +124,17 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
             <EditMenuDropDown className="hdr-button" name={'Правка'} />
             <AboutMenuDropDown className="hdr-button" name={'Справка'} />
             <StartModelDropDown className="hdr-button" name={'Модель'} />
-            {true && <div style={{fontSize: '10px', color: 'rgba(0,0,0,0.5)'}}> Все изменения сохранены</div>}
-
+            {true && <div style={{ fontSize: '10px', color: 'rgba(0,0,0,0.5)' }}> Все изменения сохранены</div>}
           </div>
         </div>
       </div>
+
+      {isKeyboardShortcutsModalOpen && (
+        <KeyboardShortcutsModal
+          isOpen={isKeyboardShortcutsModalOpen}
+          handleClose={() => setKeyboardShortcutsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };
