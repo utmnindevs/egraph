@@ -1,14 +1,24 @@
 import React, { useState } from 'react';
 import Modal from './Modal';
-import './style_modal/KeyboardshortcutsModal.css'; // Подключаем стили
+import './style_modal/Modal.css'; // Подключаем стили
 
 const KeyboardShortcutsModal = ({ isOpen, handleClose }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const hotkeys = [
-        { key: 'Ctrl + S', action: 'Сохранить' },
-        { key: 'Ctrl + C', action: 'Копировать' },
-        { key: 'Ctrl + V', action: 'Вставить' },
-        { key: 'Ctrl + Z', action: 'Отменить' }
+        { key: 'Ctrl + S', action: 'Сохранить', category: 'Редактирование' },
+        { key: 'Ctrl + C', action: 'Копировать', category: 'Редактирование' },
+        { key: 'Ctrl + V', action: 'Вставить', category: 'Редактирование' },
+        { key: 'Ctrl + Z', action: 'Отменить', category: 'Редактирование' },
+        { key: 'Alt + Shift + F', action: 'Меню "Файл"', category: 'Меню' },
+        { key: 'Alt + Shift + E', action: 'Меню "Правка"', category: 'Меню' },
+        { key: 'Alt + Shift + H', action: 'Меню "Справка"', category: 'Меню' },
+        { key: 'Alt + Shift + M', action: 'Меню "Модель"', category: 'Меню' },
+        { key: 'Ctrl + Shift + 1', action: 'Переключить на вкладку "Модель"', category: 'Навигация' },
+        { key: 'Ctrl + Shift + 2', action: 'Переключить на вкладку "Изображение"', category: 'Навигация' },
+        { key: 'Ctrl + Shift + 3', action: 'Переключить на вкладку "Результаты"', category: 'Навигация' },
+        { key: 'Ctrl + Alt + K', action: 'Увеличить', category: 'Действия с объектами' },
+        { key: 'Ctrl + Alt + J', action: 'Уменьшить', category: 'Действия с объектами' }
+
     ];
 
     const handleSearchChange = (event) => {
@@ -19,22 +29,39 @@ const KeyboardShortcutsModal = ({ isOpen, handleClose }) => {
         hotkey.action.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const hotkeysByCategory = filteredHotkeys.reduce((acc, hotkey) => {
+        if (!acc[hotkey.category]) {
+            acc[hotkey.category] = [];
+        }
+        acc[hotkey.category].push(hotkey);
+        return acc;
+    }, {});
+
     const hotkeysContent = {
         header_text: "Горячие клавиши",
         body_text: (
-            <>
-                <input
-                    type="text"
-                    placeholder="Поиск..."
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                />
-                <ul>
-                    {filteredHotkeys.map((hotkey, index) => (
-                        <li key={index}><strong>{hotkey.key}</strong>: {hotkey.action}</li>
+            <div className="keyboard-shortcuts-modal">
+                <div className="modal-header">
+                    <input
+                        type="text"
+                        placeholder="Поиск..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                    />
+                </div>
+                <div className="modal-body">
+                    {Object.entries(hotkeysByCategory).map(([category, hotkeys]) => (
+                        <div key={category}>
+                            <strong>{category}:</strong>
+                            <ul>
+                                {hotkeys.map((hotkey, index) => (
+                                    <li key={index}>{hotkey.key} - {hotkey.action}</li>
+                                ))}
+                            </ul>
+                        </div>
                     ))}
-                </ul>
-            </>
+                </div>
+            </div>
         ),
         buttons_funcs_label: [
             ["Закрыть", handleClose]
@@ -42,16 +69,7 @@ const KeyboardShortcutsModal = ({ isOpen, handleClose }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} typeModal="info" content={hotkeysContent}>
-            <div className="sidebar">
-                <ul>
-                    <li>Действия с объектами</li>
-                    <li>Меню</li>
-                    <li>Навигация</li>
-                    <li>Редактирование</li>
-                </ul>
-            </div>
-        </Modal>
+        <Modal isOpen={isOpen} typeModal="info" content={hotkeysContent} />
     );
 };
 

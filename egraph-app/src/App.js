@@ -21,6 +21,7 @@ import { OpenModal, NameAndTemplateModal } from './modal/OpenModal.js';
 import Header from './header/Header';
 import KeyboardShortcutsModal from './modal/KeyboardshortcutsModal.js'; // Импортируйте новое модальное окно
 
+
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
 import './nodes/compartment//style/CompartmentNodeStyle.css'
@@ -255,7 +256,7 @@ function App() {
           {adding_props && <SideBarAdding />}
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => { onCreateClick(true); }} />}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
+             {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
 
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}

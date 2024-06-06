@@ -1,15 +1,13 @@
-import React, { useState, useEffect } from 'react';
-
-import "./style_modal/Modal.css";
-
+import React from 'react';
+import './style_modal/Modal.css';
 import IconRender from './IconRender';
 
 /**
- * Шаблон модального окна, принимающий в себя параметры - Открыто ли окно, тип модального окна {"warning", "info", "another"} 
+ * Шаблон модального окна, принимающий в себя параметры - Открыто ли окно, тип модального окна {"warning", "info", "another"}
  * и контент модального окна содержащий следующее: { header_text: "", body_text: "", buttons_funcs_label: [ [label, function], ... ] }
  * @returns 
  */
-function Modal({ isOpen, typeModal, content, isFormed }) {
+function Modal({ isOpen, typeModal, content, isFormed, modalClass }) {
 
     const renderBody = () => {
         if (typeof (content.body_text) === 'string' || 'object') {
@@ -51,7 +49,7 @@ function Modal({ isOpen, typeModal, content, isFormed }) {
     }
     return (
 
-        <div className={`modal ${isOpen ? 'open' : ''} ${typeModal}`}>
+        <div className={`modal ${isOpen ? 'open' : ''} ${typeModal} ${modalClass}`}>
 
             <div className="content">
                 <div className="header">
@@ -66,6 +64,5 @@ function Modal({ isOpen, typeModal, content, isFormed }) {
     )
 
 }
-
 
 export default Modal;
