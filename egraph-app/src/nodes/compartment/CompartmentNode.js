@@ -76,7 +76,6 @@ function CompartmentNode({ data, isConnectable }) {
       </div>
 
       <div key="test" className='compartment-node-body row '>
-        <label>pop</label>
         <div class="handlers left col">
           {targetHandles}
         </div>
