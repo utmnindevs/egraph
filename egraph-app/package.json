@@ -17,7 +17,7 @@
     "react-bootstrap": "^2.10.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.5",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "reactflow": "^11.10.3",
     "web-vitals": "^2.1.4"
   },

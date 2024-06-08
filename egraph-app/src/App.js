@@ -212,7 +212,7 @@ function App() {
         const posAbsolute = change.positionAbsolute;
         if (posAbsolute) {
           const node = nds.filter((node, _) => { return node.id === change.id })[0]
-          node?.data?.obj.UpdatePosition(posAbsolute)
+          node.data.obj.UpdatePosition(posAbsolute)
         }
       }
     })

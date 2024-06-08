@@ -1,4 +1,3 @@
-import React, { startTransition } from 'react';
 import { EGraph } from './graph';
 import { generate_uuid_v4 } from './helpers';
 import { Compartment } from './compartment';
