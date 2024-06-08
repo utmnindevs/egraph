@@ -48,7 +48,7 @@ class EGraph {
   /**
    * Добавляет в граф компартмент
    * @param {int} id 
-   * @param {Map} comp_config - {name: , population: }
+   * @param {} comp_config - {name: , population: }
    * @returns {EGraph}
    */
   AddComp(id, comp_config) {
