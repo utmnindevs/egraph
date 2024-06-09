@@ -21,6 +21,7 @@ import SideBarEditable from './sidebars/editable/SideBarEditable';
 import AddingModal from './modal/AddingModal.js';
 import { OpenModal, NameAndTemplateModal } from './modal/OpenModal.js';
 import Header from './header/Header';
+import { ChooseStorageModal } from './modal/ChooseStorageModal';
 
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
@@ -35,6 +36,7 @@ import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRe
 import { EGraph } from './graph/graph.js';
 import { svgConverterFunction } from './Svgconverter.js';
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
+import LocalStorage from './handlers/LocalStorage';
 var dagre = require("@xdashduck/dagre-tlayering");
 
 const fileExist = await checkIsHandleExist();
@@ -48,12 +50,27 @@ let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
 const nodeTypes = { compartmentNode: CompartmentNode, flowNode: FlowNode };
 
 let viewportSettings_ = undefined; // базовая настройка вьюпорта, временная
-
+const LS_CONFIG = ".user_config"
+const localStorageShare = new LocalStorage();
 
 function App() {
 
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
+
+  const [storagePlace, setStoragePlace] = useState(null);
+  const [isStorageView, setStorageView] = useState(false);
+
+  const setStorageViewShare = useCallback((state) => {
+    setStorageView(state);
+    setIsModalOpen(!state);
+  })
+  const setStoragePlaceShare = useCallback((type) => {
+    localStorageShare.SavePropTo(LS_CONFIG, JSON.stringify({"type": type}))
+    setStoragePlace(type);
+    setStorageViewShare(false);
+  }, [setStoragePlace, setStorageViewShare])
+  
 
   // state for debuger
   const [devView, setDevView] = useState(false);
@@ -273,7 +290,8 @@ function App() {
           {adding_props && <SideBarAdding />}
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => { onCreateClick(true); }} />}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} storageType={storagePlace} onChangeStorage={() => {setStorageViewShare(true)}} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
+            {isStorageView && <ChooseStorageModal isOpen={isStorageView} setStorageType={setStoragePlaceShare}/>}
 
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
