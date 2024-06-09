@@ -11,7 +11,7 @@ import { openFile } from '../handlers/Save';
 export function OpenModal({ isOpen, storageType, onChangeStorage, onCreate, handleOpenExisting }) {
   const renderChooseStorageButton = () => {
     return (<>
-      <a onClick={() => {onChangeStorage()}}>Изменить место хранения</a>
+      <a className='change' onClick={() => {onChangeStorage()}}>Изменить место хранения</a>
     </>);
   }
 

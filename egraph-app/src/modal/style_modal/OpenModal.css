@@ -13,7 +13,16 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
-.modal .content .body a:hover{
+
+
+.modal .content .body .change{
+  font-size: 12px;
+  font-style: italic;
+  color: rgba(0, 0, 0, 0.5);  
+  text-decoration: none;
+}
+
+.modal .content .body .change:hover{
   cursor: pointer;
 }
 

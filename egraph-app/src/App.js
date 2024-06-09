@@ -22,6 +22,7 @@ import AddingModal from './modal/AddingModal.js';
 import { OpenModal, NameAndTemplateModal } from './modal/OpenModal.js';
 import Header from './header/Header';
 import { ChooseStorageModal } from './modal/ChooseStorageModal';
+import MetaDataModal from './modal/MetaDataModal.tsx';
 
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
@@ -58,7 +59,7 @@ function App() {
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
 
-  const [storagePlace, setStoragePlace] = useState(null);
+  const [storagePlace, setStoragePlace] = useState("device");
   const [isStorageView, setStorageView] = useState(false);
 
   const setStorageViewShare = useCallback((state) => {
@@ -78,6 +79,7 @@ function App() {
   // all modals
   const [isModalOpen, setIsModalOpen] = useState(!fileExist);
   const [isChooseFileNameModalOpen, setFileNameModalOpen] = useState(false);
+  const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('flow');
   const [svgContent, setSvgContent] = useState('');
@@ -172,13 +174,26 @@ function App() {
    * Метод для создания нового файла путем вызова всплывающего окна
    */
   const createNewFile = useCallback((form_data) => {
+    localStorageShare.SavePropTo(".current_files", JSON.stringify({name: form_data.file_name + form_data.file_format}));
+    // InitialStandartNodes();
+    // onSaveFileAs(
+    //   e_graph.toJson(),
+    //   form_data.file_name + form_data.file_format,
+    //   () => { setFileNameModalOpen(false); }
+    // );
+    setFileNameModalOpen(false);
+    setMetaDataModalOpen(true);
+  }, [setFileNameModalOpen, setMetaDataModalOpen])
+
+  const createOrSkipMetdata = useCallback(() => {
     InitialStandartNodes();
     onSaveFileAs(
       e_graph.toJson(),
-      form_data.file_name + form_data.file_format,
-      () => { setFileNameModalOpen(false); }
+      JSON.parse(localStorageShare.GetPropFrom(".current_files"))?.name,
+      () => { setMetaDataModalOpen(false); }
     );
-  }, [setFileNameModalOpen])
+    // TODO: дописать ловью метаданных
+  })
 
 
   const InitialStandartNodes = () => {
@@ -292,7 +307,7 @@ function App() {
             {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => { onCreateClick(true); }} />}
             {isModalOpen && <OpenModal isOpen={isModalOpen} storageType={storagePlace} onChangeStorage={() => {setStorageViewShare(true)}} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
             {isStorageView && <ChooseStorageModal isOpen={isStorageView} setStorageType={setStoragePlaceShare}/>}
-
+            {isMetaDataModalOpen && <MetaDataModal is_open={isMetaDataModalOpen} storage_type={storagePlace} on_create={createOrSkipMetdata} on_skip={createOrSkipMetdata}/>}
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
               {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
