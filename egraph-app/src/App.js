@@ -11,7 +11,7 @@ import './style/App.css';
 import NodeInspector from './debugs/NodeInspector.js';
 
 // import tabs
-import SvgTab from './SvgTab';
+import SvgTab from './tabs/SvgTab';
 import ResultsTab from './ResultsTab.js';
 import FlowTab from './tabs/FlowTab.js';
 
@@ -34,7 +34,7 @@ import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRe
 
 // import graph methodes
 import { EGraph } from './graph/graph.js';
-import { svgConverterFunction } from './Svgconverter.js';
+import { svgConverterFunction } from './Svgconverter.ts';
 import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
 import LocalStorage from './handlers/LocalStorage';
 var dagre = require("@xdashduck/dagre-tlayering");
@@ -317,7 +317,7 @@ function App() {
                 setViewportSettings={setViewportSettings}
               />)}
             {activeTab === 'image' && (
-              <SvgTab svgContent={svgContent} />)}
+              <SvgTab e_graph={e_graph} />)}
             {activeTab === 'results' && (
               <ResultsTab e_graph={e_graph} />)}
           </div>
