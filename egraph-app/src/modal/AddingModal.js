@@ -12,11 +12,21 @@ import { AddingFormInputs } from '../handlers/CompartmentForms';
 function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
     const { register, handleSubmit, setError, formState: { errors } } = useForm({mode: 'onSubmit'});
 
+    const ConstructHandleId = (id, handle_type, node_type) => {
+        return "handle_" + node_type + "_" +  handle_type + "_" + (id);
+      }
+
+    function GenerateHandlesIds(handle_type, node_type){
+        return Array.from({length: 1}, (_, index) => {
+            return ConstructHandleId(index, handle_type, node_type);
+        })
+    }
+
     const onSubmit = useCallback((form_data) => {
         addingNode.data.obj.name_ = form_data.name;
         addingNode.data.obj.population_ = parseInt(form_data.population);
-        addingNode.data.ins = parseInt(form_data.ins);
-        addingNode.data.outs = parseInt(form_data.outs);
+        addingNode.data.ins = GenerateHandlesIds("target", "comp");
+        addingNode.data.outs = GenerateHandlesIds("source", "comp");
         createGraphNode()
     }, [createGraphNode]);
 

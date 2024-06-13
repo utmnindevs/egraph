@@ -97,8 +97,18 @@ function App() {
 
   const [graphObjects, setGraphObjects, onGraphObjectChange] = useState(initialNodes);
   const [objectsUpdate, setObjectsUpdate] = useState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const onConnect = useCallback((params) => setEdges((els) => addEdge({ ...params }, els)), []);
+  const [edges, setEdges] = useEdgesState([]);
+  const onConnect = useCallback((params) => {
+    setEdges((els) => addEdge({ ...params }, els))
+    console.log(params);
+  }, []
+  );
+  const onEdgesChange = useCallback((changes) => 
+    setEdges((edg) => {
+      changes.forEach((change) => console.log(change?.type))
+      return applyEdgeChanges(changes, edg);
+    })
+  )
 
   const [editableProps, setEditableProps] = useState(null);
 
@@ -249,6 +259,8 @@ function App() {
       }
     })
   })
+  
+
 
   const onNodesChange = useCallback(
     (changes) => setGraphObjects(

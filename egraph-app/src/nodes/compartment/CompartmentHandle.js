@@ -15,12 +15,10 @@ const selector = (s) => ({
  * @param {*} props 
  * @returns 
  */
-const CompartmentHandle = (props) => {
+const SharedHandle = (props) => {
     const { nodeInternals, edges } = useStore(selector);
     const nodeId = useNodeId();
     const updateNodeInternals = useUpdateNodeInternals();
-    
-    
 
     const isHandleConnectionValid = (connection) => {
         const node = nodeInternals.get(nodeId);
@@ -38,15 +36,15 @@ const CompartmentHandle = (props) => {
         else {
             return edges.filter((edge) => {
                 return edge.targetHandle === connection.targetHandle || edge.sourceHandle === connection.sourceHandle;
-            }).length < 1 && connection.targetHandle.includes('comp_target') // тут нужно заменить на разрешение подключение потоков
+            }).length < 1 && !connection.targetHandle.includes(props.nodeType + '_target') // тут нужно заменить на разрешение подключение потоков
         }    
     };
 
     return (
-        <div class="compartment-handle">
+        <div class={props.nodeType + "-handle"}>
         <Handle {...props} isValidConnection={isHandleConnectionValid}   ></Handle>
         </div>
     );
 };
 
-export default CompartmentHandle;
+export default SharedHandle;

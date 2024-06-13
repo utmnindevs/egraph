@@ -14,16 +14,6 @@ export function AddingFormInputs({ errors, register }) {
                     required: true,
                     pattern: Validators.number.pattern
                 })} />
-            <Input type={'ins'} inputType={'number'} span={'Кол-во входных'} errors={errors}
-                register={register('ins', {
-                    required: true,
-                    pattern: Validators.number.pattern
-                })} />
-            <Input type={'outs'} inputType={'number'} span={'Кол-во выходных'} errors={errors}
-                register={register('outs', {
-                    required: true,
-                    pattern: Validators.number.pattern
-                })} />
         </>
     )
 }
@@ -41,16 +31,7 @@ export function EditableFormInputs({ errors, register }) {
                     required: true,
                     pattern: Validators.number.pattern
                 })} />
-            <Input type={'ins'} inputType={'number'} span={'Кол-во входных'} errors={errors}
-                register={register('ins', {
-                    required: true,
-                    pattern: Validators.number.pattern
-                })} />
-            <Input type={'outs'} inputType={'number'} span={'Кол-во выходных'} errors={errors}
-                register={register('outs', {
-                    required: true,
-                    pattern: Validators.number.pattern
-                })} />
+            
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
                 <label class="form-check-label" for="flexCheckDefault">

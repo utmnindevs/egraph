@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { Background, Handle, Position, useUpdateNodeInternals, useStore, NodeProps } from 'reactflow';
 import React, { memo, useEffect } from 'react';
 
-import CompartmentHandle from './CompartmentHandle';
+import SharedHandle from './CompartmentHandle';
  
 const selector = (s) => ({
   nodeInternals: s.nodeInternals,
@@ -22,10 +22,9 @@ function CompartmentNode({ data, isConnectable }) {
     updateNodeInternals(nodeId)
   }, [])
   
-  let all_ids = 0;
 
   const constructHandleId = (id, type) => {
-    return "handle_comp_" + type + "_" + (++all_ids) + "_" + data.name.substr(0,2);
+    return "handle_comp_" +  type + "_" + (id) + "_" + data.name.substr(0,2);
   }
 
   const positionHandle = (index) => {
@@ -38,29 +37,30 @@ function CompartmentNode({ data, isConnectable }) {
    * @returns 
    */
   function OrientationHandler({id, type, style, position}){
-    const constructed_id = constructHandleId(id, type);
     return(
       <>
-        <CompartmentHandle id={constructed_id} key={constructed_id} 
+        <SharedHandle id={id} key={id} 
         type={type} 
         position={position === "Left" ? Position.Left : Position.Right}
-        style = {{...style}} isConnectable={isConnectable}/>
+        style = {{...style}} isConnectable={isConnectable} nodeType={"comp"}
+        
+        />
       </>
     );
   }
 
   const targetHandles = useMemo(
     () =>
-      Array.from({length: data.ins}, (_, index) => {
-        return (<OrientationHandler id={index+1} style={{top: positionHandle(index + 1)}} type={"target"} position={"Left"}/>)
-      }), [data.ins]
+      Array.from({length: data?.ins.length}, (_, index) => {
+        return (<OrientationHandler id={data?.ins[index]} style={{top: positionHandle(index + 1)}} type={"target"} position={"Left"}/>)
+      })
   )
 
   const sourceHandles = useMemo(
     () =>
-      Array.from({length: data.outs}, (_, index) => {
-        return (<OrientationHandler id={index+1} style={{top: positionHandle(index + 1)}} type={"source"} position={"Right"}/>)
-      }), [data.outs]
+      Array.from({length: data?.outs.length}, (_, index) => {
+        return (<OrientationHandler id={data?.outs[index]} style={{top: positionHandle(index + 1)}} type={"source"} position={"Right"}/>)
+      })
   )
 
  
@@ -84,9 +84,6 @@ function CompartmentNode({ data, isConnectable }) {
         </div>
         
       </div>
-   
-       
-      {/* <Handle type="source" position={Position.Bottom} id="a" /> */}
     </div>
   );
 }
