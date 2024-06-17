@@ -1,6 +1,8 @@
 // import libraries methodes
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import ReactFlow, { Controls, Background, addEdge, useEdgesState, applyEdgeChanges, applyNodeChanges, useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes } from 'reactflow';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
+import ReactFlow, { Controls, Background, addEdge, 
+  useEdgesState, applyEdgeChanges, applyNodeChanges, 
+  useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes, getConnectedEdges, useEdges } from 'reactflow';
 
 // import styles
 import 'reactflow/dist/style.css';
@@ -26,8 +28,6 @@ import MetaDataModal from './modal/MetaDataModal.tsx';
 
 // import nodes
 import CompartmentNode from "./nodes/compartment/CompartmentNode.js"
-import './nodes/compartment//style/CompartmentNodeStyle.css'
-
 import FlowNode from './nodes/flow/FlowNode.js';
 
 // import save methodes
@@ -36,7 +36,7 @@ import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRe
 // import graph methodes
 import { EGraph } from './graph/graph.js';
 import { svgConverterFunction } from './Svgconverter.ts';
-import { getInitialNodes, generateGraphClass } from './tabs/temp.js';
+import { getInitialNodes, generateGraphClass, ConstructHandleId, ParseConstructHandleId } from './tabs/temp.js';
 import LocalStorage from './handlers/LocalStorage';
 var dagre = require("@xdashduck/dagre-tlayering");
 
@@ -54,7 +54,10 @@ let viewportSettings_ = undefined; // базовая настройка вьюп
 const LS_CONFIG = ".user_config"
 const localStorageShare = new LocalStorage();
 
+
+
 function App() {
+
 
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
@@ -67,11 +70,11 @@ function App() {
     setIsModalOpen(!state);
   })
   const setStoragePlaceShare = useCallback((type) => {
-    localStorageShare.SavePropTo(LS_CONFIG, JSON.stringify({"type": type}))
+    localStorageShare.SavePropTo(LS_CONFIG, JSON.stringify({ "type": type }))
     setStoragePlace(type);
     setStorageViewShare(false);
   }, [setStoragePlace, setStorageViewShare])
-  
+
 
   // state for debuger
   const [devView, setDevView] = useState(false);
@@ -98,14 +101,10 @@ function App() {
   const [graphObjects, setGraphObjects, onGraphObjectChange] = useState(initialNodes);
   const [objectsUpdate, setObjectsUpdate] = useState([]);
   const [edges, setEdges] = useEdgesState([]);
-  const onConnect = useCallback((params) => {
-    setEdges((els) => addEdge({ ...params }, els))
-    console.log(params);
-  }, []
-  );
-  const onEdgesChange = useCallback((changes) => 
+  
+
+  const onEdgesChange = useCallback((changes) =>
     setEdges((edg) => {
-      changes.forEach((change) => console.log(change?.type))
       return applyEdgeChanges(changes, edg);
     })
   )
@@ -184,7 +183,7 @@ function App() {
    * Метод для создания нового файла путем вызова всплывающего окна
    */
   const createNewFile = useCallback((form_data) => {
-    localStorageShare.SavePropTo(".current_files", JSON.stringify({name: form_data.file_name + form_data.file_format}));
+    localStorageShare.SavePropTo(".current_files", JSON.stringify({ name: form_data.file_name + form_data.file_format }));
     // InitialStandartNodes();
     // onSaveFileAs(
     //   e_graph.toJson(),
@@ -229,19 +228,24 @@ function App() {
   useEffect(() => {
     objectsUpdate.forEach(obj => updateObject(obj));
   }, [objectsUpdate])
-  
-  const updateObject = (graphObject) => {
+
+const updateObject = (graphObject) => {
     setGraphObjects(graphObjects => {
       return graphObjects.map(obj => {
         if (obj?.id === graphObject?.GetId()) {
           const objType = obj.type;
-          if(objType === 'compartmentNode' ){
-            obj.data = { ...obj.data, population: graphObject.GetPopulation(), name: graphObject.GetName(), position: graphObject.GetPosition() };            
+          if (objType === 'compartmentNode') {
+            obj.data = {
+              ...obj.data,
+              population: graphObject.GetPopulation(),
+              name: graphObject.GetName(),
+              position: graphObject.GetPosition()
+            };
             return obj;
           } else {
-            obj.data = { ...obj.data} // something for flow
+            obj.data = { ...obj.data } // something for flow
             return obj;
-          }          
+          }
         }
         return obj;
       });
@@ -259,7 +263,7 @@ function App() {
       }
     })
   })
-  
+
 
 
   const onNodesChange = useCallback(
@@ -278,6 +282,10 @@ function App() {
       updateNodesByObjects(e_graph.GetComps());
     }
   }
+
+
+
+  
 
 
   const chooseExistFile = useCallback((blobText) => {
@@ -317,9 +325,9 @@ function App() {
           {adding_props && <SideBarAdding />}
           <div className="reactflow-wrapper" ref={reactFlowWrapper}>
             {isChooseFileNameModalOpen && <NameAndTemplateModal isOpen={isChooseFileNameModalOpen} onCreate={createNewFile} onCancel={() => { onCreateClick(true); }} />}
-            {isModalOpen && <OpenModal isOpen={isModalOpen} storageType={storagePlace} onChangeStorage={() => {setStorageViewShare(true)}} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
-            {isStorageView && <ChooseStorageModal isOpen={isStorageView} setStorageType={setStoragePlaceShare}/>}
-            {isMetaDataModalOpen && <MetaDataModal is_open={isMetaDataModalOpen} storage_type={storagePlace} on_create={createOrSkipMetdata} on_skip={createOrSkipMetdata}/>}
+            {isModalOpen && <OpenModal isOpen={isModalOpen} storageType={storagePlace} onChangeStorage={() => { setStorageViewShare(true) }} onCreate={() => { onCreateClick(false); }} handleOpenExisting={() => { openFile(chooseExistFile) }} />}
+            {isStorageView && <ChooseStorageModal isOpen={isStorageView} setStorageType={setStoragePlaceShare} />}
+            {isMetaDataModalOpen && <MetaDataModal is_open={isMetaDataModalOpen} storage_type={storagePlace} on_create={createOrSkipMetdata} on_skip={createOrSkipMetdata} />}
             <div className="tab-buttons">
               {showModelBtn && <button className={activeTab === 'flow' ? 'active' : ''} onClick={() => setActiveTabWithReset('flow')}>Модель</button>}
               {showImageBtn && <button className={activeTab === 'image' ? 'active' : ''} onClick={() => setActiveTabWithReset('image')}>Изображение</button>}
@@ -334,7 +342,6 @@ function App() {
                 edges={edges}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
                 setEditableProps={updateEditableProps}
                 setAddingNode={setAddingNodeShare}
                 updateNodesByObjects={updateNodesByObjects}
@@ -342,6 +349,8 @@ function App() {
                 setViewportState={setViewportSettings}
                 viewportSettings={viewportSettings}
                 setViewportSettings={setViewportSettings}
+                setEdges={setEdges}
+                setGraphObjects={setGraphObjects}
               />)}
             {activeTab === 'image' && (
               <SvgTab e_graph={e_graph} />)}

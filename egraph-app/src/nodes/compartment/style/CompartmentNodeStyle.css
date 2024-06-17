@@ -40,9 +40,9 @@
 }
 
 
-.compartment-node-body .handlers .compartment-handle{
+.compartment-node-body .handlers .comp-handle{
     padding: 7px;
-    /* background: orange; */
+    background: orange;
     margin-top: 5px;
     margin-bottom: 6px;
 }

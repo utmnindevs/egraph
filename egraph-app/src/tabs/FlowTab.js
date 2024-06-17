@@ -1,11 +1,16 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import ReactFlow, { Controls, Background, ReactFlowProvider, useStore, useReactFlow, useNodes, useViewport, useOnViewportChange } from 'reactflow';
+import { getConnectedEdges, useNodeId, useUpdateNodeInternals, useEdges, addEdge } from 'reactflow';
+
 
 import SideBarEditable from '../sidebars/editable/SideBarEditable';
 import { generate_uuid_v4 } from '../graph/helpers';
 import { EGraph } from '../graph/graph';
 
 import { Compartment } from '../graph/compartment';
+
+import { ParseConstructHandleId, ConstructHandleId } from './temp';
+
 
 
 /**
@@ -22,7 +27,6 @@ function FlowTab({
     nodes,
     onNodesChange,
     onEdgesChange,
-    onConnect,
     setEditableProps,
     setGraphNodes,
     updateNodesByObjects,
@@ -30,16 +34,60 @@ function FlowTab({
     setViewportState,
     setAddingNode,
     viewportSettings,
-    setViewportSettings }) {
+    setEdges,
+    setViewportSettings,
+setGraphObjects }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    const {x ,y, zoom } = useViewport();
-    const {fitView} = useReactFlow();
+    const edg = useEdges();
+
+    /**
+   * Метод добавления новой ячейки.
+   */
+    const AddNewHandle = useCallback((node_id, handle_id) => {
+        const parsed_handle_id = ParseConstructHandleId(handle_id);
+        setGraphObjects(graphObjects => {
+            return graphObjects.map(obj => {
+                const obj_id = obj?.id;
+                if (node_id === obj_id) {
+                    if (parsed_handle_id[2] === 'source') {
+                        const sources_edges = getConnectedEdges([obj], edg).filter(edge => {return edge.source === obj_id});
+                        console.log('sources', sources_edges.length);
+                        if(sources_edges.length + 1 === obj?.data?.outs.length){
+                            obj?.data?.outs.push(ConstructHandleId(obj?.data?.outs.length, 'source', obj?.type.slice(0, 4), node_id.slice(0, 6)));
+                        }
+                    }
+                    else if (parsed_handle_id[1] != 'flow') {
+                        const targets_edges = getConnectedEdges([obj], edg).map(edge => {if(edge.target === obj_id){return edge}});
+                        console.log('targets', targets_edges.length);
+
+                        if(targets_edges.length + 1 === obj?.data?.ins.length){
+                            obj?.data?.ins.push(ConstructHandleId(obj?.data?.ins.length, 'target', obj?.type.slice(0, 4), node_id.slice(0, 6)));
+                        }
+                    }
+                }
+                return obj;
+            })
+        })
+        updateNodesByObjects(e_graph.GetComps());
+        updateNodesByObjects(e_graph.GetFlows());
+    }, [setGraphObjects, updateNodesByObjects])
+
+    const onConnect = useCallback((params) => {
+        setEdges((els) => addEdge({ ...params }, els))
+        AddNewHandle(params?.source, params?.sourceHandle);
+        AddNewHandle(params?.target, params?.targetHandle);
+    }, [AddNewHandle]
+    );
+
+
+    const { x, y, zoom } = useViewport();
+    const { fitView } = useReactFlow();
 
     useOnViewportChange({
         onEnd: (viewport) => setViewportState(viewport),
-      });
+    });
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -102,7 +150,7 @@ function FlowTab({
     const onNodesDelete = useCallback(
         (deleted) => {
             deleted.forEach((node) => {
-                if(node.type === "compartmentNode"){
+                if (node.type === "compartmentNode") {
                     e_graph.DeleteComp(node.data.obj)
                 }
                 setEditableProps(null)
