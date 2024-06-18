@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import ReactFlow, { Controls, Background, ReactFlowProvider, useStore, useReactFlow, useNodes, useViewport, useOnViewportChange } from 'reactflow';
-import { getConnectedEdges, useNodeId, useUpdateNodeInternals, useEdges, addEdge } from 'reactflow';
+import { getConnectedEdges, applyEdgeChanges, useEdges, addEdge } from 'reactflow';
 
 
 import SideBarEditable from '../sidebars/editable/SideBarEditable';
@@ -26,7 +26,6 @@ function FlowTab({
     nodeTypes,
     nodes,
     onNodesChange,
-    onEdgesChange,
     setEditableProps,
     setGraphNodes,
     updateNodesByObjects,
@@ -36,11 +35,39 @@ function FlowTab({
     viewportSettings,
     setEdges,
     setViewportSettings,
-setGraphObjects }) {
+    setGraphObjects }) {
 
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
     const edg = useEdges();
+
+    /**
+     * Метод удаления ячейки.
+     */
+    const DeleteHandle = useCallback((node_id, handle_id) => {
+        const parsed_handle_id = ParseConstructHandleId(handle_id);
+        setGraphObjects(graphObjects => {
+            return graphObjects.map(obj => {
+                const obj_id = obj?.id;
+                if(node_id === obj_id){
+                    if (parsed_handle_id[2] === 'source'){
+                        var del_index = obj?.data?.outs.indexOf(handle_id);
+                        console.log(obj?.data?.outs)
+                        obj?.data?.outs.splice(del_index, 1);
+                        console.log(obj?.data?.outs)
+
+                    }
+                    else if(parsed_handle_id[1] != 'flow'){
+                        var del_index = obj?.data?.ins.indexOf(handle_id);
+                        obj?.data?.ins.splice(del_index, 1);
+                    }
+                }
+                return obj;
+            })
+        })
+        updateNodesByObjects(e_graph.GetComps());
+        updateNodesByObjects(e_graph.GetFlows());
+    }, [setGraphObjects, updateNodesByObjects])
 
     /**
    * Метод добавления новой ячейки.
@@ -52,17 +79,14 @@ setGraphObjects }) {
                 const obj_id = obj?.id;
                 if (node_id === obj_id) {
                     if (parsed_handle_id[2] === 'source') {
-                        const sources_edges = getConnectedEdges([obj], edg).filter(edge => {return edge.source === obj_id});
-                        console.log('sources', sources_edges.length);
-                        if(sources_edges.length + 1 === obj?.data?.outs.length){
+                        const sources_edges = getConnectedEdges([obj], edg).filter(edge => edge.source === obj_id);
+                        if (sources_edges.length + 1 === obj?.data?.outs.length) {
                             obj?.data?.outs.push(ConstructHandleId(obj?.data?.outs.length, 'source', obj?.type.slice(0, 4), node_id.slice(0, 6)));
                         }
                     }
                     else if (parsed_handle_id[1] != 'flow') {
-                        const targets_edges = getConnectedEdges([obj], edg).map(edge => {if(edge.target === obj_id){return edge}});
-                        console.log('targets', targets_edges.length);
-
-                        if(targets_edges.length + 1 === obj?.data?.ins.length){
+                        const targets_edges = getConnectedEdges([obj], edg).filter(edge => edge.target === obj_id);
+                        if (targets_edges.length + 1 === obj?.data?.ins.length) {
                             obj?.data?.ins.push(ConstructHandleId(obj?.data?.ins.length, 'target', obj?.type.slice(0, 4), node_id.slice(0, 6)));
                         }
                     }
@@ -78,8 +102,42 @@ setGraphObjects }) {
         setEdges((els) => addEdge({ ...params }, els))
         AddNewHandle(params?.source, params?.sourceHandle);
         AddNewHandle(params?.target, params?.targetHandle);
+        const connected_flow = e_graph.getFlowById(params?.source) || e_graph.getFlowById(params?.target);
+        const connected_comp = e_graph.getCompartmentById(params?.source) || e_graph.getCompartmentById(params?.target);
+        const is_to_comp = params?.targetHandle.search('flow') === -1;
+        if(is_to_comp){
+            connected_flow.SetToCompartment(connected_comp, 1);
+        }
+        else{
+            connected_flow.SetFromCompartment(connected_comp);
+        }
     }, [AddNewHandle]
     );
+
+
+    const ParseChangeId = (change_id) => {
+        const result = [];
+        const change_id_without_reactflow = change_id.slice(16);
+        let first_id = change_id_without_reactflow.slice(0,change_id_without_reactflow.search('handle'));
+        let first_handle = change_id_without_reactflow.slice(first_id.length, first_id.length + change_id_without_reactflow.slice(first_id.length).search('-'));
+        result.push({id: first_id, handle: first_handle});
+        let second_handle = change_id_without_reactflow.slice(change_id_without_reactflow.slice(first_id.length+1).search('handle') + first_id.length+1);
+        let second_id = change_id_without_reactflow.slice(first_id.length + first_handle.length + 1, change_id_without_reactflow.length - second_handle.length)
+        result.push({id: second_id, handle: second_handle});
+        return result;
+    }
+
+    const onEdgesChange = useCallback((changes) =>
+        setEdges((edg) => {
+            if(changes?.at(0)?.type === 'remove'){
+                console.log(changes)
+                const parsed_data = ParseChangeId(changes?.at(0)?.id);
+                DeleteHandle(parsed_data[0]?.id, parsed_data[0]?.handle);                
+                DeleteHandle(parsed_data[1]?.id, parsed_data[1]?.handle);                
+            }
+            return applyEdgeChanges(changes, edg);
+        })
+    )
 
 
     const { x, y, zoom } = useViewport();
@@ -173,6 +231,7 @@ setGraphObjects }) {
                 onPaneClick={onPaneCLick}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+
 
                 deleteKeyCode={"Delete"}
 

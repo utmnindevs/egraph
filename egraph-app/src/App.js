@@ -103,12 +103,6 @@ function App() {
   const [edges, setEdges] = useEdgesState([]);
   
 
-  const onEdgesChange = useCallback((changes) =>
-    setEdges((edg) => {
-      return applyEdgeChanges(changes, edg);
-    })
-  )
-
   const [editableProps, setEditableProps] = useState(null);
 
 
@@ -208,9 +202,9 @@ function App() {
   const InitialStandartNodes = () => {
     let graphs = generateGraphClass();
     e_graph = graphs[0];
-    dagre_graph = graphs[1];
-    const svg = svgConverterFunction(dagre_graph);
-    setSvgContent(svg);
+    // dagre_graph = graphs[1];
+    // const svg = svgConverterFunction(dagre_graph);
+    // setSvgContent(svg);
     setGraphObjects(getInitialNodes(e_graph));
   };
 
@@ -341,7 +335,6 @@ const updateObject = (graphObject) => {
                 nodes={graphObjects}
                 edges={edges}
                 onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
                 setEditableProps={updateEditableProps}
                 setAddingNode={setAddingNodeShare}
                 updateNodesByObjects={updateNodesByObjects}

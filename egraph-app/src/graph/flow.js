@@ -14,7 +14,7 @@ class Flow  extends Coordinates{
       
       this.id_ = id;
 
-      this.from_ = flow_config.from; 
+      this.from_ = flow_config.from || "undefined"; 
       this.to_coefs_ = new Map(flow_config.to);
       this.coef_ = flow_config.coef;
       this.interpolar_ = flow_config.interpolar != undefined ? flow_config.interpolar : null;
