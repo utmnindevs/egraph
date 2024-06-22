@@ -18,6 +18,8 @@ class EGraph {
     if(jsonData){
       this.deserializeJSON(jsonData)
     }
+    this.result_json = undefined;
+    this.default_values = undefined;
   }
 
   getStartedCompartment(){
@@ -98,7 +100,7 @@ class EGraph {
     }
     return null;
   }
-  ComputePopulation(comp) {
+  ComputePopulation(comp, day) {
     const flow = this.FindFlowByFromComp(comp);
     if (flow) {
       const population_comp = comp.GetPopulation();
@@ -107,10 +109,11 @@ class EGraph {
       for (const [ptr, coef] of flow.GetToComps()) {
         // ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);
         this.ComputePopulation(ptr);
+
       }
     }
   }
-  ApplyIterationPopulation(comp) {
+  ApplyIterationPopulation(comp, day) {
     const flow = this.FindFlowByFromComp(comp);
     if (flow) {
       const it_population = flow.GetItPopulation();
@@ -121,10 +124,39 @@ class EGraph {
       }
     }
   }
-  onCompute(comp) {
-    this.ComputePopulation(comp);
-    this.ApplyIterationPopulation(comp);
+  // нулевой пациент ещё
+  ConvertPopulationsToJson(day){
+    this.id_to_comp_.forEach((comp, id) => {
+      this.result_json.at(day)[comp.GetName()] = comp.GetPopulation();
+    })
   }
+  SaveDefaultValues(){
+    const arr = [];
+    this.id_to_comp_.forEach((comp, id) => {const res = {name: comp.name_, pop: comp.population_}; arr.push(res);});
+    return arr;
+  }
+  LoadDefaultValues(default_values){
+    this.id_to_comp_.forEach((comp, id) => {
+      default_values.forEach((data) => {
+        if(data.name === comp.GetName()) { comp.SetPopulation(data.pop); };
+      })
+    })
+  }
+  onCompute(comp, days = 1) {
+    const defaults = this.SaveDefaultValues();
+    this.result_json = [];
+    this.result_json.push({label: 0});
+    this.ConvertPopulationsToJson(0);
+    for(var day = 1; day < days; day++){
+      this.result_json.push({label: day});
+      this.ComputePopulation(comp, day);
+      this.ApplyIterationPopulation(comp, day);
+      this.ConvertPopulationsToJson(day);
+    }
+    this.LoadDefaultValues(defaults);
+  }
+
+
   GetFlows() {
     return this.id_to_flow_;
   }

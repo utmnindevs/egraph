@@ -16,10 +16,10 @@ export function generateGraphClass() {
     var g = new EGraph();
 
     g.AddComp(generate_uuid_v4(), { name: "Suspectable", population: 100, x: 100, y: 100})
-        .AddComp(generate_uuid_v4(), {name: "HeavyInfected", population: 1, x: 200, y: 200})
+        // .AddComp(generate_uuid_v4(), {name: "HeavyInfected", population: 1, x: 200, y: 200})
         .AddComp(generate_uuid_v4(), {name: "LightInfected", population: 1, x: 300, y: 300})
         .AddComp(generate_uuid_v4(), {name: "Rejected", population: 0, x: 400, y: 400})
-        .AddComp(generate_uuid_v4(), {name: "Dead", population: 0, x: 500, y: 600})
+        // .AddComp(generate_uuid_v4(), {name: "Dead", population: 0, x: 500, y: 600})
 
     g.setStartCompartment("Suspectable");
 
@@ -29,9 +29,9 @@ export function generateGraphClass() {
     // g.AddFlow(generate_uuid_v4(), {from: "HeavyInfected", to: [{name: "Dead", coef: 0.4}, {name: "Rejected",coef: 0.6}], coef: 0.5, x: 350, y:150});
     // g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [{name: "Rejected",coef: 1}], coef: 0.3, x: 550, y:150});
 
-    g.AddFlow(generate_uuid_v4(), {from: null, to: [] , coef: 0.6, x: 150, y:150});
-    g.AddFlow(generate_uuid_v4(), {from: null, to: [], coef: 0.5, x: 350, y:150});
-    g.AddFlow(generate_uuid_v4(), {from: null, to: [], coef: 0.3, x: 550, y:150});
+    g.AddFlow(generate_uuid_v4(), {from: "Suspectable", to: [{name: "LightInfected", coef: 1}] , coef: 0.06, x: 150, y:150});
+    g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [{name: "Rejected", coef: 1}], coef: 0.05, x: 350, y:150});
+    // g.AddFlow(generate_uuid_v4(), {from: null, to: [], coef: 0.3, x: 550, y:150});
 
 
     // var gd = g.getDagreGraph({label_w: 100, node_w: 50, node_h: 50});
@@ -93,11 +93,11 @@ export function getInitialNodes(e_graph) {
                 }
             }
         )
-        initial_edges.push(
-            {
+    })
 
-            }
-        )
+    const constructed_edges = [];
+    initial_nodes.forEach((node) => {
+        
     })
     return initial_nodes;
 
