@@ -1,3 +1,4 @@
+
 .results-workspace{
     height: fit-content;
     max-width: 2000px;
@@ -41,7 +42,7 @@
 
     .content{
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         margin: 30px 0px 0px 0;
         text-align: left;
         flex-direction: row;

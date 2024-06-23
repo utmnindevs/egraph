@@ -4,10 +4,24 @@ import ResultRenderer from './results/ResultRender';
 import "./tabs/style/ResultTabStyle.css"
 import Latex from 'react-latex-next';
 import 'katex/dist/katex.min.css';
-
+import LocalStorage from './handlers/LocalStorage';
 
 function ResultsTab({ e_graph }) {
+
+  const ls = new LocalStorage;
   const edge_node_graph = e_graph.toNodeEdgeGraph();
+  const [img, setImageOfResults] = React.useState(null);
+
+  const SavePictureFile = () => {
+    var a = document.createElement('a');
+    // console.log(img)
+    a.href = img;
+    const current_file_name = ls.GetPropFrom(".current_file")
+    a.download = JSON.parse(current_file_name).name +  '_results.png';
+
+    // Trigger the download
+    a.click();
+  }
 
   const RenderDownlodadImage = () => {
     return (<><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" class="bi bi-download" viewBox="0 0 16 16">
@@ -24,6 +38,8 @@ function ResultsTab({ e_graph }) {
   }
 
   const RenderRates = () => {
+
+
     const comps = [];
     e_graph.GetComps().forEach((comp, id) => {
       comps.push({name: comp.GetName(), pop: comp.GetPopulation()});
@@ -117,7 +133,7 @@ function ResultsTab({ e_graph }) {
         </div>
         <div className='buttons'>
           <button className='refresh'>{RenderRefreshImage()} Обновить</button>
-          <button className='export'>{RenderDownlodadImage()} Скачать</button>
+          <button className='export' onClick={() => {SavePictureFile()}}>{RenderDownlodadImage()} Скачать</button>
         </div>
       </div>
 
@@ -126,7 +142,7 @@ function ResultsTab({ e_graph }) {
           <RenderParametersContent/>
         </div>
         <div className='image-content'>
-          <ResultRenderer e_graph={e_graph} />
+          <ResultRenderer e_graph={e_graph} setImageOfResults={setImageOfResults}/>
         </div>
       </div>
     </div>

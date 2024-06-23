@@ -12,7 +12,7 @@ import {
     Legend,
     TimeScale,
     ChartOptions, ChartItem
-    } from 'chart.js';
+} from 'chart.js';
 import { Line } from "react-chartjs-2"
 import "chart.js/auto";
 import { EGraph } from '../graph/graph';
@@ -29,63 +29,87 @@ Chart.register(
     Title,
     Tooltip,
     Legend
-   );
+);
 
+const plugin = {
+    id: 'customCanvasBackgroundColor',
+    beforeDraw: (chart, args, options) => {
+      const {ctx} = chart;
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-over';
+      ctx.fillStyle = options.color || '#99ffff';
+      ctx.fillRect(0, 0, chart.width, chart.height);
+      ctx.restore();
+    }
+  };
 
+const ResultRenderer = ({ e_graph, setImageOfResults }) => {
 
-const ResultRenderer = (props) => {
-
-    let [ctx, setCtx] = React.useState();
     let [chart, setChart] = React.useState(null);
-    const chartRef = React.useRef(null);
-    const [chart_data, SetChartData] = React.useState({labels: [], yLabels: [], xLabels: [], datasets: []});
-    
-    const time_= 100;
+    let [ctx, setCtx] = React.useState();
+    const [chart_data, SetChartData] = React.useState({ labels: [], yLabels: [], xLabels: [], datasets: [] });
+
+    const time_ = 100;
 
     const GetResultByDay = (days) => {
-        props.e_graph.onCompute(props.e_graph.getStartedCompartment(), days);
-        return props.e_graph.result_json || [];
+        e_graph.onCompute(e_graph.getStartedCompartment(), days);
+        return e_graph.result_json || [];
     }
     const GetFeatures = () => {
         let result = [];
-        props.e_graph.id_to_comp_?.forEach((comp, id) => {
+        e_graph.id_to_comp_?.forEach((comp, id) => {
             result.push(comp.GetName());
         });;
         return result;
     }
 
     const GetDataSet = (name, result) => {
-        const result_ = {label: name, data: result.map(data => data[name]), pointRadius: 0, borderWidth: 2};
+        const result_ = { label: name, data: result.map(data => data[name]), pointRadius: 0, borderWidth: 2 };
         return result_;
     }
 
-    
-    
-    const RenderLabel = React.useCallback(() =>{
+    const RenderLabel = React.useCallback(() => {
         const result_egraph = GetResultByDay(time_);
         SetChartData({
             labels: result_egraph?.map((data) => data.label),
             datasets: GetFeatures().map(data => GetDataSet(data, result_egraph)),
         })
-        console.log("clicked")
     }, [SetChartData])
 
     const SetChartShared = React.useCallback(() => {
-        RenderLabel();
-        if(ctx != null){
+        const result_egraph = GetResultByDay(time_);
+        const charted = {
+            labels: result_egraph?.map((data) => data.label),
+            datasets: GetFeatures().map(data => GetDataSet(data, result_egraph)),
+        };
+        if (ctx != null) {
             chart?.destroy();
-            chart = new Chart(ctx, 
-                {type: "line", 
-                data: chart_data,
-                options: {
-                    scales: {
-                      y: {
-                        beginAtZero: true
-                      }
-                    }
-                }});
-        }        
-    }, [RenderLabel])
+            chart = new Chart(ctx,{
+                    type: "line",
+                    data: charted,
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        animation: {
+                            onComplete: function () {
+                                if(chart){
+                                    setImageOfResults(ctx.toDataURL());
+                                }
+                            },
+                        },
+                        plugins: {
+                            customCanvasBackgroundColor: {
+                              color: 'white',
+                            }
+                          }
+                    },
+                    plugins: [plugin],
+                });
+        }
+    }, [RenderLabel, setImageOfResults])
 
     React.useEffect(() => {
         ctx = document.getElementById("result-canvas-id1");
@@ -93,14 +117,14 @@ const ResultRenderer = (props) => {
         return () => {
             chart?.destroy();
         }
-    }, [SetChartShared])
-    
-    return(
+
+    }, [SetChartShared, RenderLabel])
+
+    return (
         <>
-        <div >
-            {/* <button onClick={() => {SetChartShared()}}>Click me</button> */}
-            <canvas id="result-canvas-id1" className='result-canvas'/>
-        </div>
+            <div >
+                <canvas id="result-canvas-id1" className='result-canvas'/>
+            </div>
         </>
     );
 }
