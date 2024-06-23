@@ -38,6 +38,7 @@ class EGraph {
       from: this.getCompartmentByName(flow_config.from),
       to: flow_config.to.map(obj => ([this.getCompartmentByName(obj.name), obj.coef])),
       coef: flow_config.coef,
+      coef_name: flow_config.coef_name,
       x: flow_config.x,
       y: flow_config.y
     })
@@ -275,7 +276,7 @@ class EGraph {
       })
       parsedData.flows.forEach((data) => {
         const position = data.position;
-        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, x: position?.x, y: position?.y})
+        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, coef_name: data.coef_name, x: position?.x, y: position?.y})
       })
     }
     return this;

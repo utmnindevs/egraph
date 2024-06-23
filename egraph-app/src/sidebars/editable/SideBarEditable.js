@@ -17,7 +17,8 @@ const GetDefatultValues = (node) => {
     }
     if (node.type === "flowNode"){
         return {
-            coef: node.data.obj.coef_
+            coef: node.data.obj.coef_,
+            coef_name: node.data.obj.coef_name_,
         }
     }
 }
@@ -52,6 +53,7 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
                     }
                     if(nd.type === "flowNode"){
                         e_graph.getFlowById(nd.id).UpdateCoef(parseFloat(data.coef));
+                        e_graph.getFlowById(nd.id).coef_name_ = data.coef_name;
                         nd.data = {...node.data}
                     }
                 }

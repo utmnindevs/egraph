@@ -13,10 +13,10 @@ class Flow  extends Coordinates{
       super(flow_config.x, flow_config.y);
       
       this.id_ = id;
-
       this.from_ = flow_config.from || "undefined"; 
       this.to_coefs_ = new Map(flow_config.to);
       this.coef_ = flow_config.coef;
+      this.coef_name_ = flow_config.coef_name || "\\gamma"
       this.interpolar_ = flow_config.interpolar != undefined ? flow_config.interpolar : null;
       this.it_population_ = 0;
     }
@@ -80,6 +80,7 @@ class Flow  extends Coordinates{
         from: this.from_.name_,
         to: to_comps,
         coef: this.coef_,
+        coef_name: this.coef_name_,
         position: {
           x: this.x_,
           y: this.y_,

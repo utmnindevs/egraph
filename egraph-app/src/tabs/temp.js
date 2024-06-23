@@ -29,8 +29,8 @@ export function generateGraphClass() {
     // g.AddFlow(generate_uuid_v4(), {from: "HeavyInfected", to: [{name: "Dead", coef: 0.4}, {name: "Rejected",coef: 0.6}], coef: 0.5, x: 350, y:150});
     // g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [{name: "Rejected",coef: 1}], coef: 0.3, x: 550, y:150});
 
-    g.AddFlow(generate_uuid_v4(), {from: "Suspectable", to: [{name: "LightInfected", coef: 1}] , coef: 0.06, x: 150, y:150});
-    g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [{name: "Rejected", coef: 1}], coef: 0.05, x: 350, y:150});
+    g.AddFlow(generate_uuid_v4(), {from: "Suspectable", to: [{name: "LightInfected", coef: 1}] , coef: 0.06, coef_name: "\\beta", x: 150, y:150});
+    g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [{name: "Rejected", coef: 1}], coef: 0.05, coef_name: "\\mu", x: 350, y:150});
     // g.AddFlow(generate_uuid_v4(), {from: null, to: [], coef: 0.3, x: 550, y:150});
 
 

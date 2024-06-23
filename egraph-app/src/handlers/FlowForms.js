@@ -8,6 +8,10 @@ export function EditableFormInputsFlow({ errors, register }) {
                     required: true,
                     pattern: Validators.float_number.pattern
                 })} />
+            <Input type={'coef_name'} inputType={'text'} span={'(LaTeX) буква'} errors={errors}
+                register={register('coef_name', {
+                    required: true
+                })} />
         </>
     )
 }

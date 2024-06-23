@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Background, Handle, Position, useUpdateNodeInternals, useStore, NodeProps } from 'reactflow';
 import React, { memo, useEffect } from 'react';
+import Latex from 'react-latex-next';
 
 import './style/FlowNodeStyle.css'
 import SharedHandle from '../compartment/CompartmentHandle';
@@ -48,7 +49,7 @@ function FlowNode({ data, isConnectable }) {
         <div className='flow-node container'>
             <div className='row flow-node-header'>
                 <div className='col-sm-8'>
-                    <label htmlFor='text'> FLOW | prob: A({data.obj?.coef_}) </label>
+                    <label htmlFor='text'> FLOW | <Latex>${data.obj?.coef_name_} = {data.obj?.coef_}$</Latex> </label>
                 </div>
             </div>
 

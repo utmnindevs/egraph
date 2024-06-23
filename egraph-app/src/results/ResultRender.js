@@ -18,6 +18,8 @@ import "chart.js/auto";
 import { EGraph } from '../graph/graph';
 import { Compartment } from '../graph/compartment';
 
+import "./ResultRender.css"
+
 Chart.register(
     CategoryScale,
     LinearScale,
@@ -96,8 +98,8 @@ const ResultRenderer = (props) => {
     return(
         <>
         <div >
-            <button onClick={() => {SetChartShared()}}>Click me</button>
-            <canvas id="result-canvas-id1"/>
+            {/* <button onClick={() => {SetChartShared()}}>Click me</button> */}
+            <canvas id="result-canvas-id1" className='result-canvas'/>
         </div>
         </>
     );

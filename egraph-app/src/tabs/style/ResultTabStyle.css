@@ -1,0 +1,63 @@
+.results-workspace{
+    height: fit-content;
+    max-width: 2000px;
+    /* border: 1px dashed #71C2FF; */
+    /* border-radius: 10px; */
+    display: flex;
+    flex-direction: column;
+    padding: 0px 40px;
+
+    .header{
+        display: flex;
+        justify-content: space-between;
+        margin-top: 30px;
+        margin-left: 20px;
+        margin-right: 20px;
+        text-align: center;
+        flex-direction: row;
+
+        .buttons{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+
+            .export{
+                background-color: #63A9FF;
+                color: white;
+                border: 1px solid;
+                border-radius: 10px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .refresh{
+                border: 1px solid #71C2FF; 
+                border-radius: 10px;
+                padding: 5px 10px 5px 10px;
+                background-color: white;   
+            }
+        }
+    }
+
+    .content{
+        display: flex;
+        justify-content: space-between;
+        margin: 30px 0px 0px 0;
+        text-align: left;
+        flex-direction: row;
+        gap:20px;
+
+        .image-content{
+            width: fit-content;
+        }
+
+        .parameters-content{
+            width: 200px;
+
+            .param-box{
+                margin-top: 10px;
+                font-size: 14px;
+            }
+        }
+    }
+}
