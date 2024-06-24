@@ -3,7 +3,19 @@
     width: fit-content;
     height: fit-content;
     border-radius: 5px;
+    
 }
+
+.error{
+    background: #ffbdbd;
+    text-align: center;
+    font-size: 10px;
+    color: white;
+    border-radius: 5px;
+}
+
+
+
 
 .flow-node-header {
     background: #bddbff;

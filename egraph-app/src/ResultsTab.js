@@ -50,7 +50,7 @@ function ResultsTab({ e_graph }) {
       total_population += data.pop;
       const flow = e_graph.FindFlowByToComp(e_graph.getCompartmentByName(data.name));
       if(flow){
-        rates.push({name: data.name, coef: flow.GetCoef(), coef_name: flow.coef_name_});
+        rates.push({name: data.name, from: flow.GetFromComp().GetName(), coef: flow.GetCoef(), coef_name: flow.coef_name_});
       }
     })
     return(
@@ -63,9 +63,10 @@ function ResultsTab({ e_graph }) {
         {rates.map(data => {
           return (<>
           <div className='param-box'>
-            Частота <b>{data.name}</b>
+            Вероятность перехода из <b>{data.from}</b> в <b>{data.name}</b>
             <div></div>
-            <Latex output="mathml">${data.coef_name}$: {data.coef}</Latex>
+            {/* TODO: проверка на индуцированность {data.coef}*/}
+            <Latex output="mathml">${data.coef_name}*p_{'{'} {data.from.slice(0,1).toLowerCase()}{data.name.slice(0,1).toLowerCase()} {'}'}$:  </Latex>
           </div>
           </>) 
         })}
@@ -145,7 +146,7 @@ function ResultsTab({ e_graph }) {
           <ResultRenderer e_graph={e_graph} setImageOfResults={setImageOfResults}/>
         </div>
       </div>
-      <RenderDev/>
+      {false && <RenderDev/>}
     </div>
   );
 };

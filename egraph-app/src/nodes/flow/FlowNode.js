@@ -58,7 +58,8 @@ function FlowNode({ data, isConnectable }) {
                     (<>
                         <div>
                         <Latex>$p_{'{'}{data?.obj.from_?.GetName().slice(0,1).toLowerCase()}
-                        {val.GetName().slice(0,1).toLowerCase()}{result.length}{'}'}({key == 1 ? "1.0" : key})$</Latex>
+                        {val.GetName().slice(0,1).toLowerCase()}{'}'}({key == 1 ? "1.0" : key})$</Latex> 
+                        {/* {result.length} */}
                         </div>
                     </>)
                 )
@@ -68,7 +69,7 @@ function FlowNode({ data, isConnectable }) {
     )
 
     return (
-        <div className={'flow-node container ' + (data.corrected ? "corrected" : "not-corrected")}>
+        <div className={'flow-node container '}>
             <div className='row flow-node-header'>
                 <div className='col-sm-8'>
                     <label htmlFor='text'> Поток </label>
@@ -88,6 +89,11 @@ function FlowNode({ data, isConnectable }) {
                 </div>
                 
             </div>
+            {!data.corrected &&
+                <div className='row error'>
+                    <div className='col'>Ошибка!</div>
+                </div>
+            }
         </div>
     );
 }

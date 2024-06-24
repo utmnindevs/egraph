@@ -67,7 +67,7 @@ function App() {
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
 
-  const [isGraphCorrected, setGraphCorrected] = useState(e_graph.IsCorrectGraph()?.result);
+  const [isGraphCorrected, setGraphCorrected] = useState(true);
 
   const [storagePlace, setStoragePlace] = useState("device");
   const [isStorageView, setStorageView] = useState(false);
@@ -247,10 +247,16 @@ function App() {
 
   useEffect(() => {
     objectsUpdate.forEach(obj => updateObject(obj));
-    // edges.forEach(edge => updateEdge(edge))
-  }, [objectsUpdate, edges])
+  }, [objectsUpdate, edges, setGraphCorrected])
 
-  
+  const IsObjectCorrected = useCallback((obj) => {
+    const graph_corrected = e_graph.IsCorrectGraph();
+    setGraphCorrected(graph_corrected.result);
+    graph_corrected.errors.forEach(data => {
+      if(data.value.GetId() === obj.GetId()){ console.log(data.message); return false; }
+    })
+    return true;
+  }, [setGraphCorrected])
 
   const updateObject = (graphObject) => {
     setGraphObjects(graphObjects => {
@@ -262,17 +268,19 @@ function App() {
               ...obj.data,
               population: graphObject.GetPopulation(),
               name: graphObject.GetName(),
-              position: graphObject.GetPosition()
+              position: graphObject.GetPosition(),
+              corrected: e_graph.IsCorrectGraph().errors.find((data) => data.value.GetId() === graphObject.GetId())? false : true
             };
             return obj;
           } else {
-            obj.data = { ...obj.data } // something for flow
+            obj.data = { ...obj.data,
+              corrected: e_graph.IsCorrectGraph().errors.find((data) => data.value.GetId() === graphObject.GetId())? false : true } // something for flow
             return obj;
           }
         }
         return obj;
       });
-    }, []);
+    }, [setGraphObjects]);
   };
 
   const applyNodesChanges2Egraph = useCallback((changes, nds) => {

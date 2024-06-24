@@ -85,6 +85,11 @@ function CompartmentNode({ data, isConnectable }) {
         </div>
 
       </div>
+      {!data.corrected &&
+                <div className='row error'>
+                    <div className='col'>Ошибка!</div>
+                </div>
+            }
     </div>
   );
 }
