@@ -35,13 +35,28 @@ export function generateGraphClass() {
     return [g, gd];
 }
 
+export const ConstructHandleId = (id, handle_type, node_type, node_name) => {
+    return "handle_" + node_type + "_" +  handle_type + "_" + (id) + "_" + node_name;
+  }
+
+export const ParseConstructHandleId = (handle_id) => {
+    return handle_id.split("_")
+}
+
 /**
  * Временная генерация исходных узлов
  * @param {EGraph} e_graph - граф эпидемиологической модели.
  */
 export function getInitialNodes(e_graph) {
 
+    function GenerateHandlesIds(handle_type, node_type, node_name){
+        return Array.from({length: 1}, (_, index) => {
+            return ConstructHandleId(index, handle_type, node_type, node_name);
+        })
+    }
+
     var initial_nodes = [];
+    var initial_edges = [];
     let coord_index = 0;
     e_graph.GetComps().forEach((value, key) => {
         initial_nodes.push(
@@ -52,20 +67,21 @@ export function getInitialNodes(e_graph) {
                     population: value.GetPopulation(),
                     name: value.GetName(),
                     obj: value,
-                    ins: 0,
-                    outs: 0
+                    ins: GenerateHandlesIds("target", "comp", value.id_.slice(0,6)),
+                    outs: GenerateHandlesIds("source", "comp", value.id_.slice(0,6))
                 }
             }
         )
     });
     e_graph.GetFlows().forEach((value, key) => {
-        coord_index += 100;
         initial_nodes.push(
             {
                 id: key, type: 'flowNode',
                 position: value.GetPosition(),
                 data: {
                     obj: value,
+                    ins: GenerateHandlesIds("target", "flow", value.id_.slice(0,6)),
+                    outs: GenerateHandlesIds("source", "flow", value.id_.slice(0,6))
                 }
             }
         )

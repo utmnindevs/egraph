@@ -1,0 +1,72 @@
+.image-workspace{
+    height: fit-content;
+    max-width: 2000px;
+    border: 1px dashed #71C2FF;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+
+    .image{
+        padding: 100px;
+        align-items: center;
+    }
+}
+.svg-body {
+    display: flex;
+    flex-direction: column;
+    padding-left: 40px;
+    padding-right: 40px;
+    justify-content: center;
+    gap: 30px;
+
+    .settings-content{
+        display: flex;
+        flex-direction: row;
+        height: 100px;
+        align-items:center;
+        justify-content: baseline;
+        gap: 20px;
+        border-radius: 5px;
+        margin-left: 10px;
+        /* border: 1px solid #63a9ff3f; */
+    }
+}
+
+.svg-body .header{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-align: center;
+    flex-direction: row;
+    
+    .setting_buttons{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+
+        .settings{
+            border: 1px dashed #71C2FF;
+            border-radius: 10px;
+            padding: 5px 10px 5px 10px;
+            background-color: white;   
+        }
+
+        .actived{
+            border: 0 solid black;
+            background-color: #CCE3FF;
+        }
+
+        .export{
+            background-color: #63A9FF;
+            color: white;
+            border: 1px solid;
+            border-radius: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+
+}
+

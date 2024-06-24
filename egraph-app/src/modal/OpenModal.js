@@ -8,13 +8,21 @@ import './style_modal/OpenModal.css';
 import { openFile } from '../handlers/Save';
 
 
-export function OpenModal({ isOpen, onCreate, handleOpenExisting }) {
+export function OpenModal({ isOpen, storageType, onChangeStorage, onCreate, handleOpenExisting }) {
+  const renderChooseStorageButton = () => {
+    return (<>
+      <a className='change' onClick={() => {onChangeStorage()}}>Изменить место хранения</a>
+    </>);
+  }
+
+  const type = storageType ? storageType : "device"
+
   return (
     <>
-      <Modal isOpen={isOpen} typeModal={"device"} content={
+      <Modal isOpen={isOpen} typeModal={type} content={
         {
-          header_text: "Это устройство",
-          body_text: "Изменить место хранения <- стиль поправить",
+          header_text: type === "device" ? "Это устройство" : "Яндекс Диск",
+          body_text: renderChooseStorageButton(),
           buttons_funcs_label: [
             ["Создать новую модель", onCreate],
             ["Открыть существующую", handleOpenExisting]

@@ -1,0 +1,45 @@
+.inputs-content{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 10px;
+    
+    .form-control{
+        font-size: 12px;
+    }
+
+    .input-content{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        gap: 10px;
+
+        .right{
+            width: 250px;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+        }
+    }
+    .create-content{
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+
+        .left{
+            width: 200px;
+        }
+
+        .val-button{
+            background-color: #71C2FF;
+            border-radius: 5px;
+            width: 110px;
+            color: white;
+            border: 1px solid rgba(0, 0, 0, 10%);
+        }
+    }
+}

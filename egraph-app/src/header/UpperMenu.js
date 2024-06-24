@@ -119,7 +119,6 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
             {fileName}
           </h1>
           <div className="header-buttons">
-            <button className="dark-mode-button" onClick={toggleDarkMode}>Dark Theme</button>
             <FileMenuDropDown className="hdr-button" name={'Файл'} />
             <EditMenuDropDown className="hdr-button" name={'Правка'} />
             <AboutMenuDropDown className="hdr-button" name={'Справка'} />
