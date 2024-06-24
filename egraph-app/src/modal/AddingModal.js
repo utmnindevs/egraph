@@ -29,7 +29,7 @@ function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
     const onSubmit = useCallback((form_data) => {
         switch(node_type){
             case "flowNode":
-                addingNode.data.obj.coef_name_ = form_data.coef_name_;
+                addingNode.data.obj.coef_name_ = form_data.coef_name;
                 addingNode.data.obj.coef_ = parseFloat(form_data.coef)
             case "compartmentNode":
                 addingNode.data.obj.name_ = form_data.name;

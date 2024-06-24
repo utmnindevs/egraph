@@ -68,7 +68,7 @@ class EGraph {
       this.id_to_flow_.delete(id_flow);
     }
   }
-  DeleteComp(comp) { // TODO: переписать удаление компартмента, с учетом что от потоков тоже отсоеденились
+  DeleteComp(comp) { 
     const id_comp = comp.GetId();
     if (this.id_to_comp_.has(id_comp)) {
       this.id_to_comp_.delete(id_comp);
@@ -205,7 +205,6 @@ class EGraph {
     this.id_to_flow_.forEach((value, key) => {
       flows.push(value.toString());
     });
-    console.log(flows)
     return JSON.stringify({
       compartments,
       flows,
@@ -286,6 +285,62 @@ class EGraph {
   jsonIsValid(jsonData){
     const parsedData = JSON.parse(jsonData);
     return parsedData.compartments && parsedData.flows;
+  }
+
+  IsCorrectGraph(){
+    let result = {result: true, errors: [], warnings: []};
+    const result_view_compartments = this.CheckCompartments();
+    result.errors.push(...result_view_compartments?.errors);
+    result.warnings.push(...result_view_compartments?.warnings);
+
+    const result_view_flows = this.CheckFlows();
+    result.errors.push(...result_view_flows?.errors);
+    result.warnings.push(...result_view_flows?.warnings);
+
+    result.result = result.result && result_view_compartments.result && result_view_flows.result;
+    return result;
+  }
+
+  /**
+   * Проверка компартментов, а именно корретность существования стартового компартмента, который не подсоединен к другим потокам с западной стороны.
+   * Кроме случаев когда компартмент никуда не выходит и не входит.
+   */
+  CheckCompartments(){
+    let result = {result: true, errors: [], warnings: []};
+    if(!this.start_compartment_) {return {result: false, errors: [{message: "EGraph has not started compartment.", value: null}], warnings: []}};
+    if(this.FindFlowByToComp(this.start_compartment_)){return {result:false, errors: [{message: "Started compartment sourced from flow.", value: this.start_compartment_}], warnings: []}}
+    if(!this.FindFlowByFromComp(this.start_compartment_)){return {result:false, errors: [{message: "Started compartment has not connected to EGraph.", value: this.start_compartment_}], warnings: []}}
+    this.id_to_comp_.forEach((comp, id) => {
+      if(!this.FindFlowByFromComp(comp) && !this.FindFlowByToComp(comp)){
+        result.warnings.push({message: comp.GetName() + " hasn't connected", value: comp})
+      }
+    })
+    return result;
+  }
+
+  /**
+   * Проверка потоков, что все они указывают направления, кроме случаев когда null -> null. Корретная сумма выходных коэффициентов.
+   */
+  CheckFlows(){
+    let result = {result: true, errors: [], warnings: []};
+    this.id_to_flow_.forEach((flow, id) => { 
+      if(!flow.GetFromComp() && flow.GetToComps().size == 0){
+        result.warnings.push({message: "Flow hasn't connected.", value: flow});
+      }else if((!flow.GetFromComp() && flow.GetToComps().size != 0)  || (flow.GetFromComp() && flow.GetToComps().size == 0)){
+
+        result.errors.push({message: "Flow hasn't to or from compartments.", value: flow});
+        result.result = false;
+      }
+      let coef_sum = 0;
+      flow.GetToComps().forEach((coef, comp) => {
+        coef_sum += coef;
+      })
+      if(coef_sum != 1.0 && coef_sum != 0){
+        result.errors.push({message: "Flow's to coefs in sum not equals 1.0", value: flow});
+        result.result = false;
+      }
+    })
+    return result;
   }
 
 }

@@ -67,6 +67,8 @@ function App() {
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
 
+  const [isGraphCorrected, setGraphCorrected] = useState(e_graph.IsCorrectGraph()?.result);
+
   const [storagePlace, setStoragePlace] = useState("device");
   const [isStorageView, setStorageView] = useState(false);
 
@@ -298,6 +300,7 @@ function App() {
 
   const runModel = async () => {
     for (let i = 0; i < 1; i++) {
+      console.log(e_graph.IsCorrectGraph());
       await delay(500);
       e_graph.onCompute(e_graph.GetStarted());
       updateNodesByObjects(e_graph.GetComps());

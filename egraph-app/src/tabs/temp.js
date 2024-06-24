@@ -121,7 +121,8 @@ export function getInitialNodes(e_graph) {
                     name: value.GetName(),
                     obj: value,
                     ins: GenerateHandlesIds("target", "comp", value.id_.slice(0,6)),
-                    outs: GenerateHandlesIds("source", "comp", value.id_.slice(0,6))
+                    outs: GenerateHandlesIds("source", "comp", value.id_.slice(0,6)),
+                    corrected: true,
                 }
             }
         )
@@ -134,7 +135,8 @@ export function getInitialNodes(e_graph) {
                 data: {
                     obj: value,
                     ins: GenerateHandlesIds("target", "flow", value.id_.slice(0,6)),
-                    outs: GenerateHandlesIds("source", "flow", value.id_.slice(0,6))
+                    outs: GenerateHandlesIds("source", "flow", value.id_.slice(0,6)),
+                    corrected: true,
                 }
             }
         )

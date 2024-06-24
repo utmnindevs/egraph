@@ -1,5 +1,5 @@
 .flow-node {
-    min-width: 200px;
+    min-width: 230px;
     width: fit-content;
     height: fit-content;
     border-radius: 5px;
@@ -37,6 +37,24 @@
     min-height: 50px;
     height: fit-content;
     font-size: 12px;
+    display: flex;
+    flex-direction: row;
+
+    .left-handle-info{
+        text-align: start;
+        margin-top: 4px;
+        width: 70px;
+    }
+
+    .right-handle-info{
+        text-align: end;
+        margin-top: 3px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 2.3px;
+    }
+
 
 }
 
@@ -46,6 +64,7 @@
     /* background: orange; */
     margin-top: 5px;
     margin-bottom: 6px;
+    width: 1px;
 }
 
 .flow-node-body label {

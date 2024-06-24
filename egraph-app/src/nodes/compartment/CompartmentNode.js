@@ -66,7 +66,7 @@ function CompartmentNode({ data, isConnectable }) {
 
 
   return (
-    <div class='compartment-node container'>
+    <div class={'compartment-node container ' + (data.corrected ? "corrected" : "not-corrected")}>
       <div class="row compartment-node-header ">
         <div class="col-sm-8">
           <label htmlFor="text"> {data.name.substr(0, 2).toUpperCase()}: {data.name} </label>

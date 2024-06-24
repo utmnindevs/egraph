@@ -10,7 +10,8 @@ export function AddingFormInputsFlow({ errors, register }) {
                 })} />
             <Input type={'coef_name'} inputType={'text'} span={"(LaTeX) буква: \\beta"} errors={errors}
                 register={register('coef_name', {
-                    required: true
+                    required: true,
+                    pattern: Validators.latex_alphabet.pattern
                 })} />
         </>
     )
@@ -26,7 +27,8 @@ export function EditableFormInputsFlow({ errors, register }) {
                 })} />
             <Input type={'coef_name'} inputType={'text'} span={'(LaTeX) буква'} errors={errors}
                 register={register('coef_name', {
-                    required: true
+                    required: true,
+                    pattern: Validators.latex_alphabet.pattern
                 })} />
         </>
     )

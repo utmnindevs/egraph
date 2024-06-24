@@ -42,6 +42,7 @@ function FlowTab({
 
     const edg = useEdges();
 
+
     /**
      * Метод удаления ячейки.
      */
@@ -99,19 +100,36 @@ function FlowTab({
         updateNodesByObjects(e_graph.GetFlows());
     }, [setGraphObjects, updateNodesByObjects])
 
+    const GetDiffOfCoefsAndUpdateAll = (flow) => {
+        const all_values = [];
+        let diff = 0;
+        flow.GetToComps().forEach((coef, comp) => {
+            diff += coef/2;
+            flow.UpdateToComaprtmentCoef(comp, coef/2);
+        })
+        return diff;
+    }
+
+    const ReturnDiffOfCoefs = (flow, deleted_coef) => {
+        let size = flow.GetToComps().size;
+        flow.GetToComps().forEach((coef, comp) => {
+            flow.UpdateToComaprtmentCoef(comp, coef + deleted_coef/size);
+        })
+    }
+
     const onConnect = useCallback((params) => {
-        setEdges((els) => addEdge({ ...params }, els))
         AddNewHandle(params?.source, params?.sourceHandle);
         AddNewHandle(params?.target, params?.targetHandle);
         const connected_flow = e_graph.getFlowById(params?.source) || e_graph.getFlowById(params?.target);
         const connected_comp = e_graph.getCompartmentById(params?.source) || e_graph.getCompartmentById(params?.target);
         const is_to_comp = params?.targetHandle.search('flow') === -1;
         if(is_to_comp){
-            connected_flow.SetToCompartment(connected_comp, 1);
+            connected_flow.SetToCompartment(connected_comp, 1 - GetDiffOfCoefsAndUpdateAll(connected_flow));
         }
         else{
             connected_flow.SetFromCompartment(connected_comp);
         }
+        setEdges((els) => addEdge({ ...params }, els))
     }, [AddNewHandle]
     );
 
@@ -141,7 +159,9 @@ function FlowTab({
                 const connected_comp = e_graph.getCompartmentById(parsed_data[0]?.id) || e_graph.getCompartmentById(parsed_data[1]?.id);   
                 const is_to_comp = parsed_data[1]?.handle.search('flow') === -1;   
                 if(is_to_comp){
+                    let diff = connected_flow.GetToCompartmentCoef(connected_comp);
                     connected_flow.DeleteToCompartment(connected_comp)
+                    ReturnDiffOfCoefs(connected_flow, diff);
                 }
                 else{
                     connected_flow.DeleteFromCompartment(connected_comp)
@@ -191,7 +211,8 @@ function FlowTab({
                         name: comp.GetName(),
                         obj: comp,
                         ins: GenerateHandlesIds("target", "comp", comp.GetId().slice(0,6)),
-                        outs: GenerateHandlesIds("source", "comp", comp.GetId().slice(0,6))
+                        outs: GenerateHandlesIds("source", "comp", comp.GetId().slice(0,6)),
+                        corrected: true,
                     },
                 };
                 setAddingNode(newNode);
@@ -205,7 +226,8 @@ function FlowTab({
                     data: {
                         obj: flow,
                         ins: GenerateHandlesIds("target", "flow", flow.GetId().slice(0,6)),
-                        outs: GenerateHandlesIds("source", "flow", flow.GetId().slice(0,6))
+                        outs: GenerateHandlesIds("source", "flow", flow.GetId().slice(0,6)),
+                        corrected: true,
                     }
                 }
                 setAddingNode(newNode);
@@ -237,6 +259,9 @@ function FlowTab({
             deleted.forEach((node) => {
                 if (node.type === "compartmentNode") {
                     e_graph.DeleteComp(node.data.obj)
+                }
+                if (node.type === "flowNode"){
+                    e_graph.DeleteFlow(node.data.obj)
                 }
                 setEditableProps(null)
             })

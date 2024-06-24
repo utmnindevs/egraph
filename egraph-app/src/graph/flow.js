@@ -14,7 +14,7 @@ class Flow  extends Coordinates{
       
       this.id_ = id;
       this.from_ = flow_config.from || null; 
-      this.to_coefs_ = new Map(flow_config.to);
+      this.to_coefs_ = flow_config.to != [] ? new Map(flow_config.to) : null;
       this.coef_ = flow_config.coef;
       this.coef_name_ = flow_config.coef_name || "\\gamma"
       this.interpolar_ = flow_config.interpolar != undefined ? flow_config.interpolar : null;
@@ -29,6 +29,12 @@ class Flow  extends Coordinates{
     SetInerpolar(from, coef = 1) {
       this.interpolar_ = { interpolar_by: from, interpolar_coef_: coef }; // induction
     }
+    GetToCompartmentCoef(comp){
+      if(this.to_coefs_.has(comp)){
+        return this.to_coefs_.get(comp);
+      }
+      return 0;
+    }
     DeleteInterpolar() {
       if (this.interpolar_) {
         delete this.interpolar_;
@@ -36,6 +42,9 @@ class Flow  extends Coordinates{
     }
     UpdateCoef(coef){
       this.coef_ = coef;
+    }
+    UpdateCoefName(coef){
+      this.coef_name_ = coef
     }
     UpdateToComaprtmentCoef(to, coef) {
       if (this.to_coefs_.has(to)) {
