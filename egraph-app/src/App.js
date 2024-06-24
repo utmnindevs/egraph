@@ -127,15 +127,29 @@ function App() {
 
   // Расшаренная установка обновления и добавления нового узла если такой был создан
   const setGraphNodesShare = useCallback(() => {
-    if (addingNode) {
-      const comp = addingNode.data.obj;
-      const position = comp.GetPosition();
-      e_graph.AddComp(comp.GetId(), { name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y });
-      addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
-      setGraphObjects((nds) => nds.concat(addingNode));
-      updateNodesByObjects(e_graph.GetComps());
-      setAddingNodeShare(null);
+    if(!addingNode) {return;}
+
+    const type_node = addingNode.type;
+    switch(type_node){
+      case "flowNode":
+        const flow = addingNode.data.obj;
+        const f_position = flow.GetPosition();
+        e_graph.AddFlow(flow.GetId(), {from: null, to: [], coef: flow.GetCoef(), coef_name: flow.GetCoefName(), x: f_position?.x, y: f_position?.y});
+        addingNode.data.obj = e_graph.getFlowById(flow.GetId());
+        break;
+      case "compartmentNode":
+        const comp = addingNode.data.obj;
+        const position = comp.GetPosition();
+        e_graph.AddComp(comp.GetId(), { name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y });
+        addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
+        break;
+      default:
+        throw "Undefined node type";
     }
+    setGraphObjects((nds) => nds.concat(addingNode));
+    updateNodesByObjects(new Map([...e_graph.GetComps(), ...e_graph.GetFlows()]));
+    setAddingNodeShare(null);
+    console.log(e_graph)
   }, [setGraphObjects, addingNode])
 
   // Метод вызываемый при отмене создания нового узла

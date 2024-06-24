@@ -9,7 +9,8 @@ import { EGraph } from '../graph/graph';
 
 import { Compartment } from '../graph/compartment';
 
-import { ParseConstructHandleId, ConstructHandleId } from './temp';
+import { ParseConstructHandleId, ConstructHandleId, GenerateHandlesIds } from './temp';
+import { Flow } from '../graph/flow';
 
 
 
@@ -179,23 +180,36 @@ function FlowTab({
                 x: event.clientX,
                 y: event.clientY,
             });
-
-            let comp = new Compartment(generate_uuid_v4(), { name: "testing", population: 1, x: position.x, y: position.y });
-            // TODO: Решить баг с тем, что хендлеры ху*во работают
-            const newNode = {
-                id: comp.GetId(),
-                type,
-                position: comp.GetPosition(),
-                data: {
-                    population: comp.GetPopulation(),
-                    name: comp.GetName(),
-                    obj: comp,
-                    ins: 1,
-                    outs: 1
-                },
-            };
-
-            setAddingNode(newNode);
+            if(type === 'compartmentNode'){
+                let comp = new Compartment(generate_uuid_v4(), { name: "testing", population: 1, x: position.x, y: position.y });
+                const newNode = {
+                    id: comp.GetId(),
+                    type,
+                    position: comp.GetPosition(),
+                    data: {
+                        population: comp.GetPopulation(),
+                        name: comp.GetName(),
+                        obj: comp,
+                        ins: GenerateHandlesIds("target", "comp", comp.GetId().slice(0,6)),
+                        outs: GenerateHandlesIds("source", "comp", comp.GetId().slice(0,6))
+                    },
+                };
+                setAddingNode(newNode);
+            }
+            if(type === 'flowNode'){
+                let flow = new Flow(generate_uuid_v4(), { to: [], coef: 0, x: position.x, y: position.y })
+                const newNode = {
+                    id: flow.GetId(),
+                    type,
+                    position: flow.GetPosition(),
+                    data: {
+                        obj: flow,
+                        ins: GenerateHandlesIds("target", "flow", flow.GetId().slice(0,6)),
+                        outs: GenerateHandlesIds("source", "flow", flow.GetId().slice(0,6))
+                    }
+                }
+                setAddingNode(newNode);
+            }
         },
         [e_graph, reactFlowInstance, setAddingNode],
     );

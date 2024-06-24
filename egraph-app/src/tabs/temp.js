@@ -52,7 +52,7 @@ export const ParseConstructHandleId = (handle_id) => {
     return handle_id.split("_")
 }
 
-function GenerateHandlesIds(handle_type, node_type, node_name){
+export function GenerateHandlesIds(handle_type, node_type, node_name){
     return Array.from({length: 1}, (_, index) => {
         return ConstructHandleId(index, handle_type, node_type, node_name);
     })

@@ -205,6 +205,7 @@ class EGraph {
     this.id_to_flow_.forEach((value, key) => {
       flows.push(value.toString());
     });
+    console.log(flows)
     return JSON.stringify({
       compartments,
       flows,

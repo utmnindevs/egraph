@@ -3,6 +3,7 @@ import Modal from './Modal';
 import { useForm, Controller } from "react-hook-form";
 
 import { AddingFormInputs } from '../handlers/CompartmentForms';
+import { AddingFormInputsFlow } from '../handlers/FlowForms';
 
 /**
  * Форма модального окна, в котором можно задавать значения для создания новых узлов
@@ -12,21 +13,32 @@ import { AddingFormInputs } from '../handlers/CompartmentForms';
 function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
     const { register, handleSubmit, setError, formState: { errors } } = useForm({mode: 'onSubmit'});
 
-    const ConstructHandleId = (id, handle_type, node_type) => {
-        return "handle_" + node_type + "_" +  handle_type + "_" + (id);
-      }
+    const node_type = addingNode.type;
 
-    function GenerateHandlesIds(handle_type, node_type){
-        return Array.from({length: 1}, (_, index) => {
-            return ConstructHandleId(index, handle_type, node_type);
-        })
+    const ChooseBodyGenerate = () => {
+        switch(node_type){
+            case "flowNode":
+                return AddingFormInputsFlow;
+            case "compartmentNode":
+                return AddingFormInputs;
+            default:
+                throw "Not exist type of node";
+        }
     }
 
     const onSubmit = useCallback((form_data) => {
-        addingNode.data.obj.name_ = form_data.name;
-        addingNode.data.obj.population_ = parseInt(form_data.population);
-        addingNode.data.ins = GenerateHandlesIds("target", "comp");
-        addingNode.data.outs = GenerateHandlesIds("source", "comp");
+        switch(node_type){
+            case "flowNode":
+                addingNode.data.obj.coef_name_ = form_data.coef_name_;
+                addingNode.data.obj.coef_ = parseFloat(form_data.coef)
+            case "compartmentNode":
+                addingNode.data.obj.name_ = form_data.name;
+                addingNode.data.obj.population_ = parseInt(form_data.population);
+                break;
+            default:
+                throw "Not exist type of node";
+        }
+        
         createGraphNode()
     }, [createGraphNode]);
 
@@ -34,7 +46,7 @@ function AddingModal({ isOpen, addingNode, createGraphNode, closeModal }) {
         <Modal isOpen={isOpen} typeModal={"another"}
             content={{
                 header_text: "Добавление нового узла",
-                body_text: AddingFormInputs({errors: errors, register: register}),
+                body_text: ChooseBodyGenerate()({errors: errors, register: register}),
                 buttons_funcs_label: [
                     ['Создать', handleSubmit(onSubmit)],
                     ['Отмена', closeModal]

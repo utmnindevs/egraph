@@ -29,7 +29,7 @@ function SideBarAdding() {
                 </div>
 
                 <div class="flow ">
-                <div class='flow-node container'>
+                <div class='flow-node container dndnode' onDragStart={(event) => onDragStart(event, 'flowNode')} draggable>
                         <div class="row flow-node-header ">
                             <div class="col-sm-8">
                                 <label htmlFor="text"> Поток </label>

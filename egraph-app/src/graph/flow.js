@@ -13,7 +13,7 @@ class Flow  extends Coordinates{
       super(flow_config.x, flow_config.y);
       
       this.id_ = id;
-      this.from_ = flow_config.from || "undefined"; 
+      this.from_ = flow_config.from || null; 
       this.to_coefs_ = new Map(flow_config.to);
       this.coef_ = flow_config.coef;
       this.coef_name_ = flow_config.coef_name || "\\gamma"
@@ -56,6 +56,9 @@ class Flow  extends Coordinates{
     GetCoef() {
       return this.coef_;
     }
+    GetCoefName(){
+      return this.coef_name_
+    }
     GetFromComp() {
       return this.from_;
     }
@@ -77,7 +80,7 @@ class Flow  extends Coordinates{
       }))
       return {
         id: this.id_,
-        from: this.from_.name_,
+        from: this.from_?.name_ || null,
         to: to_comps,
         coef: this.coef_,
         coef_name: this.coef_name_,
