@@ -114,6 +114,9 @@ function FlowTab({
     }, [AddNewHandle]
     );
 
+    
+
+
 
     const ParseChangeId = (change_id) => {
         const result = [];
@@ -130,13 +133,23 @@ function FlowTab({
     const onEdgesChange = useCallback((changes) =>
         setEdges((edg) => {
             if(changes?.at(0)?.type === 'remove'){
-                console.log(changes)
                 const parsed_data = ParseChangeId(changes?.at(0)?.id);
                 DeleteHandle(parsed_data[0]?.id, parsed_data[0]?.handle);                
-                DeleteHandle(parsed_data[1]?.id, parsed_data[1]?.handle);                
+                DeleteHandle(parsed_data[1]?.id, parsed_data[1]?.handle);  
+                const connected_flow = e_graph.getFlowById(parsed_data[0]?.id) || e_graph.getFlowById(parsed_data[1]?.id);
+                const connected_comp = e_graph.getCompartmentById(parsed_data[0]?.id) || e_graph.getCompartmentById(parsed_data[1]?.id);   
+                const is_to_comp = parsed_data[1]?.handle.search('flow') === -1;   
+                if(is_to_comp){
+                    connected_flow.DeleteToCompartment(connected_comp)
+                }
+                else{
+                    connected_flow.DeleteFromCompartment(connected_comp)
+                }
+                updateNodesByObjects(e_graph.GetComps());
+                updateNodesByObjects(e_graph.GetFlows());
             }
             return applyEdgeChanges(changes, edg);
-        })
+        }), [updateNodesByObjects]
     )
 
 

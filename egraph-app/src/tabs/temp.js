@@ -44,12 +44,64 @@ export const ConstructHandleId = (id, handle_type, node_type, node_name) => {
     return "handle_" + node_type + "_" +  handle_type + "_" + generate_id_v1() + "_" + node_name;
   }
 
-export const ConstructEdgeId = (handles, ids) => {
-    return "reactflow__edge-" + ids[0] + handles[0] + "-" + ids[1] + handles[1];
+export const ConstructEdgeId = (from, to, id_from, id_to) => {
+    return "reactflow__edge-" + id_from + from + "-" + id_to + to;
 }
 
 export const ParseConstructHandleId = (handle_id) => {
     return handle_id.split("_")
+}
+
+function GenerateHandlesIds(handle_type, node_type, node_name){
+    return Array.from({length: 1}, (_, index) => {
+        return ConstructHandleId(index, handle_type, node_type, node_name);
+    })
+}
+
+export function getInitialEdges(e_graph, initial_nodes){
+    var initial_edges = [];
+    if(!initial_nodes) { return initial_edges; }
+
+    initial_nodes.forEach(node => {
+        if(node.type === 'flowNode'){
+            const from_comp = node.data.obj.GetFromComp();
+            const to_comps = node.data.obj.GetToComps();
+            
+            if(from_comp){
+                const flow_handle_in = node.data.ins.at(-1);
+                const comp_node = initial_nodes.find((val) => {return val.data.name === from_comp.GetName();})
+                const comp_handle_out = comp_node.data.outs.at(-1);
+                initial_edges.push({ 
+                    id: ConstructEdgeId(comp_handle_out, flow_handle_in, comp_node.id, node.id), 
+                    source: comp_node.id, 
+                    target: node.id,
+                    sourceHandle: comp_handle_out,
+                    targetHandle: flow_handle_in,
+                    arrowHeadType: 'arrowclosed',
+                });
+                comp_node.data.outs.push(ConstructHandleId(0, "source", "comp", comp_node.id.slice(0,6)));
+            }
+            if(to_comps){
+                to_comps.forEach((coef, comp) => {
+                    const flow_handle_out = node.data.outs.at(-1);
+                    const comp_node = initial_nodes.find((data) => {return data.data.name === comp.GetName();})
+                    const comp_handle_in = comp_node.data.ins.at(-1);
+                    initial_edges.push({ 
+                        id: ConstructEdgeId(flow_handle_out, comp_handle_in, node.id, comp_node.id ),
+                        source: node.id,
+                        target: comp_node.id,
+                        sourceHandle: flow_handle_out,
+                        targetHandle: comp_handle_in,
+                        arrowHeadType: 'arrowclosed',
+                        });
+                    node.data.outs.push(ConstructHandleId(0, "source", "flow", node.id.slice(0,6)));
+                    comp_node.data.ins.push(ConstructHandleId(0, "target", "comp", comp_node.id.slice(0,6)));
+                })
+            }
+        }
+    })
+
+    return initial_edges;
 }
 
 /**
@@ -58,14 +110,7 @@ export const ParseConstructHandleId = (handle_id) => {
  */
 export function getInitialNodes(e_graph) {
 
-    function GenerateHandlesIds(handle_type, node_type, node_name){
-        return Array.from({length: 1}, (_, index) => {
-            return ConstructHandleId(index, handle_type, node_type, node_name);
-        })
-    }
-
     var initial_nodes = [];
-    var initial_edges = [];
     e_graph.GetComps().forEach((value, key) => {
         initial_nodes.push(
             {
@@ -95,10 +140,6 @@ export function getInitialNodes(e_graph) {
         )
     })
 
-    const constructed_edges = [];
-    initial_nodes.forEach((node) => {
-        
-    })
     return initial_nodes;
 
 }

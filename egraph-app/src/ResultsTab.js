@@ -145,6 +145,7 @@ function ResultsTab({ e_graph }) {
           <ResultRenderer e_graph={e_graph} setImageOfResults={setImageOfResults}/>
         </div>
       </div>
+      <RenderDev/>
     </div>
   );
 };
