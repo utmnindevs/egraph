@@ -1,6 +1,6 @@
 
 import { Compartment } from "./compartment";
-import { Flow } from "./flow";
+import { Flow, Induction } from "./flow";
 import { generate_uuid_v4 } from "./helpers";
 
 var dagre = require("@xdashduck/dagre-tlayering");
@@ -39,6 +39,7 @@ class EGraph {
       to: flow_config.to.map(obj => ([this.getCompartmentByName(obj.name), obj.coef])),
       coef: flow_config.coef,
       coef_name: flow_config.coef_name,
+      induction: flow_config.induction,
       x: flow_config.x,
       y: flow_config.y
     })
@@ -93,12 +94,15 @@ class EGraph {
     return null;
   }
   FindFlowByToComp(comp) {
+    const from_flows = []
     for (const [name, ptr] of this.id_to_flow_) {
       const comps_by_flow = ptr.GetToComps();
       if (comps_by_flow.has(comp)) {
-        return ptr;
+        from_flows.push(ptr)
       }
     }
+    if(from_flows.length == 1){return from_flows.at(0);}
+    else if(from_flows.length > 1){return from_flows;}
     return null;
   }
   ComputePopulation(comp, day) {
@@ -276,7 +280,9 @@ class EGraph {
       })
       parsedData.flows.forEach((data) => {
         const position = data.position;
-        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, coef_name: data.coef_name, x: position?.x, y: position?.y})
+        const inductions = []
+        data.induction.forEach((data) => {inductions.push(new Induction(data.from, data.coef))})
+        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, induction: inductions, coef_name: data.coef_name, x: position?.x, y: position?.y})
       })
     }
     return this;

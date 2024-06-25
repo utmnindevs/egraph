@@ -48,11 +48,29 @@ function ResultsTab({ e_graph }) {
     let total_population = 0;
     comps.forEach(data => {
       total_population += data.pop;
-      const flow = e_graph.FindFlowByToComp(e_graph.getCompartmentByName(data.name));
+      let flow = e_graph.FindFlowByToComp(e_graph.getCompartmentByName(data.name));
       if(flow){
-        rates.push({name: data.name, from: flow.GetFromComp().GetName(), coef: flow.GetCoef(), coef_name: flow.coef_name_});
+        if (!(Array.isArray(flow))){flow = [flow]}
+        [...flow].forEach((f) => {
+          rates.push({
+            name: data.name, 
+            from: f.GetFromComp().GetName(), 
+            coef: f.GetCoef(), 
+            coef_name: f.coef_name_,
+            inductions: f.GetInductions()  });
+          })
       }
     })
+    const ConvertedInductionsToLatex = (inductions, from) => {
+      const result = []
+      console.log(inductions)
+      inductions.forEach((ind) => {
+        const str = `k_{${from.slice(0,1).toLowerCase()}${ind.GetFrom().slice(0,1).toLowerCase()}}${ind.GetFrom().slice(0,1)}`;
+        result.push(str)
+      })
+      console.log(result)
+      return result;
+    }
     return(
       <>
         <div className='param-box'>
@@ -65,8 +83,22 @@ function ResultsTab({ e_graph }) {
           <div className='param-box'>
             Вероятность перехода из <b>{data.from}</b> в <b>{data.name}</b>
             <div></div>
-            {/* TODO: проверка на индуцированность {data.coef}*/}
+            { data.inductions.length != 0 &&
+              <Latex output="mathml">
+                $
+                \frac{'{'}{data.coef_name} {data.from.slice(0,1)}{'}'}{'{'}n{'}'}
+                {data.inductions.length > 1 && '('}
+                {ConvertedInductionsToLatex(data.inductions, data.from).join("+")}
+                {data.inductions.length > 1 && ')'}
+                *p_{'{'} {data.from.slice(0,1).toLowerCase()}{data.name.slice(0,1).toLowerCase()} {'}'}
+                $  
+              </Latex>
+            }
+            {
+              data.inductions.length == 0 && 
             <Latex output="mathml">${data.coef_name}*p_{'{'} {data.from.slice(0,1).toLowerCase()}{data.name.slice(0,1).toLowerCase()} {'}'}$:  </Latex>
+
+            }
           </div>
           </>) 
         })}

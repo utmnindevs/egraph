@@ -67,12 +67,37 @@ function FlowNode({ data, isConnectable }) {
             return result;
             }
     )
+    
+    const InductionCoefs = useMemo(
+        () => {
+            const result = [];
+            data?.obj.induction_.forEach((ind) => {
+                result.push(
+                    <>
+                        <Latex>$k_{'{'}
+                        {data?.obj.from_?.GetName().slice(0,1).toLowerCase()}
+                        {ind.GetFrom().slice(0,1).toLowerCase()}
+                        {'}'}
+                        = {ind.GetCoef()}
+                        $</Latex>
+                    </>
+                )
+            })
+            return result;
+        }
+    )
 
     return (
         <div className={'flow-node container '}>
             <div className='row flow-node-header'>
-                <div className='col-sm-8'>
+                <div className='col-sm-4'>
                     <label htmlFor='text'> Поток </label>
+                </div>
+                <div className='checkbox-inducted col-sm-8'>
+                    
+                    {data.obj.induction_.length != 0 && <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked/>}
+                    {data.obj.induction_.length == 0 && <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>}
+                    
                 </div>
             </div>
 
@@ -89,6 +114,15 @@ function FlowNode({ data, isConnectable }) {
                 </div>
                 
             </div>
+            
+            {data.obj.induction_.length != 0 && <div className='induction row'>
+                <div className='handler-from'>
+
+                </div>
+                <div className='coef'>
+                    {InductionCoefs}
+                </div>
+            </div>}
             {!data.corrected &&
                 <div className='row error'>
                     <div className='col'>Ошибка!</div>

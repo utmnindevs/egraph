@@ -69,7 +69,7 @@ function CompartmentNode({ data, isConnectable }) {
     <div class={'compartment-node container ' + (data.corrected ? "corrected" : "not-corrected")}>
       <div class="row compartment-node-header ">
         <div class="col-sm-8">
-          <label htmlFor="text"> {data.name.substr(0, 2).toUpperCase()}: {data.name} </label>
+          <label htmlFor="text"> {data.name.substr(0, 1).toUpperCase()}: {data.name} </label>
         </div>
         <div class="col-4 start-compartment-check">
           {/* <input class="form-check-radio nodrag" type="radio" value="" id="flexCheckDefault"></input> */}

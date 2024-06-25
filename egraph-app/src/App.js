@@ -136,7 +136,7 @@ function App() {
       case "flowNode":
         const flow = addingNode.data.obj;
         const f_position = flow.GetPosition();
-        e_graph.AddFlow(flow.GetId(), {from: null, to: [], coef: flow.GetCoef(), coef_name: flow.GetCoefName(), x: f_position?.x, y: f_position?.y});
+        e_graph.AddFlow(flow.GetId(), {from: null, to: [], coef: flow.GetCoef(), induction: flow.GetInductions(), coef_name: flow.GetCoefName(), x: f_position?.x, y: f_position?.y});
         addingNode.data.obj = e_graph.getFlowById(flow.GetId());
         break;
       case "compartmentNode":
