@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Background, Handle, Position, useUpdateNodeInternals, useStore, NodeProps } from 'reactflow';
 import React, { memo, useEffect } from 'react';
+import Latex from 'react-latex-next';
 
 import './style/FlowNodeStyle.css'
 import SharedHandle from '../compartment/CompartmentHandle';
@@ -11,9 +12,7 @@ import SharedHandle from '../compartment/CompartmentHandle';
  * @returns 
  */
 function FlowNode({ data, isConnectable }) {
-    const ConstructHandleId = (id, type, side) => {
-        return "handle_flow_" + type + "_" + (id) + "_" + side;
-    }
+
     const positionHandle = (index) => {
         return 20* index + 20;
     }
@@ -33,41 +32,102 @@ function FlowNode({ data, isConnectable }) {
     const targetHandles = useMemo(
         () =>
             Array.from({ length: data?.ins.length }, (_, index) => {
-                return (<OrientationHandler id={data.ins[index]} style={{ top: positionHandle(index + 1) }} type={"target"} position={"Left"} />)
-            })
+                return (
+                    <div className='left-handle-info'>
+                        <Latex>${data.obj?.coef_name_} = {data.obj?.coef_.toFixed(3)}$</Latex>
+                        <OrientationHandler id={data.ins[index]} style={{ top: positionHandle(index + 1) }} type={"target"} position={"Left"} />
+                    </div>
+            )})
     )
 
     const sourceHandles = useMemo(
         () =>
             Array.from({ length: data?.outs.length }, (_, index) => {
-                return (<OrientationHandler id={data.outs[index]} style={{ top: positionHandle(index + 1) }} type={"source"} position={"Right"} />)
+                return (
+                    <OrientationHandler id={data.outs[index]} style={{ top: positionHandle(index + 1) }} type={"source"} position={"Right"} />
+                    
+                )
             })
     )
 
+    const sourceCoefs = useMemo(
+        () => {
+            const result = [];
+            data?.obj.to_coefs_.forEach((key, val) => {
+                result.push(
+                    (<>
+                        <div>
+                        <Latex>$p_{'{'}{data?.obj.from_?.GetName().slice(0,1).toLowerCase()}
+                        {val.GetName().slice(0,1).toLowerCase()}{'}'}({key == 1 ? "1.0" : key})$</Latex> 
+                        {/* {result.length} */}
+                        </div>
+                    </>)
+                )
+            })
+            return result;
+            }
+    )
+    
+    const InductionCoefs = useMemo(
+        () => {
+            const result = [];
+            data?.obj.induction_.forEach((ind) => {
+                result.push(
+                    <>
+                        <Latex>$k_{'{'}
+                        {data?.obj.from_?.GetName().slice(0,1).toLowerCase()}
+                        {ind.GetFrom().slice(0,1).toLowerCase()}
+                        {'}'}
+                        = {ind.GetCoef()}
+                        $</Latex>
+                    </>
+                )
+            })
+            return result;
+        }
+    )
+
     return (
-        <div className='flow-node container'>
+        <div className={'flow-node container '}>
             <div className='row flow-node-header'>
-                <div className='col-sm-8'>
-                    <label htmlFor='text'> FLOW | prob: A({data.obj?.coef_}) </label>
+                <div className='col-sm-4'>
+                    <label htmlFor='text'> Поток </label>
+                </div>
+                <div className='checkbox-inducted col-sm-8'>
+                    
+                    {data.obj.induction_.length != 0 && <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked/>}
+                    {data.obj.induction_.length == 0 && <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>}
+                    
                 </div>
             </div>
 
-            <div className='row flow-node-body'>
-                <div class="handlers left col">
+            <div className='row justify-content-md-center flow-node-body'>
+                <div class="handlers left col col-4">
                     {targetHandles}
                 </div>
-                <div class="handlers right col">
+                
+                <div class="handlers right col-auto">
                     {sourceHandles}
                 </div>
-                <div className='info col'>
+                <div className='right-handle-info col col-4'>
+                    {sourceCoefs}
                 </div>
-                {/* <div className='induced col'>
-                    <button className='induced-button'> Check </button>
-                </div> */}
-                {/* При создании индуцированности должен создаваться новый хендл
-                    снизу.
-                */}
+                
             </div>
+            
+            {data.obj.induction_.length != 0 && <div className='induction row'>
+                <div className='handler-from'>
+
+                </div>
+                <div className='coef'>
+                    {InductionCoefs}
+                </div>
+            </div>}
+            {!data.corrected &&
+                <div className='row error'>
+                    <div className='col'>Ошибка!</div>
+                </div>
+            }
         </div>
     );
 }

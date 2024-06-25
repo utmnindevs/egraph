@@ -17,7 +17,8 @@ const GetDefatultValues = (node) => {
     }
     if (node.type === "flowNode"){
         return {
-            coef: node.data.obj.coef_
+            coef: node.data.obj.coef_,
+            coef_name: node.data.obj.coef_name_,
         }
     }
 }
@@ -48,17 +49,19 @@ function SideBarEditable({ node, setStateMenu, e_graph, updateGraphNodes, setGra
                 if (nd.id === node.id) {
                     if(nd.type === "compartmentNode"){
                         e_graph.getCompartmentByName(node.data.name).UpdateCompartment(data.name, parseFloat(data.population))
-                        nd.data = { ...node.data, ins: parseInt(data.ins), outs: parseInt(data.outs) }
+                        nd.data = { ...node.data}
                     }
                     if(nd.type === "flowNode"){
                         e_graph.getFlowById(nd.id).UpdateCoef(parseFloat(data.coef));
+                        e_graph.getFlowById(nd.id).UpdateCoefName(data.coef_name)
                         nd.data = {...node.data}
                     }
                 }
                 return nd;
             })
         })
-        updateGraphNodes(new Map([...e_graph.GetComps(), ...e_graph.GetFlows()]))
+        updateGraphNodes(e_graph.GetComps())
+        updateGraphNodes(e_graph.GetFlows())
         setStateMenu(null);
     }, [updateGraphNodes, node, setGraphNodes, e_graph, setStateMenu]);
 

@@ -25,6 +25,12 @@ export const Validators = {
             value: /^[0-9]+[.,]?[0-9]+$/gm,
             message: "Число с плавающей запятой"
         }
+    },
+    latex_alphabet:{
+        pattern:{
+            value: /^^\\[A-Za-z]+$/gm,
+            message: "Начинается с \\, кириллица"
+        }
     }
 }
 

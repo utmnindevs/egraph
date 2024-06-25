@@ -1,8 +1,10 @@
 // import libraries methodes
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import ReactFlow, { Controls, Background, addEdge, 
-  useEdgesState, applyEdgeChanges, applyNodeChanges, 
-  useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes, getConnectedEdges, useEdges } from 'reactflow';
+import ReactFlow, {
+  Controls, Background, addEdge,
+  useEdgesState, applyEdgeChanges, applyNodeChanges,
+  useStore, ReactFlowProvider, useKeyPress, useReactFlow, useOnViewportChange, useNodes, getConnectedEdges, useEdges
+} from 'reactflow';
 
 // import styles
 import 'reactflow/dist/style.css';
@@ -37,7 +39,7 @@ import { onSaveFileAs, checkIsHandleExist, getContentOfLastFile, openFile, getRe
 // import graph methodes
 import { EGraph } from './graph/graph.js';
 import { svgConverterFunction } from './Svgconverter.ts';
-import { getInitialNodes, generateGraphClass, ConstructHandleId, ParseConstructHandleId } from './tabs/temp.js';
+import { getInitialNodes, generateGraphClass, ConstructHandleId, ParseConstructHandleId, getInitialEdges } from './tabs/temp.js';
 import LocalStorage from './handlers/LocalStorage';
 var dagre = require("@xdashduck/dagre-tlayering");
 
@@ -46,7 +48,8 @@ const fileExist = await checkIsHandleExist();
 // initialize
 let e_graph = new EGraph(null, await getContentOfLastFile()); // -> useState mb nice
 let dagre_graph = new dagre.graphlib.Graph({ directed: true }).setGraph({ rankdir: "LR", ranksep: 10 });
-let initialNodes = fileExist ? getInitialNodes(e_graph) : [];
+let initialNodes = fileExist ? getInitialNodes(e_graph) : []
+let initialEdges = fileExist ? getInitialEdges(e_graph, initialNodes) : []
 
 const nodeTypes = { compartmentNode: CompartmentNode, flowNode: FlowNode };
 
@@ -59,8 +62,12 @@ const localStorageShare = new LocalStorage();
 function App() {
 
 
+
+
   const reactFlowWrapper = useRef(null);
   const [viewportSettings, setViewportSettings] = useState(viewportSettings_);
+
+  const [isGraphCorrected, setGraphCorrected] = useState(true);
 
   const [storagePlace, setStoragePlace] = useState("device");
   const [isStorageView, setStorageView] = useState(false);
@@ -85,28 +92,21 @@ function App() {
   const [isMetaDataModalOpen, setMetaDataModalOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('flow');
-  const [svgContent, setSvgContent] = useState('');
 
   const [showModelBtn, setShowModelBtn] = useState(false);
   const [showImageBtn, setShowImageBtn] = useState(false);
   const [showResultsBtn, setShowResultsBtn] = useState(false);
 
-  // Для всех модальных окон
+
   const [isModalOpne, setModalOpen] = useState(false);
   const [isKeyboardShortcutsModalOpen, setKeyboardShortcutsModalOpen] = useState(false); // Добавлено состояние для модального окна горячих клавиш
 
-  const [nodes, setNodes] = useState(initialNodes);
+  
 
   const [graphObjects, setGraphObjects, onGraphObjectChange] = useState(initialNodes);
   const [objectsUpdate, setObjectsUpdate] = useState([]);
-  const [edges, setEdges] = useEdgesState([]);
-  
+  const [edges, setEdges] = useEdgesState(initialEdges);
 
-  const onEdgesChange = useCallback((changes) =>
-    setEdges((edg) => {
-      return applyEdgeChanges(changes, edg);
-    })
-  )
 
   const [editableProps, setEditableProps] = useState(null);
 
@@ -126,15 +126,29 @@ function App() {
 
   // Расшаренная установка обновления и добавления нового узла если такой был создан
   const setGraphNodesShare = useCallback(() => {
-    if (addingNode) {
-      const comp = addingNode.data.obj;
-      const position = comp.GetPosition();
-      e_graph.AddComp(comp.GetId(), { name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y });
-      addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
-      setGraphObjects((nds) => nds.concat(addingNode));
-      updateNodesByObjects(e_graph.GetComps());
-      setAddingNodeShare(null);
+    if(!addingNode) {return;}
+
+    const type_node = addingNode.type;
+    switch(type_node){
+      case "flowNode":
+        const flow = addingNode.data.obj;
+        const f_position = flow.GetPosition();
+        e_graph.AddFlow(flow.GetId(), {from: null, to: [], coef: flow.GetCoef(), induction: flow.GetInductions(), coef_name: flow.GetCoefName(), x: f_position?.x, y: f_position?.y});
+        addingNode.data.obj = e_graph.getFlowById(flow.GetId());
+        break;
+      case "compartmentNode":
+        const comp = addingNode.data.obj;
+        const position = comp.GetPosition();
+        e_graph.AddComp(comp.GetId(), { name: comp.GetName(), population: comp.GetPopulation(), x: position?.x, y: position?.y });
+        addingNode.data.obj = e_graph.getCompartmentByName(comp.GetName());
+        break;
+      default:
+        throw "Undefined node type";
     }
+    setGraphObjects((nds) => nds.concat(addingNode));
+    updateNodesByObjects(new Map([...e_graph.GetComps(), ...e_graph.GetFlows()]));
+    setAddingNodeShare(null);
+    console.log(e_graph)
   }, [setGraphObjects, addingNode])
 
   // Метод вызываемый при отмене создания нового узла
@@ -185,25 +199,26 @@ function App() {
   }, [setFileNameModalOpen, setMetaDataModalOpen])
 
   const createOrSkipMetdata = useCallback(() => {
-    InitialStandartNodes();
     onSaveFileAs(
       e_graph.toJson(),
       JSON.parse(localStorageShare.GetPropFrom(".current_files"))?.name,
       () => { setMetaDataModalOpen(false); }
     );
+    InitialStandartNodes();
     // TODO: дописать ловью метаданных
     
   })
 
 
-  const InitialStandartNodes = () => {
+  const InitialStandartNodes = useCallback(() => {
     let graphs = generateGraphClass();
     e_graph = graphs[0];
-    dagre_graph = graphs[1];
-    const svg = svgConverterFunction(dagre_graph);
-    setSvgContent(svg);
-    setGraphObjects(getInitialNodes(e_graph));
-  };
+    const init_nodes = getInitialNodes(e_graph);
+    setGraphObjects(init_nodes);
+    const init_edges = getInitialEdges(e_graph, init_nodes);
+    setEdges(init_edges)
+
+  }, [setEdges, setGraphObjects]);
 
   const delay = ms => new Promise(
     resolve => setTimeout(resolve, ms)
@@ -215,11 +230,28 @@ function App() {
     });
   };
 
+  const updateEdge = (edgeGraph) => {
+    setEdges(edges => {
+      return edges.map(edge => {
+        return edge;
+      })
+    })
+  }
+
   useEffect(() => {
     objectsUpdate.forEach(obj => updateObject(obj));
-  }, [objectsUpdate])
+  }, [objectsUpdate, edges, setGraphCorrected])
 
-const updateObject = (graphObject) => {
+  const IsObjectCorrected = useCallback((obj) => {
+    const graph_corrected = e_graph.IsCorrectGraph();
+    setGraphCorrected(graph_corrected.result);
+    graph_corrected.errors.forEach(data => {
+      if(data.value.GetId() === obj.GetId()){ console.log(data.message); return false; }
+    })
+    return true;
+  }, [setGraphCorrected])
+
+  const updateObject = (graphObject) => {
     setGraphObjects(graphObjects => {
       return graphObjects.map(obj => {
         if (obj?.id === graphObject?.GetId()) {
@@ -229,17 +261,19 @@ const updateObject = (graphObject) => {
               ...obj.data,
               population: graphObject.GetPopulation(),
               name: graphObject.GetName(),
-              position: graphObject.GetPosition()
+              position: graphObject.GetPosition(),
+              corrected: e_graph.IsCorrectGraph().errors.find((data) => data.value.GetId() === graphObject.GetId())? false : true
             };
             return obj;
           } else {
-            obj.data = { ...obj.data } // something for flow
+            obj.data = { ...obj.data,
+              corrected: e_graph.IsCorrectGraph().errors.find((data) => data.value.GetId() === graphObject.GetId())? false : true } // something for flow
             return obj;
           }
         }
         return obj;
       });
-    }, []);
+    }, [setGraphObjects]);
   };
 
   const applyNodesChanges2Egraph = useCallback((changes, nds) => {
@@ -267,6 +301,7 @@ const updateObject = (graphObject) => {
 
   const runModel = async () => {
     for (let i = 0; i < 1; i++) {
+      console.log(e_graph.IsCorrectGraph());
       await delay(500);
       e_graph.onCompute(e_graph.GetStarted());
       updateNodesByObjects(e_graph.GetComps());
@@ -275,14 +310,17 @@ const updateObject = (graphObject) => {
 
 
 
-  
+
 
 
   const chooseExistFile = useCallback((blobText) => {
     e_graph = new EGraph(null, blobText);
-    setGraphObjects(getInitialNodes(e_graph));
+    const init_nodes = getInitialNodes(e_graph);
+    setGraphObjects(init_nodes);
+    const init_edges = getInitialEdges(e_graph, init_nodes);
+    setEdges(init_edges)
     setIsModalOpen(false);
-  }, [setGraphObjects, setIsModalOpen])
+  }, [setGraphObjects, setEdges, setIsModalOpen])
 
   // @param {string} state - название экрана
   const setActiveTabWithReset = useCallback((state) => {
@@ -330,7 +368,6 @@ const updateObject = (graphObject) => {
                 nodes={graphObjects}
                 edges={edges}
                 onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
                 setEditableProps={updateEditableProps}
                 setAddingNode={setAddingNodeShare}
                 updateNodesByObjects={updateNodesByObjects}

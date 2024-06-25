@@ -1,6 +1,6 @@
 
 import { Compartment } from "./compartment";
-import { Flow } from "./flow";
+import { Flow, Induction } from "./flow";
 import { generate_uuid_v4 } from "./helpers";
 
 var dagre = require("@xdashduck/dagre-tlayering");
@@ -15,6 +15,9 @@ class EGraph {
     this.id_to_flow_ = new Map();
     this.id_to_comp_ = new Map();
     this.start_compartment_ = start != null ? start : null;
+    this.result_json = undefined;
+    this.default_values = undefined;
+    this.total_population = 0;
     if(jsonData){
       this.deserializeJSON(jsonData)
     }
@@ -36,6 +39,8 @@ class EGraph {
       from: this.getCompartmentByName(flow_config.from),
       to: flow_config.to.map(obj => ([this.getCompartmentByName(obj.name), obj.coef])),
       coef: flow_config.coef,
+      coef_name: flow_config.coef_name,
+      induction: flow_config.induction,
       x: flow_config.x,
       y: flow_config.y
     })
@@ -54,6 +59,7 @@ class EGraph {
   AddComp(id, comp_config) {
     if (!this.id_to_comp_.has(id)) {
       this.id_to_comp_.set(id, new Compartment(id, comp_config));
+      this.total_population += comp_config.population;
     }
     return this;
   }
@@ -65,7 +71,7 @@ class EGraph {
       this.id_to_flow_.delete(id_flow);
     }
   }
-  DeleteComp(comp) { // TODO: переписать удаление компартмента, с учетом что от потоков тоже отсоеденились
+  DeleteComp(comp) { 
     const id_comp = comp.GetId();
     if (this.id_to_comp_.has(id_comp)) {
       this.id_to_comp_.delete(id_comp);
@@ -90,27 +96,46 @@ class EGraph {
     return null;
   }
   FindFlowByToComp(comp) {
+    const from_flows = []
     for (const [name, ptr] of this.id_to_flow_) {
       const comps_by_flow = ptr.GetToComps();
       if (comps_by_flow.has(comp)) {
-        return ptr;
+        from_flows.push(ptr)
       }
     }
+    if(from_flows.length == 1){return from_flows.at(0);}
+    else if(from_flows.length > 1){return from_flows;}
     return null;
   }
-  ComputePopulation(comp) {
+  ComputePopulation(comp, day) {
     const flow = this.FindFlowByFromComp(comp);
-    if (flow) {
+    if (flow && this.total_population != 0) {
       const population_comp = comp.GetPopulation();
-      const data_population = flow.GetCoef() * population_comp;
+      let data_population = 0;
+      const inductions = flow.GetInductions()
+      if(inductions.length == 0){
+        data_population = flow.GetCoef() * population_comp;
+      }else if(inductions.length == 1){
+        const population_ind = this.getCompartmentByName(inductions.at(0).GetFrom()).GetPopulation();
+        data_population = flow.GetCoef() * population_comp * population_ind / this.total_population;
+      }else{
+        data_population = population_comp * flow.GetCoef() / this.total_population;
+        let sum_of_ind = 0;
+        inductions.forEach(ind => {
+          const population_ind = this.getCompartmentByName(ind.GetFrom()).GetPopulation();
+          sum_of_ind += population_ind * ind.GetCoef();
+        })
+        data_population*=sum_of_ind;
+      }
       flow.SetItPopulation(data_population);
       for (const [ptr, coef] of flow.GetToComps()) {
         // ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);
         this.ComputePopulation(ptr);
+
       }
     }
   }
-  ApplyIterationPopulation(comp) {
+  ApplyIterationPopulation(comp, day) {
     const flow = this.FindFlowByFromComp(comp);
     if (flow) {
       const it_population = flow.GetItPopulation();
@@ -121,10 +146,39 @@ class EGraph {
       }
     }
   }
-  onCompute(comp) {
-    this.ComputePopulation(comp);
-    this.ApplyIterationPopulation(comp);
+  // нулевой пациент ещё
+  ConvertPopulationsToJson(day){
+    this.id_to_comp_.forEach((comp, id) => {
+      this.result_json.at(day)[comp.GetName()] = comp.GetPopulation();
+    })
   }
+  SaveDefaultValues(){
+    const arr = [];
+    this.id_to_comp_.forEach((comp, id) => {const res = {name: comp.name_, pop: comp.population_}; arr.push(res);});
+    return arr;
+  }
+  LoadDefaultValues(default_values){
+    this.id_to_comp_.forEach((comp, id) => {
+      default_values.forEach((data) => {
+        if(data.name === comp.GetName()) { comp.SetPopulation(data.pop); };
+      })
+    })
+  }
+  onCompute(comp, days = 1) {
+    const defaults = this.SaveDefaultValues();
+    this.result_json = [];
+    this.result_json.push({label: 0});
+    this.ConvertPopulationsToJson(0);
+    for(var day = 1; day < days; day++){
+      this.result_json.push({label: day});
+      this.ComputePopulation(comp, day);
+      this.ApplyIterationPopulation(comp, day);
+      this.ConvertPopulationsToJson(day);
+    }
+    this.LoadDefaultValues(defaults);
+  }
+
+
   GetFlows() {
     return this.id_to_flow_;
   }
@@ -243,7 +297,9 @@ class EGraph {
       })
       parsedData.flows.forEach((data) => {
         const position = data.position;
-        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, x: position?.x, y: position?.y})
+        const inductions = []
+        data.induction.forEach((data) => {inductions.push(new Induction(data.from, data.coef))})
+        this.AddFlow(data.id, {from: data.from, to: data.to, coef: data.coef, induction: inductions, coef_name: data.coef_name, x: position?.x, y: position?.y})
       })
     }
     return this;
@@ -252,6 +308,62 @@ class EGraph {
   jsonIsValid(jsonData){
     const parsedData = JSON.parse(jsonData);
     return parsedData.compartments && parsedData.flows;
+  }
+
+  IsCorrectGraph(){
+    let result = {result: true, errors: [], warnings: []};
+    const result_view_compartments = this.CheckCompartments();
+    result.errors.push(...result_view_compartments?.errors);
+    result.warnings.push(...result_view_compartments?.warnings);
+
+    const result_view_flows = this.CheckFlows();
+    result.errors.push(...result_view_flows?.errors);
+    result.warnings.push(...result_view_flows?.warnings);
+
+    result.result = result.result && result_view_compartments.result && result_view_flows.result;
+    return result;
+  }
+
+  /**
+   * Проверка компартментов, а именно корретность существования стартового компартмента, который не подсоединен к другим потокам с западной стороны.
+   * Кроме случаев когда компартмент никуда не выходит и не входит.
+   */
+  CheckCompartments(){
+    let result = {result: true, errors: [], warnings: []};
+    if(!this.start_compartment_) {return {result: false, errors: [{message: "EGraph has not started compartment.", value: null}], warnings: []}};
+    if(this.FindFlowByToComp(this.start_compartment_)){return {result:false, errors: [{message: "Started compartment sourced from flow.", value: this.start_compartment_}], warnings: []}}
+    if(!this.FindFlowByFromComp(this.start_compartment_)){return {result:false, errors: [{message: "Started compartment has not connected to EGraph.", value: this.start_compartment_}], warnings: []}}
+    this.id_to_comp_.forEach((comp, id) => {
+      if(!this.FindFlowByFromComp(comp) && !this.FindFlowByToComp(comp)){
+        result.warnings.push({message: comp.GetName() + " hasn't connected", value: comp})
+      }
+    })
+    return result;
+  }
+
+  /**
+   * Проверка потоков, что все они указывают направления, кроме случаев когда null -> null. Корретная сумма выходных коэффициентов.
+   */
+  CheckFlows(){
+    let result = {result: true, errors: [], warnings: []};
+    this.id_to_flow_.forEach((flow, id) => { 
+      if(!flow.GetFromComp() && flow.GetToComps().size == 0){
+        result.warnings.push({message: "Flow hasn't connected.", value: flow});
+      }else if((!flow.GetFromComp() && flow.GetToComps().size != 0)  || (flow.GetFromComp() && flow.GetToComps().size == 0)){
+
+        result.errors.push({message: "Flow hasn't to or from compartments.", value: flow});
+        result.result = false;
+      }
+      let coef_sum = 0;
+      flow.GetToComps().forEach((coef, comp) => {
+        coef_sum += coef;
+      })
+      if(coef_sum != 1.0 && coef_sum != 0){
+        result.errors.push({message: "Flow's to coefs in sum not equals 1.0", value: flow});
+        result.result = false;
+      }
+    })
+    return result;
   }
 
 }

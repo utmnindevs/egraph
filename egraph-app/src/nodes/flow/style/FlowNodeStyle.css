@@ -1,9 +1,34 @@
 .flow-node {
-    min-width: 200px;
+    min-width: 230px;
     width: fit-content;
     height: fit-content;
     border-radius: 5px;
+    
+    .induction{
+        font-size: 12px;
+        font-family: FiraSans;
+        background: rgba(206, 206, 206, 0.5);
+        border-radius: 5px;
+        margin-top: -2px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 3px 6px -3px inset;
+
+        .coef{
+            display: flex;
+            flex-direction: column;
+        }
+    }
 }
+
+.error{
+    background: #ffbdbd;
+    text-align: center;
+    font-size: 10px;
+    color: white;
+    border-radius: 5px;
+}
+
 
 .flow-node-header {
     background: #bddbff;
@@ -12,6 +37,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .checkbox-inducted{
+        text-align: end;
+
+        .form-check-input{
+            border-radius: 5px;
+            border: #bddbff solid 2px;
+            
+        }
+        .form-check-input:checked {
+            background-color: #4561ff;
+        }
+        .form-check-input:checked[type=checkbox]{
+            --bs-form-check-bg-image: none;
+        } 
+        .form-check-input:focus {
+            box-shadow: none;
+        }
+    }
 }
 
 .flow-node-header label {
@@ -37,15 +81,34 @@
     min-height: 50px;
     height: fit-content;
     font-size: 12px;
+    display: flex;
+    flex-direction: row;
+
+    .left-handle-info{
+        text-align: start;
+        margin-top: 4px;
+        width: 70px;
+    }
+
+    .right-handle-info{
+        text-align: end;
+        margin-top: 3px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 2.3px;
+    }
+
 
 }
 
 
 .flow-node-body .handlers .flow-handle{
     padding: 7px;
-    background: orange;
+    /* background: orange; */
     margin-top: 5px;
     margin-bottom: 6px;
+    width: 1px;
 }
 
 .flow-node-body label {
@@ -53,9 +116,11 @@
 
 }
 
-.react-flow__node.selected{
+.react-flow__node.selected {
     box-shadow: 1px 1px 4px 2px rgba(0,0,0,.2);
     border-radius: 5px;
+
+    
 }
 
 

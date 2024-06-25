@@ -15,6 +15,15 @@ class Coordinates {
     }
 }
 
+function generate_id_v1() {
+    const dis = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const ss = [];
+    for(let i = 0; i < 4; i++){
+        ss.push(dis(0, 15));
+    }
+    return ss.join("");
+}
+
 
 function generate_uuid_v4() {
     const dis = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -43,4 +52,4 @@ function generate_uuid_v4() {
     return ss.join("");
 }
 
-export {Coordinates, generate_uuid_v4};
+export {Coordinates, generate_uuid_v4, generate_id_v1};
