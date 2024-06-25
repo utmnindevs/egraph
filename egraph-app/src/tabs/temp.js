@@ -16,9 +16,9 @@ export function generateGraphClass() {
     var g = new EGraph();
 
     g.AddComp(generate_uuid_v4(), { name: "Suspectable", population: 100, x: 100, y: 100})
-        .AddComp(generate_uuid_v4(), {name: "HeavyInfected", population: 1, x: 200, y: 200})
-        .AddComp(generate_uuid_v4(), {name: "LightInfected", population: 1, x: 300, y: 300})
-        // .AddComp(generate_uuid_v4(), {name: "Rejected", population: 0, x: 400, y: 400})
+        .AddComp(generate_uuid_v4(), {name: "Infected", population: 1, x: 200, y: 200})
+        // .AddComp(generate_uuid_v4(), {name: "LightInfected", population: 1, x: 300, y: 300})
+        .AddComp(generate_uuid_v4(), {name: "Rejected", population: 0, x: 400, y: 400})
         // .AddComp(generate_uuid_v4(), {name: "Dead", population: 0, x: 500, y: 600})
 
     g.setStartCompartment("Suspectable");
@@ -31,10 +31,10 @@ export function generateGraphClass() {
 
     g.AddFlow(generate_uuid_v4(), {
         from: "Suspectable", 
-        to: [{name: "LightInfected", coef: 0.8}, {name: "HeavyInfected", coef: 0.2}] , 
+        to: [{name: "Infected", coef: 1}] , 
         coef: 0.06, 
         coef_name: "\\beta", 
-        induction: [new Induction("LightInfected", 0.4), new Induction("HeavyInfected", 0.25)],
+        induction: [new Induction("Infected", 0.4)],
         x: 150, 
         y:150});
     // g.AddFlow(generate_uuid_v4(), {from: "LightInfected", to: [], coef: 0.05, coef_name: "\\mu", x: 350, y:150});

@@ -15,11 +15,12 @@ class EGraph {
     this.id_to_flow_ = new Map();
     this.id_to_comp_ = new Map();
     this.start_compartment_ = start != null ? start : null;
+    this.result_json = undefined;
+    this.default_values = undefined;
+    this.total_population = 0;
     if(jsonData){
       this.deserializeJSON(jsonData)
     }
-    this.result_json = undefined;
-    this.default_values = undefined;
   }
 
   getStartedCompartment(){
@@ -58,6 +59,7 @@ class EGraph {
   AddComp(id, comp_config) {
     if (!this.id_to_comp_.has(id)) {
       this.id_to_comp_.set(id, new Compartment(id, comp_config));
+      this.total_population += comp_config.population;
     }
     return this;
   }
@@ -107,9 +109,24 @@ class EGraph {
   }
   ComputePopulation(comp, day) {
     const flow = this.FindFlowByFromComp(comp);
-    if (flow) {
+    if (flow && this.total_population != 0) {
       const population_comp = comp.GetPopulation();
-      const data_population = flow.GetCoef() * population_comp;
+      let data_population = 0;
+      const inductions = flow.GetInductions()
+      if(inductions.length == 0){
+        data_population = flow.GetCoef() * population_comp;
+      }else if(inductions.length == 1){
+        const population_ind = this.getCompartmentByName(inductions.at(0).GetFrom()).GetPopulation();
+        data_population = flow.GetCoef() * population_comp * population_ind / this.total_population;
+      }else{
+        data_population = population_comp * flow.GetCoef() / this.total_population;
+        let sum_of_ind = 0;
+        inductions.forEach(ind => {
+          const population_ind = this.getCompartmentByName(ind.GetFrom()).GetPopulation();
+          sum_of_ind += population_ind * ind.GetCoef();
+        })
+        data_population*=sum_of_ind;
+      }
       flow.SetItPopulation(data_population);
       for (const [ptr, coef] of flow.GetToComps()) {
         // ptr.SetPopulation(ptr.GetPopulation() + (population_comp - data_population) * coef);

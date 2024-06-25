@@ -63,12 +63,14 @@ function ResultsTab({ e_graph }) {
     })
     const ConvertedInductionsToLatex = (inductions, from) => {
       const result = []
-      console.log(inductions)
-      inductions.forEach((ind) => {
-        const str = `k_{${from.slice(0,1).toLowerCase()}${ind.GetFrom().slice(0,1).toLowerCase()}}${ind.GetFrom().slice(0,1)}`;
-        result.push(str)
-      })
-      console.log(result)
+      if(inductions.length == 1){
+        result.push(`${inductions.at(0).GetFrom().slice(0,1)}`)
+      }else{
+        inductions.forEach((ind) => {
+          const str = `k_{${from.slice(0,1).toLowerCase()}${ind.GetFrom().slice(0,1).toLowerCase()}}${ind.GetFrom().slice(0,1)}`;
+          result.push(str)
+        })
+      }
       return result;
     }
     return(
@@ -86,10 +88,10 @@ function ResultsTab({ e_graph }) {
             { data.inductions.length != 0 &&
               <Latex output="mathml">
                 $
-                \frac{'{'}{data.coef_name} {data.from.slice(0,1)}{'}'}{'{'}n{'}'}
-                {data.inductions.length > 1 && '('}
+                \frac{'{'}{data.coef_name} {'}'}{'{'}n{'}'}
+                {data.inductions.length > 1 ?'(' : ''}
                 {ConvertedInductionsToLatex(data.inductions, data.from).join("+")}
-                {data.inductions.length > 1 && ')'}
+                {data.inductions.length > 1 ?')' : ''}
                 *p_{'{'} {data.from.slice(0,1).toLowerCase()}{data.name.slice(0,1).toLowerCase()} {'}'}
                 $  
               </Latex>
@@ -113,7 +115,10 @@ function ResultsTab({ e_graph }) {
           <div className='param-box'>
             Время (дни)
             <div></div>
-            <Latex>$t_m$: 100</Latex>
+            <div className='time-input'>
+              <div><Latex>$t_m$ </Latex></div>
+              <div><input type="text" class="form-control" placeholder="250"aria-describedby="inputGroup-sizing-sm"/></div>
+            </div>
           </div>
           <RenderRates/>
         </div>

@@ -49,7 +49,7 @@ const ResultRenderer = ({ e_graph, setImageOfResults }) => {
     let [ctx, setCtx] = React.useState();
     const [chart_data, SetChartData] = React.useState({ labels: [], yLabels: [], xLabels: [], datasets: [] });
 
-    const time_ = 100;
+    const time_ = 250;
 
     const GetResultByDay = (days) => {
         e_graph.onCompute(e_graph.getStartedCompartment(), days);
@@ -90,8 +90,20 @@ const ResultRenderer = ({ e_graph, setImageOfResults }) => {
                     options: {
                         scales: {
                             y: {
-                                beginAtZero: true
-                            }
+                                title: {
+                                    display: true,
+                                    text: 'Кол-во людей'
+                                },
+                                beginAtZero: true,
+                            },
+                            x:{
+                                min: 0,
+                                max: time_,
+                                title: {
+                                    display: true,
+                                    text: 'Время (дни)'
+                                },
+                            },
                         },
                         animation: {
                             onComplete: function () {
@@ -103,6 +115,9 @@ const ResultRenderer = ({ e_graph, setImageOfResults }) => {
                         plugins: {
                             customCanvasBackgroundColor: {
                               color: 'white',
+                            },
+                            legend:{
+                                display: true,
                             }
                           }
                     },

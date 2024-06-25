@@ -58,7 +58,21 @@
             .param-box{
                 margin-top: 10px;
                 font-size: 14px;
+
+                .time-input{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    gap: 20px;  
+                    margin-top: 5px;
+                    .form-control{
+                        font-size: 12px;
+                        width: 70px;
+                        height: 25px;
+                    } 
+                }
             }
+            
         }
     }
 }
