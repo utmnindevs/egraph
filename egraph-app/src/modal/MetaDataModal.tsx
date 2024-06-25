@@ -67,7 +67,7 @@ export default function MetaDataModal(props: ModalProps){
     return (
         <>
             <Modal 
-            isOpen={props.is_open} typeModal={props.storage_type} isFormed={false}
+            isOpen={props.is_open} typeModal={props.storage_type} isFormed={false} modalClass={"ssss"}
             content={{
                 header_text: "Метаданные файла: ",
                 body_text: RenderBody(),

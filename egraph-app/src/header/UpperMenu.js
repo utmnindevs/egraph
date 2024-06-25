@@ -7,6 +7,7 @@ import { Button } from 'react-bootstrap';
 import { onSaveFileAs, onEditCurrentFile, openFile, getRecentFile } from '../handlers/Save';
 import KeyboardShortcutsModal from '../modal/KeyboardshortcutsModal'; 
 
+
 const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handleShowImage, handleShowModel, setActiveTab, setActiveTabWithReset, onCreateNew }) => {
   const [fileName, setFileName] = useState(getRecentFile()?.name || "untitled");
   const [isKeyboardShortcutsModalOpen, setKeyboardShortcutsModalOpen] = useState(false); // Состояние для модального окна
@@ -123,6 +124,7 @@ const UpperMenu = ({ onChooseFile, e_graph, onRunModel, handleShowResults, handl
             <EditMenuDropDown className="hdr-button" name={'Правка'} />
             <AboutMenuDropDown className="hdr-button" name={'Справка'} />
             <StartModelDropDown className="hdr-button" name={'Модель'} />
+           
             {true && <div style={{ fontSize: '10px', color: 'rgba(0,0,0,0.5)' }}> Все изменения сохранены</div>}
           </div>
         </div>

@@ -192,6 +192,7 @@ function App() {
       () => { setMetaDataModalOpen(false); }
     );
     // TODO: дописать ловью метаданных
+    
   })
 
 
